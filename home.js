@@ -16,18 +16,35 @@ window.addEventListener('scroll', () => {
   );
 }, {passive:true});
 
-// Countdown to 30 May 2026
-function tick() {
-  const diff = new Date('2026-05-30T23:59:59') - new Date();
-  if(diff <= 0) return;
-  const pad = n => String(Math.floor(n)).padStart(2,'0');
-  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=pad(v); };
-  set('cdDays', diff/86400000);
-  set('cdHrs',  (diff%86400000)/3600000);
-  set('cdMin',  (diff%3600000)/60000);
-  set('cdSec',  (diff%60000)/1000);
+// Countdown — dynamic from API
+function startCountdown(deadlineStr) {
+  function tick() {
+    const diff = new Date(deadlineStr + 'T23:59:59') - new Date();
+    if (diff <= 0) {
+      ['cdDays','cdHrs','cdMin','cdSec'].forEach(id => {
+        const e = document.getElementById(id); if(e) e.textContent = '00';
+      });
+      return;
+    }
+    const pad = n => String(Math.floor(n)).padStart(2,'0');
+    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=pad(v); };
+    set('cdDays', diff/86400000);
+    set('cdHrs',  (diff%86400000)/3600000);
+    set('cdMin',  (diff%3600000)/60000);
+    set('cdSec',  (diff%60000)/1000);
+  }
+  tick();
+  setInterval(tick, 1000);
 }
-tick(); setInterval(tick, 1000);
+
+fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+  const open = events.find(e=>e.status==='Open') || events[0];
+  if(open && open.reg_deadline) {
+    startCountdown(open.reg_deadline);
+  } else {
+    startCountdown('2026-12-31');
+  }
+}).catch(()=>{ startCountdown('2026-12-31'); });
 
 // Quick register DOB -> age group
 function qrFillAge() {
