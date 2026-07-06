@@ -1,0 +1,917 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>SwimFest India 2026</title>
+  <link rel="stylesheet" href="home.css?v=6"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<script>
+  // Require login — redirect to login page if not authenticated
+  if (!localStorage.getItem('swimmer_id') || localStorage.getItem('swimmer_id') === '') {
+    window.location.href = 'login.html';
+  }
+</script>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-wave">&#127946;</span> SwimFest India
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#eligibility">Eligibility</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#directory">Swimmers</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="heatsheet.html">Heat Sheet</a></li>
+      <li><a href="player.html">My Profile</a></li>
+      <li><a href="login.html" onclick="localStorage.removeItem('swimmer_id');localStorage.removeItem('swimmer_name')">Logout</a></li>
+    </ul>
+    <div>
+      <button class="nav-ham" id="navHam">&#9776;</button>
+    </div>
+  </div>
+  <ul class="nav-mob" id="navMob">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#directory">Swimmers</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="hero-eyebrow">&#127941; Tamil Nadu's Premier Swimming Championship</span>
+      <h1>SWIMFEST<br/>INDIA 2026</h1>
+      <p class="hero-sub">Non-medalist &nbsp;&middot;&nbsp; Age-group &nbsp;&middot;&nbsp; School &amp; Academy swimmers welcome</p>
+      <div class="hero-btns">
+        <button onclick="openRegisterModal()" class="btn-hero-primary">&#128221; Register Now</button>
+        <a href="#events" class="btn-hero-ghost">View Events</a>
+      </div>
+      <div class="hero-chips">
+        <div class="hero-chip"><span class="chip-n">500+</span><span class="chip-l">Swimmers</span></div>
+        <div class="hero-chip"><span class="chip-n">40</span><span class="chip-l">Events</span></div>
+        <div class="hero-chip"><span class="chip-n">20</span><span class="chip-l">Academies</span></div>
+        <div class="hero-chip"><span class="chip-n">3</span><span class="chip-l">Days</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE TICKER -->
+<div class="ticker-bar">
+  <span class="ticker-label">&#128308; LIVE</span>
+  <div class="ticker-track">
+    <span id="tickerText">Loading event info...</span>
+  </div>
+</div>
+<script>
+(function(){
+  fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+    const open = events.find(e=>e.status==='Open') || events[0];
+    if(!open) return;
+    function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+    const txt = `Registration Open — ${open.name} \u2022 Deadline: ${fD(open.reg_deadline)} \u2022 ${open.venue||''} \u2022 U10 \u00b7 U12 \u00b7 U14 \u00b7 U16 \u2022 Boys & Girls \u2022 Rs.${open.fee_per_event||300}/event \u2022 Register before spots fill up!`;
+    document.getElementById('tickerText').textContent = txt;
+  }).catch(()=>{});
+})();
+</script>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item"><span class="stat-val">500+</span><span class="stat-key">Swimmers</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-val">40</span><span class="stat-key">Events</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-val">8</span><span class="stat-key">Categories</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-val">20</span><span class="stat-key">Academies</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-val">3</span><span class="stat-key">Days</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-val">&#8377;300</span><span class="stat-key">Per Event</span></div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="page-grid" id="events">
+
+  <!-- LEFT -->
+  <div class="col-left">
+    <div class="section-head">
+      <span class="sh-icon">&#128197;</span><h2>Upcoming Events</h2>
+      <a href="#events" class="sh-link" onclick="scrollToEvents()">View Details &#8594;</a>
+    </div>
+    <div class="event-list">
+      <p style="color:#64748b;font-size:.85rem;padding:12px">Loading events...</p>
+    </div>
+
+    <!-- Past Results -->
+    <div class="section-head" id="results" style="margin-top:18px">
+      <span class="sh-icon">&#127942;</span><h2>Past Event Results</h2>
+    </div>
+    <div class="past-list">
+      <div class="past-row" onclick="toggleResult('r2025',this)">
+        <div class="past-info"><span class="past-year">2025</span><span class="past-name">SwimFest India 2025 Results</span></div>
+        <span class="past-chev">&#9660;</span>
+      </div>
+      <div class="past-panel" id="r2025">
+        <table class="mini-results">
+          <thead><tr><th>Event</th><th>Winner</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>50m Freestyle U12 Boys</td><td>Arjun Kumar</td><td>32.18s</td></tr>
+            <tr><td>100m Backstroke U14 Girls</td><td>Priya Sharma</td><td>1:12.44</td></tr>
+            <tr><td>50m Butterfly U10 Boys</td><td>Aarav Patel</td><td>38.05s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="past-row" onclick="toggleResult('r2024',this)">
+        <div class="past-info"><span class="past-year">2024</span><span class="past-name">SwimFest India 2024 Results</span></div>
+        <span class="past-chev">&#9660;</span>
+      </div>
+      <div class="past-panel" id="r2024">
+        <table class="mini-results">
+          <thead><tr><th>Event</th><th>Winner</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>100m Freestyle U16 Boys</td><td>Rahul Mehta</td><td>58.72s</td></tr>
+            <tr><td>50m Breaststroke U12 Girls</td><td>Sneha Iyer</td><td>41.33s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="past-row" onclick="toggleResult('r2023',this)">
+        <div class="past-info"><span class="past-year">2023</span><span class="past-name">SwimFest India 2023 Results</span></div>
+        <span class="past-chev">&#9660;</span>
+      </div>
+      <div class="past-panel" id="r2023">
+        <table class="mini-results">
+          <thead><tr><th>Event</th><th>Winner</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>200m IM U14 Boys</td><td>Karthik M</td><td>2:34.11</td></tr>
+            <tr><td>50m Freestyle U10 Girls</td><td>Kavya Nair</td><td>36.88s</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTRE -->
+  <div class="col-mid">
+
+    <div class="section-head" id="eligibility" style="margin-top:16px">
+      <span class="sh-icon">&#9989;</span><h2>Eligibility Checker</h2>
+    </div>
+    <div class="elig-checker">
+      <p class="ec-hint">Enter DOB to check which events the swimmer qualifies for</p>
+      <div class="ec-row">
+        <input type="date" id="ecDob" min="2010-01-01" max="2017-12-31" onchange="checkElig()"/>
+        <select id="ecGender" onchange="checkElig()">
+          <option value="">Gender</option>
+          <option value="Boys">Boys</option>
+          <option value="Girls">Girls</option>
+        </select>
+      </div>
+      <div class="ec-result" id="ecResult" style="display:none">
+        <div class="ec-badge" id="ecBadge"></div>
+        <div class="ec-events" id="ecEvents"></div>
+        <button onclick="openRegisterModal()" class="btn-reg" style="margin-top:10px;width:100%">Register in This Category</button>
+      </div>
+      <div class="ec-ineligible" id="ecIneligible" style="display:none">
+        <span>&#9888;&#65039; DOB outside eligible range (2010&ndash;2017).</span>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:16px">
+      <span class="sh-icon">&#9203;</span><h2>Registration Closes In</h2>
+    </div>
+    <div class="countdown-box">
+      <div class="cd-unit"><span class="cd-num" id="cdDays">--</span><span class="cd-lbl">Days</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cdHrs">--</span><span class="cd-lbl">Hrs</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cdMin">--</span><span class="cd-lbl">Min</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cdSec">--</span><span class="cd-lbl">Sec</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="col-right">
+    <div class="col-right-block" style="order:1">
+      <div class="section-head">
+        <span class="sh-icon">&#128226;</span><h2>Announcements</h2>
+      </div>
+      <div class="announce-list" id="announceList">
+        <div class="announce-item">
+          <span class="an-dot urgent-dot"></span>
+          <div><strong>Loading...</strong><p>Fetching event details.</p></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+          const open = events.find(e=>e.status==='Open') || events[0];
+          if(!open) return;
+          function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+          const startD = fD(open.start_date);
+          document.getElementById('announceList').innerHTML = `
+            <div class="announce-item">
+              <span class="an-dot urgent-dot"></span>
+              <div><strong>Registration Deadline</strong><p>Entries close ${fD(open.reg_deadline)}. No late entries accepted.</p></div>
+            </div>
+            <div class="announce-item">
+              <span class="an-dot"></span>
+              <div><strong>Document Check-in</strong><p>Day 1 (${startD}) at 08:00 AM. Bring all originals.</p></div>
+            </div>
+            <div class="announce-item">
+              <span class="an-dot info-dot"></span>
+              <div><strong>Heat Sheets</strong><p>Published 24 hrs before race day on this website.</p></div>
+            </div>
+            <div class="announce-item">
+              <span class="an-dot info-dot"></span>
+              <div><strong>Relay Teams</strong><p>Relay medalists from other meets are eligible. 4&#215;50m / 4&#215;100m.</p></div>
+            </div>
+          `;
+        }).catch(()=>{});
+      })();
+      </script>
+    </div>
+
+    <div class="col-right-block" style="order:2">
+      <div class="section-head">
+        <span class="sh-icon">&#128100;</span><h2>Quick Register</h2>
+      </div>
+      <form class="qr-form" onsubmit="qrSubmit(event)">
+        <div class="qr-group">
+          <label>Swimmer Name</label>
+          <input type="text" id="qrName" placeholder="Enter full name" required/>
+        </div>
+        <div class="qr-group">
+          <label>Gender</label>
+          <select id="qrGender" required>
+            <option value="">Select Gender</option>
+            <option value="Boys">Boys</option>
+            <option value="Girls">Girls</option>
+          </select>
+        </div>
+        <div class="qr-group">
+          <label>Date of Birth</label>
+          <input type="date" id="qrDob" onchange="qrFillAge()" required/>
+        </div>
+        <div class="qr-group">
+          <label>Age Group <span class="auto-tag-sm">auto</span></label>
+          <input type="text" id="qrAgeGroup" readonly class="readonly-inp" placeholder="Detected from DOB"/>
+        </div>
+        <div class="qr-group">
+          <label>Academy</label>
+          <select id="qrAcademy" required>
+            <option value="">Select Academy</option>
+            <option>SRM Swim Club</option>
+            <option>Chennai Dolphins</option>
+            <option>Madurai Marlins</option>
+            <option>Kattankulathur Aqua</option>
+            <option>TN Swim Academy</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-continue">Continue to Events &#8594;</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- SWIMMER DIRECTORY -->
+<section id="directory" class="dir-section">
+  <div class="dir-inner">
+    <div class="dir-head">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="sh-icon">&#128100;</span><h2>Swimmer Directory</h2>
+      </div>
+      <div class="dir-filters">
+        <div class="dir-fgroup" id="dirGender">
+          <button class="dfb active" data-g="all">All</button>
+          <button class="dfb" data-g="Boys">&#128102; Boys</button>
+          <button class="dfb" data-g="Girls">&#128103; Girls</button>
+        </div>
+        <div class="dir-fgroup" id="dirAge">
+          <button class="dfb active" data-a="all">All Ages</button>
+          <button class="dfb" data-a="u8">U8</button>
+          <button class="dfb" data-a="u10">U10</button>
+          <button class="dfb" data-a="u12">U12</button>
+          <button class="dfb" data-a="u14">U14</button>
+          <button class="dfb" data-a="u16">U16</button>
+        </div>
+        <input type="text" class="dir-search" id="dirSearch" placeholder="Search swimmer..." oninput="filterDir()"/>
+      </div>
+    </div>
+    <div class="dir-grid" id="dirGrid">
+      <div class="dir-card" data-g="Boys" data-a="u14"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Yashwanth Reddy</strong><span>SRM Swim Club</span><span class="ap u14">U14</span></div></div>
+      <div class="dir-card" data-g="Boys" data-a="u14"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Arjun Kumar</strong><span>Chennai Dolphins</span><span class="ap u14">U14</span></div></div>
+      <div class="dir-card" data-g="Girls" data-a="u14"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Priya Sharma</strong><span>Blue Waves Academy</span><span class="ap u14">U14</span></div></div>
+      <div class="dir-card" data-g="Boys" data-a="u12"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Karthik M</strong><span>Aquatic Chennai</span><span class="ap u12">U12</span></div></div>
+      <div class="dir-card" data-g="Girls" data-a="u10"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Kavya Nair</strong><span>TN Swim Academy</span><span class="ap u10">U10</span></div></div>
+      <div class="dir-card" data-g="Boys" data-a="u16"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Rahul Mehta</strong><span>Madurai Marlins</span><span class="ap u16">U16</span></div></div>
+      <div class="dir-card" data-g="Girls" data-a="u12"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Sneha Iyer</strong><span>SRM Swim Club</span><span class="ap u12">U12</span></div></div>
+      <div class="dir-card" data-g="Boys" data-a="u8"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Aarav Patel</strong><span>Chennai Dolphins</span><span class="ap u10">U8</span></div></div>
+      <div class="dir-card" data-g="Girls" data-a="u16"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Meera Pillai</strong><span>Madurai Marlins</span><span class="ap u16">U16</span></div></div>
+      <div class="dir-card" data-g="Boys" data-a="u10"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Rohan Verma</strong><span>TN Swim Academy</span><span class="ap u10">U10</span></div></div>
+      <div class="dir-card" data-g="Girls" data-a="u8"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Ananya Reddy</strong><span>Kattankulathur Aqua</span><span class="ap u10">U8</span></div></div>
+      <div class="dir-card" data-g="Boys" data-a="u12"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Dev Krishnan</strong><span>SRM Swim Club</span><span class="ap u12">U12</span></div></div>
+    </div>
+    <button class="btn-view-all" onclick="showAllDir()">View All Swimmers</button>
+  </div>
+</section>
+
+<!-- AGE REFERENCE -->
+<section class="age-ref-section" id="eligibility-ref">
+  <div class="age-ref-inner">
+    <div class="section-head"><span class="sh-icon">&#128203;</span><h2>Age Categories &amp; Events</h2></div>
+    <div class="age-ref-grid">
+      <div class="arc-card u10c">
+        <div class="arc-header"><span class="ap u10">U-10</span><span class="arc-gender">Boys &amp; Girls</span></div>
+        <p class="arc-born">Born: 1 Jan 2016 &ndash; 31 Dec 2017</p>
+        <ul class="arc-events"><li>50m Freestyle</li><li>100m Freestyle</li><li>50m Backstroke</li><li>50m Breaststroke</li><li>50m Butterfly</li><li>100m IM</li></ul>
+        <span class="arc-relay">Relay: 4&times;50m</span>
+      </div>
+      <div class="arc-card u12c">
+        <div class="arc-header"><span class="ap u12">U-12</span><span class="arc-gender">Boys &amp; Girls</span></div>
+        <p class="arc-born">Born: 1 Jan 2014 &ndash; 31 Dec 2015</p>
+        <ul class="arc-events"><li>50m Freestyle</li><li>100m Freestyle</li><li>50m Backstroke</li><li>50m Breaststroke</li><li>50m Butterfly</li><li>100m IM</li></ul>
+        <span class="arc-relay">Relay: 4&times;50m</span>
+      </div>
+      <div class="arc-card u14c">
+        <div class="arc-header"><span class="ap u14">U-14</span><span class="arc-gender">Boys &amp; Girls</span></div>
+        <p class="arc-born">Born: 1 Jan 2012 &ndash; 31 Dec 2013</p>
+        <ul class="arc-events"><li>50m Freestyle</li><li>100m Freestyle</li><li>100m Backstroke</li><li>100m Breaststroke</li><li>100m Butterfly</li><li>200m IM</li></ul>
+        <span class="arc-relay">Relay: 4&times;100m</span>
+      </div>
+      <div class="arc-card u16c">
+        <div class="arc-header"><span class="ap u16">U-16</span><span class="arc-gender">Boys &amp; Girls</span></div>
+        <p class="arc-born">Born: 1 Jan 2010 &ndash; 31 Dec 2011</p>
+        <ul class="arc-events"><li>50m Freestyle</li><li>100m Freestyle</li><li>100m Backstroke</li><li>100m Breaststroke</li><li>100m Butterfly</li><li>200m IM</li></ul>
+        <span class="arc-relay">Relay: 4&times;100m</span>
+      </div>
+    </div>
+    <div class="arc-rule">&#128204; Age cut-off: <strong>31 December 2026</strong> &nbsp;&middot;&nbsp; Non-medalist only &nbsp;&middot;&nbsp; Max <strong>3 events</strong> per registration + optional Relay</div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <div class="faq-inner">
+    <div class="section-head"><span class="sh-icon">&#10067;</span><h2>Frequently Asked Questions</h2></div>
+    <input type="text" class="faq-search" id="faqSearch" placeholder="Search FAQs..." oninput="filterFaq()"/>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Who is eligible for the Non-Medalist championship?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Only swimmers who have never won an individual medal (Gold, Silver, Bronze) at State, Zonal, National, or major School Games (CBSE/SGFI) are eligible. Relay medals do not affect eligibility.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What documents must we submit on Day 1?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Signed Non-Medalist Declaration (Coach + Parent), institutional representation certificate, and government age-proof document (Birth Certificate, Aadhaar, or School ID).</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How does the One Start Rule work?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Any swimmer who leaves the block before the starting signal is immediately disqualified (DSQ). The race continues for all other swimmers without a recall.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Is there a refund policy?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Fees are non-refundable once paid, except in case of official event cancellation by the organiser. No event swaps after the registration deadline.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can a swimmer represent both school and academy?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">No. Under SFI guidelines, a swimmer must declare single representation for the meet &mdash; either school OR academy, not both.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="contact-inner">
+    <div class="contact-item"><span>&#128205;</span><div><strong>Venue</strong><p>SRM University, Kattankulathur<br/>Tamil Nadu &ndash; 603203</p></div></div>
+    <div class="contact-item"><span>&#128197;</span><div><strong>Event Dates</strong><p>June 20&ndash;22, 2026</p></div></div>
+    <div class="contact-item"><span>&#8987;</span><div><strong>Reg. Deadline</strong><p>30 May 2026</p></div></div>
+    <div class="contact-item"><span>&#128222;</span><div><strong>Phone</strong><p>+91 44 2745 2270</p></div></div>
+    <div class="contact-item"><span>&#9993;&#65039;</span><div><strong>Email</strong><p>swimming@srmist.edu.in</p></div></div>
+    <div class="contact-item"><span>&#128172;</span><div><strong>WhatsApp</strong><p>+91 98765 43210</p></div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">&#127946; SwimFest India</span>
+    <div class="footer-links">
+      <a href="#events">Golden Championship</a>
+      <a href="#events">Events</a>
+      <a href="#directory">Swimmers</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <p>&copy; 2026 SwimFest India &middot; Age cut-off: 31 Dec 2026 &middot; Recognised by SFI</p>
+  </div>
+</footer>
+
+<!-- REGISTRATION MODAL -->
+<div class="reg-modal-overlay" id="registerModal" role="dialog" aria-modal="true">
+  <div class="reg-modal-box">
+
+    <!-- Header -->
+    <div class="reg-modal-header">
+      <div>
+        <h2>&#127946; Book Tournament</h2>
+        <p id="wizardStepLabel">Step 1 of 7 &mdash; Select Tournament</p>
+      </div>
+      <button class="reg-modal-close" onclick="closeRegisterModal()" aria-label="Close">&times;</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="reg-progress-bar"><div class="reg-progress-fill" id="wizardProgressFill" style="width:14.28%"></div></div>
+    <div class="reg-steps-track">
+      <div class="rst active" data-step="1"><span class="rst-n">1</span><span class="rst-l">Tournament</span></div>
+      <div class="rst" data-step="2"><span class="rst-n">2</span><span class="rst-l">Profile</span></div>
+      <div class="rst" data-step="3"><span class="rst-n">3</span><span class="rst-l">Events</span></div>
+      <div class="rst" data-step="4"><span class="rst-n">4</span><span class="rst-l">Seed Times</span></div>
+      <div class="rst" data-step="5"><span class="rst-n">5</span><span class="rst-l">Review</span></div>
+      <div class="rst" data-step="6"><span class="rst-n">6</span><span class="rst-l">Payment</span></div>
+      <div class="rst" data-step="7"><span class="rst-n">7</span><span class="rst-l">Confirmed</span></div>
+    </div>
+
+    <!-- Body -->
+    <div class="reg-modal-body" id="wizardBody">
+      <form id="registerForm" onsubmit="return false;">
+
+        <!-- STEP 1: Select Tournament -->
+        <div class="wiz-panel active" id="step1">
+          <div class="wiz-intro"><h3>Select a Tournament</h3><p>Choose the meet you want to enter. Only open tournaments are shown.</p></div>
+          <div class="tourn-list" id="tournListDynamic">
+            <p style="color:#64748b;font-size:.85rem">Loading tournaments...</p>
+          </div>
+          <div class="wiz-nav"><button type="button" class="wiz-btn-next" onclick="wizardNext()">Book Tournament &#8594;</button></div>
+        </div>
+        <script>
+        (function loadWizardTournaments(){
+          fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+            const container = document.getElementById('tournListDynamic');
+            if(!container) return;
+            // Only show Open tournaments
+            const openEvents = events.filter(e => e.status === 'Open');
+            if(openEvents.length === 0){
+              container.innerHTML = '<p style="color:#64748b;font-size:.85rem">No open tournaments available for registration.</p>';
+              return;
+            }
+            let html = '';
+            openEvents.forEach((ev, i) => {
+              const dates = ev.start_date && ev.end_date ? ev.start_date + ' to ' + ev.end_date : '';
+              html += `<label class="tourn-card ${i===0?'selected':''}">
+                <input type="radio" name="tournament" value="${ev.tournament_id}" ${i===0?'checked':''}/>
+                <div class="tourn-body">
+                  <div class="tourn-top"><span class="t-badge nm">Non-Medalist</span><span class="t-open">&#128994; Open</span></div>
+                  <h4>${ev.name}</h4>
+                  <p>Boys &amp; Girls &middot; U-10 / U-12 / U-14 / U-16</p>
+                  <div class="tourn-meta">
+                    <span>&#128205; ${ev.venue||''}</span>
+                    <span>&#128197; ${dates}</span>
+                    <span>&#8987; Closes: ${ev.reg_deadline||''}</span>
+                    <span>&#128176; &#8377;${ev.fee_per_event||300}/event + GST</span>
+                  </div>
+                </div>
+                <span class="tourn-check">&#10003;</span>
+              </label>`;
+            });
+            container.innerHTML = html;
+            // Add click selection behavior
+            container.querySelectorAll('.tourn-card').forEach(card=>{
+              card.addEventListener('click',function(){
+                container.querySelectorAll('.tourn-card').forEach(c=>c.classList.remove('selected'));
+                this.classList.add('selected');
+              });
+            });
+          }).catch(()=>{});
+        })();
+        </script>
+
+        <!-- STEP 2: Profile -->
+        <div class="wiz-panel" id="step2">
+          <div class="wiz-intro"><h3>Player Profile</h3><p>Enter your details. Age group and events will auto-detect from DOB.</p></div>
+
+          <div class="wiz-section-label">&#128100; Swimmer</div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Full Name *</label>
+              <input type="text" id="swimmerName" placeholder="Official name"/>
+            </div>
+            <div class="wiz-group">
+              <label>Gender *</label>
+              <select id="gender">
+                <option value="">Select</option>
+                <option value="Boys">Boy</option>
+                <option value="Girls">Girl</option>
+              </select>
+            </div>
+          </div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Date of Birth *</label>
+              <input type="date" id="dob" min="2010-01-01" max="2017-12-31"/>
+              <span class="wiz-hint">Valid: 1 Jan 2010 &ndash; 31 Dec 2017</span>
+            </div>
+            <div class="wiz-group">
+              <label>Age Group <span class="wiz-auto-tag">auto</span></label>
+              <input type="text" id="ageGroup" readonly class="wiz-readonly" placeholder="Detected from DOB"/>
+            </div>
+          </div>
+          <div class="wiz-row">
+            <div class="wiz-group" style="flex:1">
+              <label>Address *</label>
+              <input type="text" id="swimmerAddress" placeholder="Door No, Street, City, State, Pincode"/>
+            </div>
+          </div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Nationality *</label>
+              <select id="swimmerNationality">
+                <option value="Indian" selected>Indian</option>
+                <option value="NRI">NRI (Non-Resident Indian)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="wiz-section-label">&#128106; Parent / Guardian</div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Parent Name *</label>
+              <input type="text" id="parentName" placeholder="Full name"/>
+            </div>
+            <div class="wiz-group">
+              <label>Relationship *</label>
+              <select id="relationship">
+                <option value="">Select</option>
+                <option>Father</option><option>Mother</option><option>Guardian</option>
+              </select>
+            </div>
+          </div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Mobile *</label>
+              <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX"/>
+            </div>
+            <div class="wiz-group">
+              <label>Email *</label>
+              <input type="email" id="email" placeholder="email@example.com"/>
+            </div>
+          </div>
+
+          <div class="wiz-section-label">&#127979; School <span style="font-weight:400;font-size:.72rem;color:#94a3b8">(optional if Academy filled)</span></div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>School Name</label>
+              <input type="text" id="schoolName" placeholder="e.g. DAV Public School, Chennai"/>
+            </div>
+            <div class="wiz-group">
+              <label>Board</label>
+              <select id="schoolBoard">
+                <option value="">Select Board</option>
+                <option>CBSE</option>
+                <option>ICSE</option>
+                <option>State Board</option>
+                <option>International (IB/IGCSE)</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Class / Grade</label>
+              <input type="text" id="schoolClass" placeholder="e.g. 8th Standard"/>
+            </div>
+          </div>
+
+          <div class="wiz-section-label">&#127946; Academy <span style="font-weight:400;font-size:.72rem;color:#94a3b8">(optional if School filled)</span></div>
+          <div class="wiz-row">
+            <div class="wiz-group">
+              <label>Academy Name</label>
+              <select id="institution">
+                <option value="">Select Academy</option>
+                <option>SRM Swim Club</option>
+                <option>Chennai Dolphins</option>
+                <option>Madurai Marlins</option>
+                <option>Kattankulathur Aqua</option>
+                <option>TN Swim Academy</option>
+                <option value="Other">Other (type below)</option>
+              </select>
+            </div>
+            <div class="wiz-group">
+              <label>Representing As</label>
+              <select id="instType">
+                <option value="">Select</option>
+                <option value="School">School</option>
+                <option value="Club">Academy</option>
+              </select>
+            </div>
+          </div>
+          <div class="wiz-row" id="otherInstRow" style="display:none">
+            <div class="wiz-group" style="flex:1">
+              <label>Enter Academy Name *</label>
+              <input type="text" id="institutionOther" placeholder="Full name of your academy"/>
+            </div>
+          </div>
+          <p style="font-size:.72rem;color:#64748b;margin-top:4px;margin-bottom:8px">&#9432; A swimmer can represent only <strong>one institution</strong> &mdash; either School OR Academy, not both.</p>
+
+          <!-- Document Upload / Proof Authentication -->
+          <div class="wiz-section-label">&#128196; Proof &amp; Document Upload</div>
+          <p style="font-size:.78rem;color:#64748b;margin-bottom:10px">Upload required documents for identity and eligibility verification. Accepted formats: JPG, PNG, PDF (max 2MB each).</p>
+
+          <div class="wiz-docs-grid">
+            <div class="wiz-doc-item">
+              <label class="wiz-doc-label">
+                <span class="wiz-doc-icon">&#128196;</span>
+                <span class="wiz-doc-text">
+                  <strong>Age Proof *</strong>
+                  <span>Birth Certificate / Aadhaar / School ID</span>
+                </span>
+              </label>
+              <input type="file" id="docAgeProof" accept=".jpg,.jpeg,.png,.pdf" class="wiz-doc-input"/>
+              <span class="wiz-doc-status" id="statusAgeProof"></span>
+            </div>
+
+            <div class="wiz-doc-item">
+              <label class="wiz-doc-label">
+                <span class="wiz-doc-icon">&#128221;</span>
+                <span class="wiz-doc-text">
+                  <strong>Non-Medalist Declaration *</strong>
+                  <span>Signed by Coach &amp; Parent</span>
+                </span>
+              </label>
+              <input type="file" id="docDeclaration" accept=".jpg,.jpeg,.png,.pdf" class="wiz-doc-input"/>
+              <span class="wiz-doc-status" id="statusDeclaration"></span>
+            </div>
+
+            <div class="wiz-doc-item">
+              <label class="wiz-doc-label">
+                <span class="wiz-doc-icon">&#127979;</span>
+                <span class="wiz-doc-text">
+                  <strong>Academy Authorization *</strong>
+                  <span>On official letterhead</span>
+                </span>
+              </label>
+              <input type="file" id="docAuthorization" accept=".jpg,.jpeg,.png,.pdf" class="wiz-doc-input"/>
+              <span class="wiz-doc-status" id="statusAuthorization"></span>
+            </div>
+
+            <div class="wiz-doc-item">
+              <label class="wiz-doc-label">
+                <span class="wiz-doc-icon">&#128100;</span>
+                <span class="wiz-doc-text">
+                  <strong>Swimmer Photo</strong>
+                  <span>Passport size photo (optional)</span>
+                </span>
+              </label>
+              <input type="file" id="docPhoto" accept=".jpg,.jpeg,.png" class="wiz-doc-input"/>
+              <span class="wiz-doc-status" id="statusPhoto"></span>
+            </div>
+          </div>
+
+          <div class="wiz-doc-note">
+            &#9432; Documents will be verified at check-in on Day 1 (June 20, 2026). Originals must be produced. Incomplete documents may result in disqualification.
+          </div>
+
+          <script>
+            // Enforce 2MB max file size on all document uploads
+            document.querySelectorAll('.wiz-doc-input').forEach(input => {
+              input.addEventListener('change', function() {
+                const maxSize = 2 * 1024 * 1024; // 2MB
+                const file = this.files[0];
+                const statusEl = this.nextElementSibling;
+                if (file && file.size > maxSize) {
+                  alert('File "' + file.name + '" is ' + (file.size / 1024 / 1024).toFixed(1) + 'MB. Maximum allowed is 2MB. Please choose a smaller file.');
+                  this.value = '';
+                  if (statusEl) { statusEl.textContent = '&#10060; Too large'; statusEl.style.color = '#dc2626'; }
+                } else if (file) {
+                  if (statusEl) { statusEl.textContent = '\u2705 ' + file.name; statusEl.style.color = '#16a34a'; }
+                }
+              });
+            });
+          </script>
+
+          <div class="wiz-nav">
+            <button type="button" class="wiz-btn-back" onclick="wizardBack()">&#8592; Back</button>
+            <button type="button" class="wiz-btn-next" onclick="wizardNext()">Next: Select Events &#8594;</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Events -->
+        <div class="wiz-panel" id="step3">
+          <div class="wiz-intro"><h3>Select Eligible Events</h3><p>Choose up to <strong>3 individual events</strong> + optional Relay. Events shown are based on your age group.</p></div>
+          <div class="wiz-elig-banner" id="eligInfoBanner" style="display:none">
+            <span>&#9989;</span>
+            <div><strong id="eibCategory">--</strong><p id="eibDesc"></p></div>
+            <div class="eib-pills" id="eibPills"></div>
+          </div>
+          <p class="wiz-empty-msg" id="eventsStepMsg">&#8679; Complete Step 2 (DOB + Gender) to see eligible events.</p>
+          <div class="wiz-events-grid" id="eventsGrid"></div>
+          <div class="wiz-counter-row"><span class="wiz-counter" id="eventCounterBadge">0 / 3 selected</span></div>
+          <div class="wiz-relay-row" id="relayRow" style="display:none">
+            <label class="wiz-relay-label">
+              <input type="checkbox" id="relayOpt"/>
+              <span><strong>+ Relay</strong> &mdash; opt in <span id="relayDist" class="wiz-relay-dist"></span></span>
+            </label>
+          </div>
+          <div class="wiz-nav">
+            <button type="button" class="wiz-btn-back" onclick="wizardBack()">&#8592; Back</button>
+            <button type="button" class="wiz-btn-next" onclick="wizardNext()">Next: Seed Times &#8594;</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Seed Times -->
+        <div class="wiz-panel" id="step4">
+          <div class="wiz-intro"><h3>Enter Seed Times</h3><p>Your best time for each selected event. Enter <strong>NT</strong> if no previous time.</p></div>
+          <div class="wiz-seed-grid" id="seedTimeGrid"></div>
+          <div class="wiz-note">&#8505;&#65039; Format: <strong>MM:SS.ss</strong> (e.g. 00:32.45) or <strong>NT</strong></div>
+          <div class="wiz-nav">
+            <button type="button" class="wiz-btn-back" onclick="wizardBack()">&#8592; Back</button>
+            <button type="button" class="wiz-btn-next" onclick="wizardNext()">Review Booking &#8594;</button>
+          </div>
+        </div>
+
+        <!-- STEP 5: Review -->
+        <div class="wiz-panel" id="step5">
+          <div class="wiz-intro"><h3>Review &amp; Declare</h3><p>Check all details. Accept declarations to enable payment.</p></div>
+          <div class="wiz-review-box" id="reviewBox"></div>
+          <div class="wiz-fee-box">
+            <div class="wiz-fee-lines" id="feeLines"></div>
+            <div class="wiz-fee-divider"></div>
+            <div class="wiz-fee-row subtotal"><span>Subtotal</span><span id="feeSubtotal">&#8377;0</span></div>
+            <div class="wiz-fee-row tax"><span>GST (18%)</span><span id="feeTax">&#8377;0</span></div>
+            <div class="wiz-fee-divider"></div>
+            <div class="wiz-fee-row total"><span>Total Payable</span><span id="feeTotal">&#8377;0</span></div>
+          </div>
+          <div class="wiz-section-label" style="margin-top:14px">&#128221; Declarations (required)</div>
+          <div class="wiz-consents">
+            <label class="wiz-consent"><input type="checkbox" id="consentRules" required/><span><strong>Tournament Rules</strong> &mdash; I agree to abide by all FINA-based rules and Referee decisions.</span></label>
+            <label class="wiz-consent"><input type="checkbox" id="consentRefund" required/><span><strong>Refund Policy</strong> &mdash; Fees are non-refundable. Organiser cancellation = full refund in 7 days.</span></label>
+            <label class="wiz-consent"><input type="checkbox" id="consentParent" required/><span><strong>Parent Consent</strong> &mdash; I consent to this swimmer participating at SRM University, June 20&ndash;22, 2026.</span></label>
+            <label class="wiz-consent"><input type="checkbox" id="consentMedical" required/><span><strong>Medical Consent</strong> &mdash; Officials may seek emergency treatment if I cannot be reached.</span></label>
+            <label class="wiz-consent"><input type="checkbox" id="consentNonMedalist" required/><span><strong>Non-Medalist Declaration</strong> &mdash; This swimmer has NOT won any individual medal at State/Zonal/National/School Games meets.</span></label>
+          </div>
+          <div class="wiz-nav">
+            <button type="button" class="wiz-btn-back" onclick="wizardBack()">&#8592; Edit</button>
+            <button type="button" class="wiz-btn-pay" onclick="wizardNext()">&#128274; Proceed to Payment &#8594;</button>
+          </div>
+        </div>
+
+        <!-- STEP 6: Payment -->
+        <div class="wiz-panel" id="step6">
+          <div class="wiz-intro"><h3>Payment</h3><p>Complete payment to confirm your booking.</p></div>
+          <div class="wiz-payment-card" id="paymentSummaryCard"></div>
+          <div class="wiz-pay-action-row">
+            <div class="wiz-total-display"><span>Total</span><span class="wiz-total-amt" id="ptdAmount">&#8377;0</span></div>
+            <button type="button" class="wiz-btn-paynow" onclick="simulatePayment()">&#128274; Pay Now</button>
+          </div>
+          <p class="wiz-secure-note">&#128272; Secured by Razorpay &middot; 256-bit SSL &middot; UPI, Cards, Net Banking, Wallets</p>
+          <div class="wiz-nav" style="margin-top:12px">
+            <button type="button" class="wiz-btn-back" onclick="wizardBack()">&#8592; Back</button>
+          </div>
+        </div>
+
+        <!-- STEP 7: Confirmed -->
+        <div class="wiz-panel" id="step7">
+          <div class="wiz-confirmed">
+            <div class="wiz-conf-icon">&#127881;</div>
+            <h3>Booking Confirmed!</h3>
+            <p class="wiz-conf-sub">Payment received &middot; Registration complete</p>
+            <div class="wiz-conf-details" id="bcDetails"></div>
+            <div class="wiz-conf-notice">&#128140; Confirmation sent to your email &amp; WhatsApp. Carry all required documents on <strong>Day 1 &mdash; June 20, 2026 at 08:00 AM</strong> at SRM University.</div>
+            <div class="wiz-conf-actions">
+              <button type="button" class="wiz-btn-next" onclick="viewBooking()">&#128203; View Booking</button>
+              <button type="button" class="wiz-btn-back" onclick="downloadReceipt()">&#11015;&#65039; Receipt</button>
+              <button type="button" class="wiz-btn-close" onclick="closeRegisterModal()">&#10005; Close</button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="home.js?v=6"></script>
+<script src="app.js?v=6"></script>
+
+<!-- Load events dynamically from backend -->
+<script>
+function loadHomeEvents() {
+  fetch('/api/tournaments').then(r=>r.json()).then(events => {
+    const list = document.querySelector('.event-list');
+    if (!list || !events.length) return;
+    
+    // Filter out completed events — only show Open, Upcoming, Ongoing
+    const visibleEvents = events.filter(e => e.status !== 'Completed');
+    if (visibleEvents.length === 0) {
+      list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
+      return;
+    }
+    
+    function fmtDate(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+    
+    let html = '';
+    visibleEvents.forEach((ev, i) => {
+      const isOpen = ev.status === 'Open';
+      const badge = isOpen ? 'open' : ev.status === 'Upcoming' ? 'school' : 'nm';
+      const badgeText = ev.status === 'Open' ? 'Open Event' : ev.status;
+      const dates = ev.start_date && ev.end_date ? `${fmtDate(ev.start_date)} to ${fmtDate(ev.end_date)}` : '';
+      
+      html += `<div class="ecard ${i===0?'featured':''}">
+        <div class="ecard-top">
+          <span class="etag ${badge}">${badgeText}</span>
+          <span class="ecard-seats" style="color:${isOpen?'#16a34a':'#64748b'}">${isOpen?'&#128994; Open':'&#128274; '+ev.status}</span>
+        </div>
+        <h4>${ev.name}</h4>
+        <div class="ecard-meta">
+          <span>&#128197; ${dates}</span>
+          <span>&#128205; ${ev.venue || ''}</span>
+          <span>&#128176; &#8377;${ev.fee_per_event || 300}/event</span>
+          <span>&#127946; Max 3 events + 1 relay per swimmer</span>
+        </div>
+        <div class="ecard-cats">
+          <span class="ap u10">U10</span><span class="ap u12">U12</span>
+          <span class="ap u14">U14</span><span class="ap u16">U16</span>
+        </div>
+        <div class="ecard-btns">
+          <button onclick="openRegisterModal()" class="btn-reg">${isOpen?'Register':'View'}</button>
+          <button onclick="openEventDetail(this)" class="btn-info" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#1d4ed8;font-weight:600">More Info &#8594;</button><button onclick="shareEvent(this)" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#64748b;font-weight:600;margin-left:4px">&#128279; Share</button><button onclick="showVenuePopup(this,'${(ev.venue||'').replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#dc2626;font-weight:600;margin-left:4px">&#128205; Venue</button>
+        </div>
+      </div>`;
+    });
+    list.innerHTML = html;
+  }).catch(() => {});
+}
+loadHomeEvents();
+// Auto-refresh events when user switches back to this tab
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) loadHomeEvents();
+});
+
+// Venue Popup
+function showVenuePopup(btn, venue) {
+  // Remove existing popup
+  document.querySelectorAll('.venue-popup-overlay').forEach(p => p.remove());
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'venue-popup-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,22,40,.6);backdrop-filter:blur(3px);z-index:800;display:flex;align-items:center;justify-content:center;padding:16px';
+  
+  const mapsUrl = 'https://maps.google.com/?q=' + encodeURIComponent(venue);
+  
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden">
+      <div style="background:linear-gradient(135deg,#0a1628,#1d4ed8);padding:16px 20px;display:flex;justify-content:space-between;align-items:center">
+        <h3 style="color:#fff;font-size:1rem;font-weight:800;margin:0">&#128205; Venue Location</h3>
+        <button onclick="this.closest('.venue-popup-overlay').remove()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:1.1rem;cursor:pointer">&times;</button>
+      </div>
+      <div style="padding:20px;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:8px">&#128205;</div>
+        <h4 style="font-size:1.1rem;font-weight:800;color:#0a1628;margin:0 0 6px">${venue}</h4>
+        <p style="font-size:.8rem;color:#64748b;margin:0 0 18px">Click below to open in Google Maps for directions</p>
+        <a href="${mapsUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#1d4ed8;color:#fff;border-radius:999px;font-size:.85rem;font-weight:700;text-decoration:none;transition:background .18s">
+          &#128506; Get Directions
+        </a>
+      </div>
+    </div>
+  `;
+  
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+  
+  document.body.appendChild(overlay);
+}
+</script>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="evt-modal-overlay" id="evtModal">
+  <div class="evt-modal-box">
+    <div class="evt-modal-header">
+      <div>
+        <span class="evt-modal-badge" id="evtModalBadge"></span>
+        <h2 id="evtModalTitle">Event Details</h2>
+        <p id="evtModalMeta"></p>
+      </div>
+      <button class="evt-modal-close" onclick="closeEvtModal()">&times;</button>
+    </div>
+    <div class="evt-modal-body">
+      <div class="evt-info-row" id="evtInfoRow"></div>
+      <div class="evt-section-label">&#127942; Age Categories</div>
+      <div class="evt-cats-grid" id="evtCatsGrid"></div>
+      <div class="evt-section-label">&#127946; Events &amp; Distances</div>
+      <div class="evt-events-table" id="evtEventsTable"></div>
+      <div class="evt-section-label">&#9989; Eligibility Rules</div>
+      <div class="evt-elig-box" id="evtEligBox"></div>
+      <div class="evt-modal-actions">
+        <button onclick="closeEvtModal();openRegisterModal()" class="evt-btn-register">&#128221; Register Now</button>
+        <button onclick="closeEvtModal()" class="evt-btn-close">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+</html>
+
+
+

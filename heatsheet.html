@@ -1,0 +1,839 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Heat Sheet Generator — SwimFest India</title>
+  <link rel="stylesheet" href="home.css"/>
+  <link rel="stylesheet" href="heatsheet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<script>
+  if (!localStorage.getItem('swimmer_id') || localStorage.getItem('swimmer_id') === '') {
+    window.location.href = 'login.html';
+  }
+</script>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><span class="nav-logo-wave">&#127946;</span> SwimFest India</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#events">Events</a></li>
+      <li><a href="player.html">My Profile</a></li>
+      <li><a href="heatsheet.html" class="active">Heat Sheet</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-cta" onclick="window.print()">&#128438; Print / PDF</button>
+      <button class="nav-ham" id="navHam">&#9776;</button>
+    </div>
+  </div>
+  <ul class="nav-mob" id="navMob">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="player.html">My Profile</a></li>
+    <li><a href="heatsheet.html">Heat Sheet</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="hs-page-header">
+  <div class="hs-page-header-inner">
+    <div>
+      <h1>&#128203; Heat Sheet Generator</h1>
+      <p>Golden Non-Medalist Championship 2026 &nbsp;&middot;&nbsp; SRM University, Kattankulathur</p>
+    </div>
+    <div class="hs-header-chips">
+      <span class="hs-chip">&#128197; June 20&ndash;22, 2026</span>
+      <span class="hs-chip">&#127946; 50m Pool</span>
+      <span class="hs-chip status-live">&#128308; Booking Closed</span>
+    </div>
+  </div>
+</div>
+
+<!-- PIPELINE BANNER -->
+<div class="hs-pipeline">
+  <div class="hs-pipeline-inner">
+    <p class="hs-pipeline-title">&#128260; Backend Process Flow</p>
+    <div class="hs-pipeline-steps">
+      <span class="hs-ps done">&#9989; Close Booking</span><span class="hs-arrow">&#8594;</span>
+      <span class="hs-ps done">&#9989; Generate Entry List</span><span class="hs-arrow">&#8594;</span>
+      <span class="hs-ps done">&#9989; Group by Event/Category/Gender</span><span class="hs-arrow">&#8594;</span>
+      <span class="hs-ps done">&#9989; Sort by Seed Time</span><span class="hs-arrow">&#8594;</span>
+      <span class="hs-ps done">&#9989; Assign Heats &amp; Lanes</span><span class="hs-arrow">&#8594;</span>
+      <span class="hs-ps active">&#9201; Publish Heat Sheet</span>
+    </div>
+  </div>
+</div>
+
+<!-- AGE GROUP STRUCTURE -->
+<div class="hs-age-structure">
+  <div class="hs-age-inner">
+    <h2>&#127946; Swimming Tournament &mdash; Complete Heat List</h2>
+    <p class="hs-age-sub">Age Groups &amp; Event Structure</p>
+
+    <div class="hs-age-grid">
+      <!-- Table 1: with Can Compete in -->
+      <div>
+        <table class="hs-schema-table hs-age-table">
+          <thead>
+            <tr><th>Age Group</th><th>Age Range</th><th>YB (Year Born)</th><th>Can Compete In</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="ap u10" style="font-size:.8rem;padding:3px 10px">U-10</span></td><td>8&ndash;9 years</td><td>YB 16, YB 17</td><td><strong>U-10 ONLY</strong></td></tr>
+            <tr><td><span class="ap u12" style="font-size:.8rem;padding:3px 10px">U-12</span></td><td>10&ndash;11 years</td><td>YB 14, YB 15</td><td><strong>U-12 ONLY</strong></td></tr>
+            <tr><td><span class="ap u14" style="font-size:.8rem;padding:3px 10px">U-14</span></td><td>12&ndash;13 years</td><td>YB 12, YB 13</td><td><strong>U-14 ONLY</strong></td></tr>
+            <tr><td><span class="ap u16" style="font-size:.8rem;padding:3px 10px">U-16</span></td><td>14&ndash;15 years</td><td>YB 10, YB 11</td><td><strong>U-16 ONLY</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table 2: YB reference -->
+      <div>
+        <table class="hs-schema-table hs-age-table">
+          <thead>
+            <tr><th>Age Group</th><th>Age Range</th><th>YB (Year Born)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="ap u10" style="font-size:.8rem;padding:3px 10px">U-10</span></td><td>8&ndash;9 years</td><td>YB 16, YB 17</td></tr>
+            <tr><td><span class="ap u12" style="font-size:.8rem;padding:3px 10px">U-12</span></td><td>10&ndash;11 years</td><td>YB 14, YB 15</td></tr>
+            <tr><td><span class="ap u14" style="font-size:.8rem;padding:3px 10px">U-14</span></td><td>12&ndash;13 years</td><td>YB 12, YB 13</td></tr>
+            <tr><td><span class="ap u16" style="font-size:.8rem;padding:3px 10px">U-16</span></td><td>14&ndash;15 years</td><td>YB 10, YB 11</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="hs-note-box" style="margin-top:14px">
+      &#9432; Age cut-off date: <strong>31 December 2026</strong> &nbsp;&middot;&nbsp;
+      Year Born (YB) is the last two digits of the birth year &nbsp;&middot;&nbsp;
+      Each swimmer competes in their own age group only
+    </div>
+
+    <!-- Events by Age Group -->
+    <h2 style="margin-top:24px;text-align:center;text-transform:uppercase;letter-spacing:1px">Events by Age Group</h2>
+    <div class="hs-age-grid" style="margin-top:12px">
+      <table class="hs-schema-table hs-age-table">
+        <thead><tr><th>Age Group</th><th>Events Available</th></tr></thead>
+        <tbody>
+          <tr><td><strong>U-10</strong> (Boys &amp; Girls)</td><td>50m Freestyle, 100m Freestyle, 50m Backstroke, 50m Breaststroke, 50m Butterfly, 100m Individual Medley, 4&times;50m Freestyle Relay</td></tr>
+          <tr><td><strong>U-12</strong> (Boys &amp; Girls)</td><td>50m Freestyle, 100m Freestyle, 50m Backstroke, 50m Breaststroke, 50m Butterfly, 100m Individual Medley, 4&times;50m Freestyle Relay</td></tr>
+        </tbody>
+      </table>
+      <table class="hs-schema-table hs-age-table">
+        <thead><tr><th>Age Group</th><th>Events Available</th></tr></thead>
+        <tbody>
+          <tr><td><strong>U-14</strong> (Boys &amp; Girls)</td><td>50m Freestyle, 100m Freestyle, 100m Backstroke, 100m Breaststroke, 100m Butterfly, 200m Individual Medley, 4&times;100m Freestyle Relay</td></tr>
+          <tr><td><strong>U-16</strong> (Boys &amp; Girls)</td><td>50m Freestyle, 100m Freestyle, 100m Backstroke, 100m Breaststroke, 100m Butterfly, 200m Individual Medley, 4&times;100m Freestyle Relay</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Total Events Calculation -->
+    <h2 style="margin-top:28px;text-align:center;text-transform:uppercase;letter-spacing:1px">Total Events Calculation</h2>
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead><tr><th>Category</th><th>Boys Events</th><th>Girls Events</th><th>Total Events</th></tr></thead>
+        <tbody>
+          <tr><td>U-10</td><td>4</td><td>4</td><td>8</td></tr>
+          <tr><td>U-12</td><td>6</td><td>6</td><td>12</td></tr>
+          <tr><td>U-14</td><td>6</td><td>6</td><td>12</td></tr>
+          <tr><td>U-16</td><td>6</td><td>6</td><td>12</td></tr>
+          <tr style="background:#eff6ff;font-weight:900"><td><strong>TOTAL</strong></td><td><strong>22</strong></td><td><strong>22</strong></td><td><strong style="color:#1d4ed8">44 events</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Entries Per Event -->
+    <h2 style="margin-top:24px;text-align:center;text-transform:uppercase;letter-spacing:1px">Entries Per Event</h2>
+    <div class="hs-entries-box">
+      <p>25 entries per event</p>
+      <p>25 swimmers &divide; 8 lanes = 4 heats per event &nbsp;(3 heats &times; 8 swimmers + 1 heat &times; 1 swimmer)</p>
+    </div>
+
+    <!-- Event Order & Timing -->
+    <h2 style="margin-top:24px;text-align:center;text-transform:uppercase;letter-spacing:1px">Event Order &amp; Timing</h2>
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead><tr><th>Order</th><th>Event Type</th><th>Time per Heat</th></tr></thead>
+        <tbody>
+          <tr><td style="text-align:center;font-weight:800;color:#1d4ed8">1</td><td>50m Butterfly</td><td>2 min</td></tr>
+          <tr><td style="text-align:center;font-weight:800;color:#1d4ed8">2</td><td>50m Breaststroke</td><td>2 min</td></tr>
+          <tr><td style="text-align:center;font-weight:800;color:#1d4ed8">3</td><td>50m Backstroke</td><td>2 min</td></tr>
+          <tr><td style="text-align:center;font-weight:800;color:#1d4ed8">4</td><td>50m Freestyle</td><td>2 min</td></tr>
+          <tr><td style="text-align:center;font-weight:800;color:#1d4ed8">5</td><td>100m Freestyle</td><td>2.5 min</td></tr>
+          <tr><td style="text-align:center;font-weight:800;color:#1d4ed8">6</td><td>4&times;50m Freestyle Relay</td><td>3 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hs-note-box" style="margin-top:14px;text-align:center;font-weight:800;font-size:.88rem">
+      &#9889; COMPLETE HEAT LIST &mdash; ALL EVENTS
+    </div>
+
+    <!-- HEAT SHEET RESULTS -->
+    <h2 style="margin-top:28px;text-align:center;letter-spacing:.5px">Heat Sheet Results</h2>
+    <p style="text-align:center;font-size:.8rem;color:#64748b;margin-bottom:12px">One row per swimmer per event &mdash; includes final time, place, status and remarks</p>
+    <div class="hs-schema-table-wrap">
+      <table class="hs-schema-table hs-results-table">
+        <thead>
+          <tr>
+            <th>Ev No</th><th>Category</th><th>Gender</th><th>Event Name</th>
+            <th>Heat No</th><th>Lane No</th><th>Swimmer Name</th><th>Team / State</th>
+            <th>YB</th><th>Seed Time</th><th>Final Time</th>
+            <th>Heat Place</th><th>Overall Place</th><th>Status</th><th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td><span class="ap u10" style="font-size:.7rem">U-10</span></td><td>Boys</td><td>50m Backstroke</td>
+            <td style="text-align:center">1</td><td style="text-align:center;font-weight:800;color:#1d4ed8">4</td>
+            <td style="font-weight:700">Arun Kumar</td><td>Chennai Swim Club</td>
+            <td style="text-align:center">17</td>
+            <td style="font-family:monospace;font-weight:700">00:52.30</td>
+            <td style="font-family:monospace;font-weight:800;color:#16a34a">00:50.92</td>
+            <td style="text-align:center;font-weight:700">1</td>
+            <td style="text-align:center;font-weight:700">3</td>
+            <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:700">OK</span></td>
+            <td style="color:#64748b;font-size:.75rem"></td>
+          </tr>
+          <tr>
+            <td>1</td><td><span class="ap u10" style="font-size:.7rem">U-10</span></td><td>Boys</td><td>50m Backstroke</td>
+            <td style="text-align:center">1</td><td style="text-align:center;font-weight:800;color:#1d4ed8">5</td>
+            <td style="font-weight:700">Rahul S</td><td>Dolphins TN</td>
+            <td style="text-align:center">17</td>
+            <td style="font-family:monospace;font-weight:700">00:53.10</td>
+            <td style="font-family:monospace;font-weight:800;color:#16a34a">00:52.05</td>
+            <td style="text-align:center;font-weight:700">2</td>
+            <td style="text-align:center;font-weight:700">5</td>
+            <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:700">OK</span></td>
+            <td style="color:#64748b;font-size:.75rem"></td>
+          </tr>
+          <tr>
+            <td>1</td><td><span class="ap u10" style="font-size:.7rem">U-10</span></td><td>Boys</td><td>50m Backstroke</td>
+            <td style="text-align:center">1</td><td style="text-align:center;font-weight:800">3</td>
+            <td style="font-weight:700">Pranav M</td><td>Aqua Stars</td>
+            <td style="text-align:center">16</td>
+            <td style="font-family:monospace;font-weight:700">00:54.75</td>
+            <td style="font-family:monospace;font-weight:800;color:#16a34a">00:55.10</td>
+            <td style="text-align:center;font-weight:700">3</td>
+            <td style="text-align:center;font-weight:700">8</td>
+            <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:700">OK</span></td>
+            <td style="color:#64748b;font-size:.75rem"></td>
+          </tr>
+          <tr style="background:#fff1f2">
+            <td>1</td><td><span class="ap u10" style="font-size:.7rem">U-10</span></td><td>Boys</td><td>50m Backstroke</td>
+            <td style="text-align:center">1</td><td style="text-align:center;font-weight:800">6</td>
+            <td style="font-weight:700">Kavin Raj</td><td>Chennai Swim Club</td>
+            <td style="text-align:center">16</td>
+            <td style="font-family:monospace;font-weight:700">00:56.00</td>
+            <td style="font-family:monospace;color:#dc2626;font-weight:800">DQ</td>
+            <td style="text-align:center">—</td>
+            <td style="text-align:center">—</td>
+            <td><span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:700">DQ</span></td>
+            <td style="color:#dc2626;font-size:.75rem;font-weight:600">False start</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DEVELOPMENT PHASES -->
+    <div class="hs-phases-box">
+      <h3>&#128736;&#65039; Development Roadmap</h3>
+      <ul class="hs-phases-list">
+        <li><span class="hs-phase-num">Phase 1</span> Registration, payment, swimmer database, event selection, admin approval.</li>
+        <li><span class="hs-phase-num">Phase 2</span> Heat-sheet generation, lane assignment, downloadable reports, basic result upload.</li>
+        <li><span class="hs-phase-num">Phase 3</span> Timing-vendor import panel, live event status, result verification workflow.</li>
+        <li><span class="hs-phase-num">Phase 4</span> Full live sync / dashboard only after you have tested at real meets.</li>
+      </ul>
+    </div>
+
+    <!-- TEAM CHAMPIONSHIP SCORING -->
+    <h2 style="margin-top:28px;text-align:center;letter-spacing:.5px">Overall Team/Club Championship &mdash; By System Calculation</h2>
+
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead><tr><th>Event Type</th><th>Suggested Points</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Individual events</strong></td><td>1st = 9, 2nd = 7, 3rd = 6, 4th = 5, 5th = 4, 6th = 3, 7th = 2, 8th = 1</td></tr>
+          <tr><td><strong>Relay events</strong></td><td>1st = 18, 2nd = 14, 3rd = 12, 4th = 10, 5th = 8, 6th = 6, 7th = 4, 8th = 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SCORING POLICY -->
+    <h2 style="margin-top:24px;text-align:center;letter-spacing:.5px">Scoring Policy</h2>
+
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead><tr><th>Rule</th><th>Recommendation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Individual scoring</strong></td><td>Top 8 places score</td></tr>
+          <tr><td><strong>Relay scoring</strong></td><td>Top 8 places score, double points</td></tr>
+          <tr><td><strong>Team scoring limit</strong></td><td>Max 2 swimmers per team score in an individual event</td></tr>
+          <tr><td><strong>Relay scoring limit</strong></td><td>Max 1 relay team per team scores per relay event</td></tr>
+          <tr><td><strong>Tie rule</strong></td><td>Split combined points equally</td></tr>
+          <tr><td><strong>DQ / DNS / DNF</strong></td><td>No points</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- STORING ACADEMY DETAILS -->
+    <h2 style="margin-top:28px;text-align:center;text-transform:uppercase;letter-spacing:1px">Storing Academy Details in My Website</h2>
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead><tr><th>Field</th><th>Why You Need It</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Academy ID</strong></td><td>Unique backend identifier so names don&rsquo;t clash</td></tr>
+          <tr><td><strong>Academy Name</strong></td><td>Official full name shown in dropdown</td></tr>
+          <tr><td><strong>Academy Short Name / Code</strong></td><td>Useful for heat sheets, scoreboards, and reports</td></tr>
+          <tr><td><strong>Head Coach Name</strong></td><td>Main academy representative</td></tr>
+          <tr><td><strong>Mobile Number</strong></td><td>Fast communication during tournament</td></tr>
+          <tr><td><strong>Email ID</strong></td><td>For confirmations and documents</td></tr>
+          <tr><td><strong>City</strong></td><td>Useful if you invite teams beyond Chennai</td></tr>
+          <tr><td><strong>Address</strong></td><td>Basic record and communication</td></tr>
+          <tr><td><strong>Status (Active/Inactive)</strong></td><td>So old academies don&rsquo;t appear in dropdown</td></tr>
+          <tr><td><strong>Created Date</strong></td><td>For admin tracking</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- COACH DETAIL COLLECTION -->
+    <h2 style="margin-top:28px;text-align:center;text-transform:uppercase;letter-spacing:1px">Coach Detail Collection</h2>
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead><tr><th>Field</th><th>Why You Need It</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Coach ID</strong></td><td>Unique backend identifier</td></tr>
+          <tr><td><strong>Full Name</strong></td><td>Official display name</td></tr>
+          <tr><td><strong>Gender</strong></td><td>Basic profile field</td></tr>
+          <tr><td><strong>Mobile Number</strong></td><td>Main contact for tournament communication</td></tr>
+          <tr><td><strong>Email ID</strong></td><td>Login, alerts, and confirmations</td></tr>
+          <tr><td><strong>Academy ID / Academy Name</strong></td><td>Link coach to one academy/team</td></tr>
+          <tr><td><strong>Role</strong></td><td>Head Coach / Assistant Coach / Team Manager</td></tr>
+          <tr><td><strong>Status</strong></td><td>Active / Inactive</td></tr>
+          <tr><td><strong>Created Date</strong></td><td>Admin tracking</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPLETE HEAT LIST ALL EVENTS -->
+<div class="hs-complete-section">
+  <div class="hs-complete-inner">
+    <h2>&#127946; Complete Heat List &mdash; All Events</h2>
+    <div id="completeHeatList"></div>
+
+    <!-- RECOMMENDED SCHEDULE -->
+    <h2 style="margin-top:28px;text-align:center;text-transform:uppercase;letter-spacing:1px">Recommended Schedule <span style="font-size:.8rem;font-weight:500;text-transform:none">(Mixed Age Group &mdash; Best for 3 Events)</span></h2>
+
+    <div class="chl-session" style="margin-top:14px">
+      <div class="chl-session-header">MORNING SESSION: 8:00 AM &mdash; 12:30 PM</div>
+      <div class="chl-event-block">
+        <table class="chl-table">
+          <thead><tr><th>Order</th><th>Event</th><th>Age Group</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>50m Butterfly</td><td>U-10 Boys</td><td class="chl-time-cell">8:00 AM</td></tr>
+            <tr><td>2</td><td>50m Butterfly</td><td>U-10 Girls</td><td class="chl-time-cell">8:10 AM</td></tr>
+            <tr><td>3</td><td>50m Freestyle</td><td>U-12 Boys</td><td class="chl-time-cell">8:20 AM</td></tr>
+            <tr><td>4</td><td>50m Freestyle</td><td>U-12 Girls</td><td class="chl-time-cell">8:30 AM</td></tr>
+            <tr><td>5</td><td>50m Breaststroke</td><td>U-10 Boys</td><td class="chl-time-cell">8:40 AM</td></tr>
+            <tr><td>6</td><td>50m Breaststroke</td><td>U-10 Girls</td><td class="chl-time-cell">8:50 AM</td></tr>
+            <tr><td>7</td><td>50m Freestyle</td><td>U-14 Boys</td><td class="chl-time-cell">9:00 AM</td></tr>
+            <tr><td>8</td><td>50m Freestyle</td><td>U-14 Girls</td><td class="chl-time-cell">9:10 AM</td></tr>
+            <tr><td>9</td><td>50m Backstroke</td><td>U-10 Boys</td><td class="chl-time-cell">9:20 AM</td></tr>
+            <tr><td>10</td><td>50m Backstroke</td><td>U-10 Girls</td><td class="chl-time-cell">9:30 AM</td></tr>
+            <tr><td>11</td><td>100m Freestyle</td><td>U-12 Boys</td><td class="chl-time-cell">9:40 AM</td></tr>
+            <tr><td>12</td><td>100m Freestyle</td><td>U-12 Girls</td><td class="chl-time-cell">9:52 AM</td></tr>
+            <tr><td>13</td><td>50m Butterfly</td><td>U-12 Boys</td><td class="chl-time-cell">10:05 AM</td></tr>
+            <tr><td>14</td><td>50m Butterfly</td><td>U-12 Girls</td><td class="chl-time-cell">10:15 AM</td></tr>
+            <tr><td>15</td><td>50m Freestyle</td><td>U-16 Boys</td><td class="chl-time-cell">10:25 AM</td></tr>
+            <tr><td>16</td><td>50m Freestyle</td><td>U-16 Girls</td><td class="chl-time-cell">10:35 AM</td></tr>
+            <tr><td>17</td><td>50m Breaststroke</td><td>U-12 Boys</td><td class="chl-time-cell">10:45 AM</td></tr>
+            <tr><td>18</td><td>50m Breaststroke</td><td>U-12 Girls</td><td class="chl-time-cell">10:55 AM</td></tr>
+            <tr><td>19</td><td>50m Butterfly</td><td>U-14 Boys</td><td class="chl-time-cell">11:05 AM</td></tr>
+            <tr><td>20</td><td>50m Butterfly</td><td>U-14 Girls</td><td class="chl-time-cell">11:15 AM</td></tr>
+            <tr><td>21</td><td>50m Breaststroke</td><td>U-14 Boys</td><td class="chl-time-cell">11:25 AM</td></tr>
+            <tr><td>22</td><td>50m Breaststroke</td><td>U-14 Girls</td><td class="chl-time-cell">11:35 AM</td></tr>
+            <tr><td>23</td><td>50m Backstroke</td><td>U-12 Boys</td><td class="chl-time-cell">11:45 AM</td></tr>
+            <tr><td>24</td><td>50m Backstroke</td><td>U-12 Girls</td><td class="chl-time-cell">11:55 AM</td></tr>
+            <tr><td>25</td><td>50m Backstroke</td><td>U-14 Boys</td><td class="chl-time-cell">12:05 PM</td></tr>
+            <tr><td>26</td><td>50m Backstroke</td><td>U-14 Girls</td><td class="chl-time-cell">12:15 PM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="hs-note-box" style="text-align:center;font-weight:700;margin-bottom:14px">
+      &#9749; Morning Break: 12:15 PM &mdash; 1:00 PM (45 min rest)
+    </div>
+
+    <div class="chl-session">
+      <div class="chl-session-header">AFTERNOON SESSION: 1:00 PM &mdash; 4:30 PM</div>
+      <div class="chl-event-block">
+        <table class="chl-table">
+          <thead><tr><th>Order</th><th>Event</th><th>Age Group</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>27</td><td>50m Butterfly</td><td>U-16 Boys</td><td class="chl-time-cell">1:00 PM</td></tr>
+            <tr><td>28</td><td>50m Butterfly</td><td>U-16 Girls</td><td class="chl-time-cell">1:10 PM</td></tr>
+            <tr><td>29</td><td>50m Breaststroke</td><td>U-16 Boys</td><td class="chl-time-cell">1:20 PM</td></tr>
+            <tr><td>30</td><td>50m Breaststroke</td><td>U-16 Girls</td><td class="chl-time-cell">1:30 PM</td></tr>
+            <tr><td>31</td><td>50m Backstroke</td><td>U-16 Boys</td><td class="chl-time-cell">1:40 PM</td></tr>
+            <tr><td>32</td><td>50m Backstroke</td><td>U-16 Girls</td><td class="chl-time-cell">1:50 PM</td></tr>
+            <tr><td>33</td><td>50m Breaststroke</td><td>U-16 Boys</td><td class="chl-time-cell">2:00 PM</td></tr>
+            <tr><td>34</td><td>50m Breaststroke</td><td>U-16 Girls</td><td class="chl-time-cell">2:10 PM</td></tr>
+            <tr><td>35</td><td>100m Freestyle</td><td>U-14 Boys</td><td class="chl-time-cell">2:20 PM</td></tr>
+            <tr><td>36</td><td>100m Freestyle</td><td>U-14 Girls</td><td class="chl-time-cell">2:32 PM</td></tr>
+            <tr><td>37</td><td>100m Freestyle</td><td>U-16 Boys</td><td class="chl-time-cell">2:45 PM</td></tr>
+            <tr><td>38</td><td>100m Freestyle</td><td>U-16 Girls</td><td class="chl-time-cell">2:57 PM</td></tr>
+            <tr><td>39</td><td>4&times;50m Relay</td><td>U-12 Boys</td><td class="chl-time-cell">3:10 PM</td></tr>
+            <tr><td>40</td><td>4&times;50m Relay</td><td>U-12 Girls</td><td class="chl-time-cell">3:22 PM</td></tr>
+            <tr><td>41</td><td>4&times;50m Relay</td><td>U-14 Boys</td><td class="chl-time-cell">3:35 PM</td></tr>
+            <tr><td>42</td><td>4&times;50m Relay</td><td>U-14 Girls</td><td class="chl-time-cell">3:47 PM</td></tr>
+            <tr><td>43</td><td>4&times;50m Relay</td><td>U-16 Boys</td><td class="chl-time-cell">4:00 PM</td></tr>
+            <tr><td>44</td><td>4&times;50m Relay</td><td>U-16 Girls</td><td class="chl-time-cell">4:12 PM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <h2 style="margin-top:28px;text-align:center;text-transform:uppercase;letter-spacing:1px">Summary</h2>
+    <div class="hs-schema-table-wrap" style="margin-top:12px;max-width:700px;margin-left:auto;margin-right:auto">
+      <table class="hs-schema-table">
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Total Events</strong></td><td>44 events</td></tr>
+          <tr><td><strong>Total Entries</strong></td><td>1,100 swimmers (25 &times; 44)</td></tr>
+          <tr><td><strong>Heats per Event</strong></td><td>4 heats</td></tr>
+          <tr><td><strong>Total Heats</strong></td><td>176 heats</td></tr>
+          <tr><td><strong>Morning Session</strong></td><td>6 events &times; 4 heats = 24 heats = 48 min</td></tr>
+          <tr><td><strong>Afternoon Session</strong></td><td>38 events &times; 4 heats = 152 heats = 304 min</td></tr>
+          <tr style="background:#eff6ff"><td><strong>Total Tournament Time</strong></td><td><strong style="color:#1d4ed8;font-size:1rem">~5.5 hours</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="hs-controls-bar">
+  <div class="hs-controls-inner">
+
+    <div class="hs-ctrl-group">
+      <label>&#127946; No. of Lanes</label>
+      <div class="hs-lane-selector" id="laneBtns">
+        <button class="hs-lane-btn" data-lanes="6">6 Lanes</button>
+        <button class="hs-lane-btn active" data-lanes="8">8 Lanes</button>
+        <button class="hs-lane-btn" data-lanes="10">10 Lanes</button>
+      </div>
+      <span class="hs-ctrl-hint" id="laneHint">Centre lanes (4&ndash;5) seeded fastest</span>
+    </div>
+
+    <div class="hs-ctrl-group">
+      <label>&#128101; Filter Category</label>
+      <select id="filterCat" onchange="renderHeatSheet()">
+        <option value="all">All Categories</option>
+        <option value="U-10 Boys">U-10 Boys</option>
+        <option value="U-10 Girls">U-10 Girls</option>
+        <option value="U-12 Boys">U-12 Boys</option>
+        <option value="U-12 Girls">U-12 Girls</option>
+        <option value="U-14 Boys">U-14 Boys</option>
+        <option value="U-14 Girls">U-14 Girls</option>
+        <option value="U-16 Boys">U-16 Boys</option>
+        <option value="U-16 Girls">U-16 Girls</option>
+      </select>
+    </div>
+
+    <div class="hs-ctrl-group">
+      <label>&#127946; Filter Event</label>
+      <select id="filterEvent" onchange="renderHeatSheet()">
+        <option value="all">All Events</option>
+        <option value="50m Freestyle">50m Freestyle</option>
+        <option value="100m Freestyle">100m Freestyle</option>
+        <option value="50m Backstroke">50m Backstroke</option>
+        <option value="100m Backstroke">100m Backstroke</option>
+        <option value="50m Breaststroke">50m Breaststroke</option>
+        <option value="100m Breaststroke">100m Breaststroke</option>
+        <option value="50m Butterfly">50m Butterfly</option>
+        <option value="100m Butterfly">100m Butterfly</option>
+        <option value="100m Ind. Medley">100m Ind. Medley</option>
+        <option value="200m Ind. Medley">200m Ind. Medley</option>
+      </select>
+    </div>
+
+    <div class="hs-ctrl-group">
+      <label>&#128269; Search Swimmer</label>
+      <input type="text" id="searchSwimmer" placeholder="Name or ID..." oninput="renderHeatSheet()"/>
+    </div>
+
+    <button class="hs-btn-generate" onclick="generateHeats()">&#9889; Re-Generate Heats</button>
+    <button class="hs-btn-export" onclick="exportCSV()">&#11015;&#65039; Export CSV</button>
+  </div>
+</div>
+
+<!-- HEAT SHEET SUMMARY STATS -->
+<div class="hs-summary-bar">
+  <div class="hs-summary-inner" id="summaryBar">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- HEAT SHEET TABLE -->
+<div class="hs-table-area">
+  <div class="hs-table-inner" id="heatSheetOutput">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- LANE POSITIONING + HEAT DISTRIBUTION -->
+<div class="hs-ref-section">
+  <div class="hs-ref-inner">
+
+    <!-- Sample Heat Sheet format -->
+    <h2>&#128203; Sample Heat Sheet Format</h2>
+    <div class="hs-sample-header-table">
+      <table class="hs-sample-info-table">
+        <tr>
+          <td><strong>50m Freestyle</strong></td>
+          <td><strong>Boys</strong></td>
+          <td><strong>U-12</strong></td>
+          <td><strong>Morning</strong></td>
+          <td><strong>9.00 AM</strong></td>
+        </tr>
+      </table>
+    </div>
+    <div class="hs-schema-table-wrap" style="margin-top:12px">
+      <table class="hs-schema-table">
+        <thead>
+          <tr><th>S.No</th><th>Swimmer Name</th><th>Year Born</th><th>State</th><th>Team/Club</th><th>Seed Time</th><th>Rank</th><th>Heat No</th><th>Lane No</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="text-align:center">1</td><td>Rahul Patrick</td><td style="text-align:center">10</td><td>Kerala</td><td>Kerala Aquatics</td><td style="font-family:monospace;font-weight:700">00:40.5</td><td style="text-align:center">3</td><td style="text-align:center">1</td><td style="text-align:center;font-weight:800;color:#1d4ed8">5</td></tr>
+          <tr><td style="text-align:center">2</td><td>Arun Kumar</td><td style="text-align:center">11</td><td>Tamil Nadu</td><td>Chennai Swim</td><td style="font-family:monospace;font-weight:700">00:39.2</td><td style="text-align:center;color:#16a34a;font-weight:800">1</td><td style="text-align:center">1</td><td style="text-align:center;font-weight:800;color:#1d4ed8">4 &#9733;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Relay format -->
+    <div class="hs-relay-ref">
+      <strong>For Relay &mdash; 4 Columns with all Swimmers to be added</strong>
+      <table class="hs-schema-table" style="margin-top:8px;max-width:420px">
+        <thead><tr><th>Swimmer 1</th><th>Swimmer 2</th><th>Swimmer 3</th><th>Swimmer 4</th></tr></thead>
+        <tbody>
+          <tr><td>Arun</td><td>Karthik</td><td>Vishal</td><td>Rohit</td></tr>
+          <tr><td>Naveen</td><td>Saran</td><td>Pradeep</td><td>Dinesh</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Lane Positioning 8-lane -->
+    <h2 style="margin-top:28px">&#127946; Lane Positioning of Swimmers based on Seed</h2>
+    <div class="hs-lane-ref-grid">
+      <div>
+        <p class="hs-ref-label">For 8 Lanes</p>
+        <table class="hs-schema-table">
+          <thead><tr><th>Lane</th><th>Assigned To (Rank)</th><th>Seed No</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Lane 4</strong> (Center)</td><td>1st (Fastest)</td><td style="font-weight:800;color:#1d4ed8">1</td></tr>
+            <tr><td><strong>Lane 5</strong></td><td>2nd</td><td style="font-weight:800">2</td></tr>
+            <tr><td><strong>Lane 3</strong></td><td>3rd</td><td style="font-weight:800">4</td></tr>
+            <tr><td><strong>Lane 6</strong></td><td>4th</td><td style="font-weight:800">5</td></tr>
+            <tr><td><strong>Lane 2</strong></td><td>5th</td><td style="font-weight:800">17</td></tr>
+            <tr><td><strong>Lane 7</strong></td><td>6th</td><td style="font-weight:800">23</td></tr>
+            <tr><td><strong>Lane 1</strong></td><td>7th</td><td style="font-weight:800">35</td></tr>
+            <tr><td><strong>Lane 8</strong> (Outer)</td><td>8th (Slowest)</td><td style="font-weight:800">100</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <p class="hs-ref-label">For 6 Lanes</p>
+        <table class="hs-schema-table">
+          <thead><tr><th>Rank</th><th>Position</th><th>Lane</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1st (Fastest)</strong></td><td>Center</td><td style="font-weight:800;color:#1d4ed8">Lane 3</td></tr>
+            <tr><td><strong>2nd</strong></td><td>Right of center</td><td style="font-weight:800;color:#1d4ed8">Lane 4</td></tr>
+            <tr><td><strong>3rd</strong></td><td>Left of center</td><td style="font-weight:800">Lane 2</td></tr>
+            <tr><td><strong>4th</strong></td><td>Right outer</td><td style="font-weight:800">Lane 5</td></tr>
+            <tr><td><strong>5th</strong></td><td>Left outer</td><td style="font-weight:800">Lane 1</td></tr>
+            <tr><td><strong>6th (Slowest)</strong></td><td>Outermost right</td><td style="font-weight:800">Lane 6</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Heat Distribution Simulator -->
+    <h2 style="margin-top:28px">&#9889; Heat Distribution Simulator</h2>
+    <p class="hs-schema-note">Enter total participants and lane count to auto-generate the heat distribution table.</p>
+    <div class="hs-sim-controls">
+      <div class="hs-sim-group">
+        <label>Total Participants</label>
+        <input type="number" id="simCount" value="100" min="1" max="500" oninput="runSimulator()"/>
+      </div>
+      <div class="hs-sim-group">
+        <label>Lanes per Heat</label>
+        <select id="simLanes" onchange="runSimulator()">
+          <option value="6">6 Lanes</option>
+          <option value="8" selected>8 Lanes</option>
+          <option value="10">10 Lanes</option>
+        </select>
+      </div>
+      <div class="hs-sim-group">
+        <label>Min per Heat (secs)</label>
+        <input type="number" id="simMins" value="3" min="1" max="10" oninput="runSimulator()"/>
+      </div>
+    </div>
+    <div class="hs-schema-table-wrap">
+      <table class="hs-schema-table" id="simTable">
+        <thead><tr><th>Heat</th><th>Participants</th><th>Lane Count</th><th>Rank Range</th></tr></thead>
+        <tbody id="simBody"></tbody>
+        <tfoot><tr><td colspan="4" id="simFooter" style="text-align:center;font-weight:800;padding:10px;background:#eff6ff;color:#1d4ed8"></td></tr></tfoot>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCHEMA TABLE -->
+<div class="hs-schema-section">
+  <div class="hs-schema-inner">
+    <h2>&#128203; Heat Sheet Data Schema</h2>
+    <p class="hs-schema-note">&#9432; Heat sheets are generated from the <strong>event-entry table</strong> (one row per swimmer per event), not directly from the player profile table.</p>
+    <div class="hs-schema-table-wrap">
+      <table class="hs-schema-table">
+        <thead><tr><th>Field</th><th>Purpose</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Heat Sheet ID</strong></td><td>Unique row ID</td><td>HS-2026-0001</td></tr>
+          <tr><td><strong>Tournament ID</strong></td><td>Tournament reference</td><td>GNMC-2026</td></tr>
+          <tr><td><strong>Event ID</strong></td><td>Event reference</td><td>EVT-FS100-U14B</td></tr>
+          <tr><td><strong>Event Name</strong></td><td>Display</td><td>100m Freestyle</td></tr>
+          <tr><td><strong>Category</strong></td><td>U-10, U-12 etc.</td><td>U-14</td></tr>
+          <tr><td><strong>Gender</strong></td><td>Boys / Girls</td><td>Boys</td></tr>
+          <tr><td><strong>Heat No</strong></td><td>Assigned heat</td><td>Heat 2</td></tr>
+          <tr><td><strong>Lane No</strong></td><td>Assigned lane</td><td>4</td></tr>
+          <tr><td><strong>Player ID</strong></td><td>Swimmer reference</td><td>SWM-2026-4271</td></tr>
+          <tr><td><strong>Player Name</strong></td><td>Display name</td><td>Arjun Kumar</td></tr>
+          <tr><td><strong>Academy Name</strong></td><td>Team display</td><td>Chennai Dolphins</td></tr>
+          <tr><td><strong>Seed Time</strong></td><td>Entry time</td><td>00:58.72</td></tr>
+          <tr><td><strong>Heat Start Time</strong></td><td>Calculated from schedule</td><td>09:30 AM</td></tr>
+          <tr><td><strong>Est. Completion</strong></td><td>Seed time + buffer</td><td>09:31:02 AM</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- BACKEND STEPS TABLE -->
+<div class="hs-steps-section">
+  <div class="hs-steps-inner">
+    <h2>&#9881;&#65039; Creation of Heat Sheet — Backend Steps</h2>
+    <table class="hs-steps-table">
+      <thead><tr><th>Step</th><th>Backend Action</th><th>Output</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Lock entries for the tournament</td><td>No more booking edits</td></tr>
+        <tr><td>2</td><td>Pull all paid/approved bookings</td><td>Master player list</td></tr>
+        <tr><td>3</td><td>Expand bookings event-wise</td><td>One row per swimmer per event</td></tr>
+        <tr><td>4</td><td>Group by category + gender + event</td><td>Event-wise entry pools</td></tr>
+        <tr><td>5</td><td>Sort by seed time (NT entries last)</td><td>Seeding order list</td></tr>
+        <tr><td>6</td><td>Assign heats and lanes (fastest in centre)</td><td>Heat sheet data with each Heat Start time</td></tr>
+        <tr><td>7</td><td>Calculation of Estimated Time Completion</td><td>Display by Website to arrive Completion time of Event</td></tr>
+        <tr><td>8</td><td>Review / manual adjust</td><td>Admin correction stage</td></tr>
+        <tr><td>9</td><td>Publish heat sheet PDF/web page</td><td>Final heat sheet</td></tr>
+      </tbody>
+    </table>
+    <div class="hs-note-box">
+      &#9432; Our backend should not generate heat sheets directly from the player profile table. It should use a <strong>separate event-entry table</strong> where each selected event becomes its own row.
+    </div>
+    <div class="hs-note-box" style="margin-top:10px">
+      &#9432; <strong>No. of Lanes is editable</strong> (6 or 8 or 10). Accordingly the lane assignment pattern and Heat Sheet will be regenerated.
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">&#127946; SwimFest India</span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="player.html">My Profile</a>
+      <a href="heatsheet.html">Heat Sheet</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <p>&copy; 2026 SwimFest India &middot; Age cut-off: 31 Dec 2026</p>
+  </div>
+</footer>
+
+<script src="heatsheet.js"></script>
+<script>
+  const ham = document.getElementById('navHam');
+  const mob = document.getElementById('navMob');
+  if(ham) ham.addEventListener('click', () => mob.classList.toggle('open'));
+
+  // ── Complete Heat List Generator ──────────────────
+  const COMPLETE_EVENTS = [
+    // SESSION 1: MORNING
+    {session:'SESSION 1: MORNING (9:00 AM – 12:30 PM)', events:[
+      {num:1,  cat:'U-10',gender:'Boys', stroke:'50m Butterfly',    participants:25, minsPerHeat:2, startMin:9*60},
+      {num:2,  cat:'U-10',gender:'Girls',stroke:'50m Butterfly',    participants:25, minsPerHeat:2, startMin:9*60+10},
+      {num:3,  cat:'U-10',gender:'Boys', stroke:'50m Breaststroke', participants:25, minsPerHeat:2, startMin:9*60+20},
+      {num:4,  cat:'U-10',gender:'Girls',stroke:'50m Breaststroke', participants:25, minsPerHeat:2, startMin:9*60+30},
+      {num:5,  cat:'U-10',gender:'Boys', stroke:'50m Backstroke',   participants:25, minsPerHeat:2, startMin:9*60+40},
+      {num:6,  cat:'U-10',gender:'Girls',stroke:'50m Backstroke',   participants:25, minsPerHeat:2, startMin:9*60+50},
+    ]},
+    // SESSION 2: AFTERNOON
+    {session:'SESSION 2: AFTERNOON (1:00 PM – 4:30 PM)', events:[
+      {num:7,  cat:'U-12',gender:'Boys', stroke:'50m Freestyle',    participants:25, minsPerHeat:2, startMin:13*60},
+      {num:8,  cat:'U-12',gender:'Girls',stroke:'50m Freestyle',    participants:25, minsPerHeat:2, startMin:13*60+10},
+      {num:9,  cat:'U-12',gender:'Boys', stroke:'100m Freestyle',   participants:25, minsPerHeat:3, startMin:13*60+20},
+      {num:10, cat:'U-12',gender:'Girls',stroke:'100m Freestyle',   participants:25, minsPerHeat:3, startMin:13*60+35},
+      {num:11, cat:'U-14',gender:'Boys', stroke:'50m Freestyle',    participants:25, minsPerHeat:2, startMin:13*60+50},
+      {num:12, cat:'U-14',gender:'Girls',stroke:'50m Freestyle',    participants:25, minsPerHeat:2, startMin:14*60},
+    ]},
+    // SESSION 3: DAY 2 MORNING
+    {session:'SESSION 3: DAY 2 MORNING (9:00 AM – 12:30 PM)', events:[
+      {num:13, cat:'U-14',gender:'Boys', stroke:'100m Freestyle',   participants:25, minsPerHeat:3, startMin:9*60},
+      {num:14, cat:'U-14',gender:'Girls',stroke:'100m Freestyle',   participants:25, minsPerHeat:3, startMin:9*60+15},
+      {num:15, cat:'U-16',gender:'Boys', stroke:'100m Freestyle',   participants:25, minsPerHeat:3, startMin:9*60+30},
+      {num:16, cat:'U-16',gender:'Girls',stroke:'100m Freestyle',   participants:25, minsPerHeat:3, startMin:9*60+45},
+      {num:17, cat:'U-12',gender:'Boys', stroke:'50m Backstroke',   participants:25, minsPerHeat:2, startMin:10*60},
+      {num:18, cat:'U-12',gender:'Girls',stroke:'50m Backstroke',   participants:25, minsPerHeat:2, startMin:10*60+10},
+    ]},
+    // SESSION 4: DAY 2 AFTERNOON
+    {session:'SESSION 4: DAY 2 AFTERNOON (1:00 PM – 5:00 PM)', events:[
+      {num:19, cat:'U-14',gender:'Boys', stroke:'100m Backstroke',  participants:25, minsPerHeat:3, startMin:13*60},
+      {num:20, cat:'U-14',gender:'Girls',stroke:'100m Backstroke',  participants:25, minsPerHeat:3, startMin:13*60+15},
+      {num:21, cat:'U-16',gender:'Boys', stroke:'100m Backstroke',  participants:25, minsPerHeat:3, startMin:13*60+30},
+      {num:22, cat:'U-16',gender:'Girls',stroke:'100m Backstroke',  participants:25, minsPerHeat:3, startMin:13*60+45},
+    ]},
+    // SESSION 5: RELAYS
+    {session:'SESSION 5: RELAY FINALS (5:00 PM)', events:[
+      {num:43, cat:'U-10',gender:'Boys', stroke:'4×50m Freestyle Relay',  participants:8, minsPerHeat:3, startMin:17*60},
+      {num:44, cat:'U-10',gender:'Girls',stroke:'4×50m Freestyle Relay',  participants:8, minsPerHeat:3, startMin:17*60+5},
+      {num:45, cat:'U-12',gender:'Boys', stroke:'4×50m Freestyle Relay',  participants:8, minsPerHeat:3, startMin:17*60+10},
+      {num:46, cat:'U-12',gender:'Girls',stroke:'4×50m Freestyle Relay',  participants:8, minsPerHeat:3, startMin:17*60+15},
+      {num:47, cat:'U-14',gender:'Boys', stroke:'4×100m Freestyle Relay', participants:8, minsPerHeat:3, startMin:17*60+20},
+      {num:48, cat:'U-16',gender:'Girls',stroke:'4×100m Freestyle Relay', participants:8, minsPerHeat:3, startMin:17*60+25},
+    ]},
+  ];
+
+  const LANES_COMP = 8;
+  const CAT_COL = {'U-10':'#f97316','U-12':'#8b5cf6','U-14':'#0ea5e9','U-16':'#10b981'};
+
+  function toTime(mins) {
+    const h=Math.floor(mins/60), m=mins%60;
+    const ap=h<12?'AM':'PM', h12=h%12||12;
+    return `${String(h12).padStart(2,'0')}:${String(m).padStart(2,'0')} ${ap}`;
+  }
+
+  function buildHeats(participants, lanes, minsPerHeat, startMin) {
+    const heats = [];
+    let remaining = participants, rankEnd = participants;
+    // first heat may be partial
+    const firstSize = remaining % lanes || lanes;
+    heats.push({count:firstSize, rankStart:remaining-firstSize+1, rankEnd, time:toTime(startMin)});
+    remaining -= firstSize;
+    let t = startMin + minsPerHeat;
+    while (remaining > 0) {
+      const sz = Math.min(lanes, remaining);
+      heats.push({count:sz, rankStart:remaining-sz+1, rankEnd:remaining, time:toTime(t)});
+      remaining -= sz;
+      t += minsPerHeat;
+    }
+    return heats;
+  }
+
+  function renderCompleteHeatList() {
+    const el = document.getElementById('completeHeatList');
+    if (!el) return;
+    let html = '';
+
+    COMPLETE_EVENTS.forEach(session => {
+      html += `<div class="chl-session">
+        <div class="chl-session-header">${session.session}</div>`;
+
+      session.events.forEach(ev => {
+        const heats = buildHeats(ev.participants, LANES_COMP, ev.minsPerHeat, ev.startMin);
+        const totalTime = heats.length * ev.minsPerHeat;
+        const catClr = CAT_COL[ev.cat] || '#374151';
+        const genClr = ev.gender==='Boys' ? '#1d4ed8' : '#db2777';
+
+        html += `<div class="chl-event-block">
+          <div class="chl-event-title">
+            EVENT ${ev.num}:
+            <span style="background:${catClr};color:#fff;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:800">${ev.cat}</span>
+            <span style="background:${genClr};color:#fff;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:800">${ev.gender}</span>
+            ${ev.stroke}
+          </div>
+          <table class="chl-table">
+            <thead><tr><th>Heat</th><th>Participants</th><th>Lane Count</th><th>Rank Range</th><th>Time</th></tr></thead>
+            <tbody>`;
+
+        heats.forEach((h, i) => {
+          html += `<tr>
+            <td>Heat ${i+1}</td>
+            <td>${h.count}</td>
+            <td>${LANES_COMP} lanes</td>
+            <td class="chl-rank-cell">${h.rankStart === h.rankEnd ? h.rankStart : `${h.rankStart}&ndash;${h.rankEnd}`}</td>
+            <td class="chl-time-cell">${h.time}</td>
+          </tr>`;
+        });
+
+        html += `<tr>
+            <td><strong>Total Time</strong></td>
+            <td><strong>${ev.participants}</strong></td>
+            <td></td><td></td>
+            <td><strong>${totalTime} min</strong></td>
+          </tr>
+            </tbody></table>
+        </div>
+        <div class="chl-event-sep"></div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    el.innerHTML = html;
+  }
+
+  renderCompleteHeatList();
+
+  function runSimulator() {
+    const total = parseInt(document.getElementById('simCount')?.value) || 100;
+    const lanes = parseInt(document.getElementById('simLanes')?.value) || 8;
+    const mins  = parseInt(document.getElementById('simMins')?.value)  || 3;
+    const body  = document.getElementById('simBody');
+    const foot  = document.getElementById('simFooter');
+    if (!body || !foot) return;
+    const heats = [];
+    let remaining = total, heatNum = 1;
+    const firstSize = total % lanes || lanes;
+    heats.push({heat:heatNum++, count:firstSize, rankStart:total-firstSize+1, rankEnd:total});
+    remaining -= firstSize;
+    while (remaining > 0) {
+      const sz = Math.min(lanes, remaining);
+      heats.push({heat:heatNum++, count:sz, rankStart:remaining-sz+1, rankEnd:remaining});
+      remaining -= sz;
+    }
+    body.innerHTML = heats.map(h =>
+      `<tr>
+        <td>Heat ${h.heat}</td>
+        <td style="text-align:center">${h.count}</td>
+        <td>${lanes} lanes</td>
+        <td style="font-weight:700;color:${h.heat===heats.length?'#16a34a':'var(--txt)'}">
+          ${h.rankStart}&ndash;${h.rankEnd}${h.heat===heats.length?' &#9733;':''}
+        </td>
+      </tr>`
+    ).join('');
+    foot.innerHTML = `Estimated Time: ${heats.length} heats &times; ${mins} minutes = <strong>${heats.length*mins} minutes</strong> for this event`;
+  }
+  runSimulator();
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Create Account — SwimFest India</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a1628 0%,#1d4ed8 50%,#06b6d4 100%);padding:24px;position:relative}
+    body::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1400&q=80') center/cover no-repeat;opacity:.12;z-index:0}
+
+    .signup-card{position:relative;z-index:1;background:#fff;border-radius:20px;padding:36px 32px;width:100%;max-width:480px;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+    .signup-header{text-align:center;margin-bottom:24px}
+    .signup-header .logo{font-size:2.2rem;margin-bottom:8px}
+    .signup-header h2{font-size:1.3rem;font-weight:800;color:#0a1628;margin-bottom:4px}
+    .signup-header p{font-size:.82rem;color:#64748b}
+
+    .signup-form{display:flex;flex-direction:column;gap:12px}
+    .form-grp{display:flex;flex-direction:column;gap:4px}
+    .form-grp label{font-size:.72rem;font-weight:700;color:#0a1628;text-transform:uppercase;letter-spacing:.5px}
+    .form-grp input,.form-grp select{padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.86rem;color:#0a1628;transition:border-color .18s}
+    .form-grp input:focus,.form-grp select:focus{outline:none;border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,.1)}
+    .form-grp input::placeholder{color:#94a3b8}
+    .form-row{display:flex;gap:10px}
+    .form-row .form-grp{flex:1}
+
+    .btn-signup{padding:12px;background:#0a1628;color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:800;cursor:pointer;transition:background .18s,transform .15s;margin-top:6px}
+    .btn-signup:hover{background:#1d4ed8;transform:translateY(-1px)}
+
+    .signup-footer{text-align:center;margin-top:16px;font-size:.8rem;color:#64748b}
+    .signup-footer a{color:#1d4ed8;font-weight:700;text-decoration:none}
+    .signup-footer a:hover{text-decoration:underline}
+
+    .signup-success{display:none;text-align:center;padding:20px 0}
+    .signup-success .check{font-size:3rem;margin-bottom:12px}
+    .signup-success h3{font-size:1.1rem;font-weight:800;color:#16a34a;margin-bottom:6px}
+    .signup-success p{font-size:.82rem;color:#64748b;margin-bottom:14px}
+    .signup-success .btn-login{padding:10px 28px;background:#1d4ed8;color:#fff;border:none;border-radius:999px;font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+    .signup-success .btn-login:hover{background:#3b82f6}
+
+    @media(max-width:480px){.signup-card{padding:24px 18px}.form-row{flex-direction:column}}
+  </style>
+</head>
+<body>
+
+<div class="signup-card">
+  <div class="signup-header">
+    <div class="logo">&#127946;</div>
+    <h2>Create Your Account</h2>
+    <p>Join SwimFest India and start competing</p>
+  </div>
+
+  <form class="signup-form" id="signupForm" onsubmit="handleSignup(event)">
+    <div class="form-grp">
+      <label>Full Name *</label>
+      <input type="text" id="suName" placeholder="Swimmer's official name" required/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-grp">
+        <label>Gender *</label>
+        <select id="suGender" required>
+          <option value="">Select</option>
+          <option value="Boys">Boy</option>
+          <option value="Girls">Girl</option>
+        </select>
+      </div>
+      <div class="form-grp">
+        <label>Date of Birth *</label>
+        <input type="date" id="suDob" min="2010-01-01" max="2017-12-31" required/>
+      </div>
+    </div>
+
+    <div class="form-grp">
+      <label>Address *</label>
+      <input type="text" id="suAddress" placeholder="Door No, Street, City, State, Pincode" required/>
+    </div>
+
+    <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">School Details <span style="font-weight:400;text-transform:none;color:#94a3b8">(optional if Academy filled)</span></p>
+
+    <div class="form-row">
+      <div class="form-grp">
+        <label>School Name</label>
+        <input type="text" id="suSchoolName" placeholder="e.g. DAV Public School"/>
+      </div>
+      <div class="form-grp">
+        <label>Board</label>
+        <select id="suSchoolBoard">
+          <option value="">Select Board</option>
+          <option value="CBSE">CBSE</option>
+          <option value="ICSE">ICSE</option>
+          <option value="State Board">State Board</option>
+          <option value="International">International (IB/IGCSE)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-grp">
+      <label>Class / Grade</label>
+      <input type="text" id="suSchoolClass" placeholder="e.g. 8th Standard"/>
+    </div>
+
+    <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">Parent / Guardian</p>
+
+    <div class="form-row">
+      <div class="form-grp">
+        <label>Parent / Guardian Name *</label>
+        <input type="text" id="suParentName" placeholder="Full name" required/>
+      </div>
+      <div class="form-grp">
+        <label>Relationship *</label>
+        <select id="suRelationship" required>
+          <option value="">Select</option>
+          <option>Father</option>
+          <option>Mother</option>
+          <option>Guardian</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-grp">
+        <label>Parent Mobile *</label>
+        <input type="tel" id="suMobile" placeholder="+91 XXXXX XXXXX" required/>
+      </div>
+      <div class="form-grp">
+        <label>Email Address *</label>
+        <input type="email" id="suEmail" placeholder="email@example.com" required/>
+      </div>
+    </div>
+
+    <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">Academy <span style="font-weight:400;text-transform:none;color:#94a3b8">(optional if School filled)</span></p>
+
+    <div class="form-grp">
+      <label>Swimming Academy</label>
+      <select id="suAcademy">
+        <option value="">Select Academy</option>
+        <option>SRM Swim Club</option>
+        <option>Chennai Dolphins</option>
+        <option>Madurai Marlins</option>
+        <option>Kattankulathur Aqua</option>
+        <option>TN Swim Academy</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0">Password</p>
+
+    <div class="form-row">
+      <div class="form-grp">
+        <label>Create Password *</label>
+        <input type="password" id="suPassword" placeholder="Min 6 characters" minlength="6" required/>
+      </div>
+      <div class="form-grp">
+        <label>Confirm Password *</label>
+        <input type="password" id="suConfirm" placeholder="Re-enter password" minlength="6" required/>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-signup">Create Account</button>
+  </form>
+
+  <div class="signup-footer">
+    Already have an account? <a href="login.html">Sign In</a>
+  </div>
+
+  <div class="signup-success" id="signupSuccess">
+    <div class="check">&#9989;</div>
+    <h3>Account Created!</h3>
+    <p>Your swimmer ID has been generated. You can now login and book events.</p>
+    <a href="login.html" class="btn-login">Go to Login &#8594;</a>
+  </div>
+</div>
+
+<script>
+function handleSignup(e) {
+  e.preventDefault();
+  const pw  = document.getElementById('suPassword').value;
+  const cpw = document.getElementById('suConfirm').value;
+
+  if (pw !== cpw) {
+    alert('Passwords do not match. Please re-enter.');
+    return;
+  }
+
+  // Validate: at least school or academy must be filled
+  const schoolName = document.getElementById('suSchoolName').value.trim();
+  const academy = document.getElementById('suAcademy').value;
+  if (!schoolName && !academy) {
+    alert('Please fill at least School Name or Swimming Academy.');
+    return;
+  }
+
+  const data = {
+    full_name: document.getElementById('suName').value.trim(),
+    gender: document.getElementById('suGender').value,
+    dob: document.getElementById('suDob').value,
+    address: document.getElementById('suAddress').value.trim(),
+    school_name: document.getElementById('suSchoolName').value.trim(),
+    school_board: document.getElementById('suSchoolBoard').value,
+    school_class: document.getElementById('suSchoolClass').value.trim(),
+    parent_name: document.getElementById('suParentName').value.trim(),
+    parent_relationship: document.getElementById('suRelationship').value,
+    parent_mobile: document.getElementById('suMobile').value.trim(),
+    parent_email: document.getElementById('suEmail').value.trim(),
+    academy_id: document.getElementById('suAcademy').value,
+    institution_type: 'Academy',
+    password: pw
+  };
+
+  fetch('/api/swimmers', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.swimmer_id) {
+      document.getElementById('signupForm').style.display = 'none';
+      document.querySelector('.signup-footer').style.display = 'none';
+      const success = document.getElementById('signupSuccess');
+      success.style.display = '';
+      success.querySelector('p').textContent = `Swimmer ID: ${res.swimmer_id} | Age Group: ${res.age_group}. Redirecting to login...`;
+      // Auto-redirect to login after 2 seconds
+      setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+    } else {
+      alert('Error: ' + (res.error || 'Could not create account'));
+    }
+  })
+  .catch(() => {
+    // Fallback if backend not running
+    document.getElementById('signupForm').style.display = 'none';
+    document.querySelector('.signup-footer').style.display = 'none';
+    document.getElementById('signupSuccess').style.display = '';
+    setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Panel — SwimFest India</title>
+  <link rel="stylesheet" href="home.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    .admin-header{background:linear-gradient(135deg,#0a1628,#1d4ed8);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+    .admin-header h1{color:#fff;font-size:1.2rem;font-weight:800;margin:0}
+    .admin-header p{color:rgba(255,255,255,.6);font-size:.78rem}
+    .admin-nav{display:flex;gap:6px;flex-wrap:wrap}
+    .admin-nav button{padding:6px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .18s}
+    .admin-nav button.active{background:#fff;color:#0a1628;border-color:#fff}
+    .admin-nav button:hover:not(.active){background:rgba(255,255,255,.1)}
+    .admin-body{max-width:1300px;margin:0 auto;padding:16px 20px}
+    .admin-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+    .admin-stat{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .admin-stat .num{font-size:1.8rem;font-weight:900;color:#1d4ed8;line-height:1}
+    .admin-stat .lbl{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+    .admin-section{margin-bottom:24px}
+    .admin-section h2{font-size:.85rem;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#0a1628;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .admin-table-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:10px}
+    .admin-table{width:100%;border-collapse:collapse;font-size:.8rem}
+    .admin-table th{background:#f8fafc;padding:10px 12px;text-align:left;font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+    .admin-table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#0f172a}
+    .admin-table tr:hover td{background:#f8fafc}
+    .admin-table .mono{font-family:monospace;font-size:.75rem;color:#1d4ed8}
+    .admin-table .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700}
+    .badge-paid{background:#dcfce7;color:#166534}
+    .badge-pending{background:#fef3c7;color:#92400e}
+    .badge-active{background:#dbeafe;color:#1d4ed8}
+    .admin-actions{display:flex;gap:8px;margin-bottom:16px}
+    .admin-btn{padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:background .18s}
+    .admin-btn-primary{background:#1d4ed8;color:#fff}
+    .admin-btn-primary:hover{background:#3b82f6}
+    .admin-btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5}
+    .admin-btn-success{background:#dcfce7;color:#166534;border:1px solid #86efac}
+    .admin-panel{display:none}
+    .admin-panel.active{display:block}
+    .empty-msg{text-align:center;padding:32px;color:#94a3b8;font-size:.85rem}
+  </style>
+</head>
+<body style="background:#f1f5f9">
+
+<div class="admin-header">
+  <div>
+    <h1>SwimFest India — Admin Panel</h1>
+    <p>Manage swimmers, bookings, results &amp; heat sheets</p>
+  </div>
+  <div class="admin-nav">
+    <button class="active" onclick="showPanel('dashboard')">Dashboard</button>
+    <button onclick="showPanel('events')">Events</button>
+    <button onclick="showPanel('swimmers')">Swimmers</button>
+    <button onclick="showPanel('bookings')">Bookings</button>
+    <button onclick="showPanel('entries')">Event Entries</button>
+    <button onclick="showPanel('academies')">Academies</button>
+    <button onclick="showPanel('heatsheet')">Heat Sheet</button>
+    <a href="index.html" style="padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.15);color:#fff;font-size:.75rem;font-weight:600;text-decoration:none">Home</a>
+    <button onclick="adminLogout()" style="padding:6px 14px;border-radius:999px;background:#dc2626;color:#fff;font-size:.75rem;font-weight:600;border:none;cursor:pointer">Logout</button>
+  </div>
+</div>
+
+<div class="admin-body">
+
+  <!-- DASHBOARD -->
+  <div class="admin-panel active" id="panel-dashboard">
+    <div class="admin-stats" id="statsGrid"></div>
+    <div class="admin-section">
+      <h2>Recent Bookings</h2>
+      <div class="admin-table-wrap" id="recentBookings"></div>
+    </div>
+  </div>
+
+  <!-- EVENTS MANAGEMENT -->
+  <div class="admin-panel" id="panel-events">
+    <div class="admin-section">
+      <h2>Add New Event / Tournament</h2>
+      <form onsubmit="addEvent(event)" style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Event Name *</label>
+          <input type="text" id="evName" placeholder="e.g. Golden Non-Medalist Championship 2026" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Venue *</label>
+          <input type="text" id="evVenue" placeholder="e.g. SRM University, Kattankulathur" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Start Date *</label>
+          <input type="date" id="evStart" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">End Date *</label>
+          <input type="date" id="evEnd" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Registration Deadline *</label>
+          <input type="date" id="evDeadline" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Fee per Event (Rs.)</label>
+          <input type="number" id="evFee" value="300" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">No. of Lanes</label>
+          <select id="evLanes" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem">
+            <option value="6">6 Lanes</option>
+            <option value="8" selected>8 Lanes</option>
+            <option value="10">10 Lanes</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Status</label>
+          <select id="evStatus" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.82rem">
+            <option value="Open">Open (Registration Active)</option>
+            <option value="Closed">Closed</option>
+            <option value="Upcoming">Upcoming (Not yet open)</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1">
+          <button type="submit" class="admin-btn admin-btn-primary" style="width:100%;padding:10px">+ Add Event</button>
+        </div>
+      </form>
+    </div>
+    <div class="admin-section">
+      <h2>All Events / Tournaments</h2>
+      <div class="admin-table-wrap" id="eventsTable"></div>
+    </div>
+  </div>
+
+  <!-- SWIMMERS -->
+  <div class="admin-panel" id="panel-swimmers">
+    <div class="admin-section">
+      <h2>All Registered Swimmers</h2>
+      <div class="admin-table-wrap" id="swimmersTable"></div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS -->
+  <div class="admin-panel" id="panel-bookings">
+    <div class="admin-section">
+      <h2>All Bookings</h2>
+      <div class="admin-table-wrap" id="bookingsTable"></div>
+    </div>
+  </div>
+
+  <!-- EVENT ENTRIES -->
+  <div class="admin-panel" id="panel-entries">
+    <div class="admin-section">
+      <h2>Event Entries (one row per swimmer per event)</h2>
+      <div class="admin-table-wrap" id="entriesTable"></div>
+    </div>
+  </div>
+
+  <!-- ACADEMIES -->
+  <div class="admin-panel" id="panel-academies">
+    <div class="admin-section">
+      <h2>Academies / Clubs</h2>
+      <div class="admin-table-wrap" id="academiesTable"></div>
+    </div>
+  </div>
+
+  <!-- HEAT SHEET -->
+  <div class="admin-panel" id="panel-heatsheet">
+    <div class="admin-actions">
+      <button class="admin-btn admin-btn-primary" onclick="generateHeatSheet()">Generate Heat Sheet</button>
+      <button class="admin-btn admin-btn-success" onclick="viewHeatSheet()">View Heat Sheet Page</button>
+    </div>
+    <div class="admin-section">
+      <h2>Generated Heat Sheet</h2>
+      <div class="admin-table-wrap" id="heatsheetTable"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = '/api';
+
+function adminLogout() {
+  localStorage.removeItem('swimmer_id');
+  localStorage.removeItem('swimmer_name');
+  window.location.href = 'login.html';
+}
+
+function showPanel(name) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name)?.classList.add('active');
+  document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  loadPanel(name);
+}
+
+function loadPanel(name) {
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'events') loadEvents();
+  if (name === 'swimmers') loadSwimmers();
+  if (name === 'bookings') loadBookings();
+  if (name === 'entries') loadEntries();
+  if (name === 'academies') loadAcademies();
+  if (name === 'heatsheet') loadHeatSheet();
+}
+
+async function loadEvents() {
+  const data = await fetch(API+'/tournaments').then(r=>r.json());
+  if (!data.length) { document.getElementById('eventsTable').innerHTML='<p class="empty-msg">No events created</p>'; return; }
+  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Venue</th><th>Dates</th><th>Deadline</th><th>Fee</th><th>Lanes</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+  data.forEach(t => {
+    const statusClass = t.status==='Open'?'badge-paid':t.status==='Closed'?'badge-pending':'badge-active';
+    function fmtD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+    html += `<tr>
+      <td class="mono">${t.tournament_id}</td>
+      <td><strong>${t.name}</strong></td>
+      <td>${t.venue||''}</td>
+      <td>${fmtD(t.start_date)} to ${fmtD(t.end_date)}</td>
+      <td>${fmtD(t.reg_deadline)}</td>
+      <td>Rs.${t.fee_per_event||300}</td>
+      <td>${t.lanes||8}</td>
+      <td>
+        <select onchange="updateEventStatus('${t.tournament_id}', this.value)" style="padding:4px 8px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:.72rem;font-weight:700;cursor:pointer">
+          <option value="Open" ${t.status==='Open'?'selected':''}>Open</option>
+          <option value="Upcoming" ${t.status==='Upcoming'?'selected':''}>Upcoming</option>
+          <option value="Ongoing" ${t.status==='Ongoing'?'selected':''}>Ongoing</option>
+          <option value="Closed" ${t.status==='Closed'?'selected':''}>Closed</option>
+          <option value="Completed" ${t.status==='Completed'?'selected':''}>Completed</option>
+        </select>
+      </td>
+      <td>
+        <button class="admin-btn" onclick="openEditEvent('${t.tournament_id}','${(t.name||'').replace(/'/g,"\\'")}','${(t.venue||'').replace(/'/g,"\\'")}','${t.start_date||''}','${t.end_date||''}','${t.reg_deadline||''}','${t.fee_per_event||300}','${t.lanes||8}')" style="padding:4px 10px;font-size:.7rem;background:#1d4ed8;color:#fff;border:none;border-radius:6px;cursor:pointer">Edit</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('eventsTable').innerHTML = html;
+}
+
+async function addEvent(e) {
+  e.preventDefault();
+  const data = {
+    name: document.getElementById('evName').value,
+    venue: document.getElementById('evVenue').value,
+    start_date: document.getElementById('evStart').value,
+    end_date: document.getElementById('evEnd').value,
+    reg_deadline: document.getElementById('evDeadline').value,
+    fee_per_event: parseInt(document.getElementById('evFee').value) || 300,
+    lanes: parseInt(document.getElementById('evLanes').value) || 8,
+    status: document.getElementById('evStatus').value,
+  };
+  const res = await fetch(API+'/tournaments', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)}).then(r=>r.json());
+  alert('Event created: ' + res.tournament_id);
+  e.target.reset();
+  loadEvents();
+}
+
+async function deleteEvent(tid) {
+  if (!confirm('Delete this event? This cannot be undone.')) return;
+  await fetch(API+'/tournaments/'+tid, {method:'DELETE'});
+  loadEvents();
+}
+
+async function updateEventStatus(tid, status) {
+  await fetch(API+'/tournaments/'+tid+'/status', {
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({status})
+  });
+}
+
+function openEditEvent(tid, name, venue, start, end, deadline, fee, lanes) {
+  document.getElementById('editEvTid').value = tid;
+  document.getElementById('editEvName').value = name;
+  document.getElementById('editEvVenue').value = venue;
+  document.getElementById('editEvStart').value = start;
+  document.getElementById('editEvEnd').value = end;
+  document.getElementById('editEvDeadline').value = deadline;
+  document.getElementById('editEvFee').value = fee;
+  document.getElementById('editEvLanes').value = lanes;
+  document.getElementById('editEventModal').style.display = 'flex';
+}
+
+function closeEditEventModal() {
+  document.getElementById('editEventModal').style.display = 'none';
+}
+
+async function saveEditEvent(e) {
+  e.preventDefault();
+  const tid = document.getElementById('editEvTid').value;
+  const data = {
+    name: document.getElementById('editEvName').value,
+    venue: document.getElementById('editEvVenue').value,
+    start_date: document.getElementById('editEvStart').value,
+    end_date: document.getElementById('editEvEnd').value,
+    reg_deadline: document.getElementById('editEvDeadline').value,
+    fee_per_event: parseInt(document.getElementById('editEvFee').value) || 300,
+    lanes: parseInt(document.getElementById('editEvLanes').value) || 8,
+  };
+  await fetch(API+'/tournaments/'+tid, {
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  closeEditEventModal();
+  loadEvents();
+  alert('Tournament updated!');
+}
+
+async function loadDashboard() {
+  const stats = await fetch(API+'/stats').then(r=>r.json());
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="admin-stat"><div class="num">${stats.total_swimmers}</div><div class="lbl">Swimmers</div></div>
+    <div class="admin-stat"><div class="num">${stats.total_bookings}</div><div class="lbl">Bookings (Paid)</div></div>
+    <div class="admin-stat"><div class="num">${stats.total_entries}</div><div class="lbl">Event Entries</div></div>
+    <div class="admin-stat"><div class="num">${stats.total_academies}</div><div class="lbl">Academies</div></div>
+  `;
+  const bookings = await fetch(API+'/bookings').then(r=>r.json());
+  if (bookings.length === 0) {
+    document.getElementById('recentBookings').innerHTML = '<p class="empty-msg">No bookings yet</p>';
+    return;
+  }
+  let html = '<table class="admin-table"><thead><tr><th>Booking ID</th><th>Swimmer</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody>';
+  bookings.slice(0,10).forEach(b => {
+    html += `<tr><td class="mono">${b.booking_id}</td><td>${b.full_name||''}</td><td><span class="badge badge-paid">${b.payment_status}</span></td><td>Rs.${b.total_paid||0}</td><td>${(b.created_at||'').split('T')[0]}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('recentBookings').innerHTML = html;
+}
+
+async function loadSwimmers() {
+  const data = await fetch(API+'/swimmers').then(r=>r.json());
+  if (!data.length) { document.getElementById('swimmersTable').innerHTML='<p class="empty-msg">No swimmers registered</p>'; return; }
+  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Age Group</th><th>Academy</th><th>Parent</th><th>Mobile</th><th>Email</th></tr></thead><tbody>';
+  data.forEach(s => {
+    html += `<tr><td class="mono">${s.swimmer_id}</td><td><strong>${s.full_name}</strong></td><td>${s.gender}</td><td>${s.dob}</td><td><span class="badge badge-active">${s.age_group||''}</span></td><td>${s.academy_id||''}</td><td>${s.parent_name||''}</td><td>${s.parent_mobile||''}</td><td>${s.parent_email||''}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('swimmersTable').innerHTML = html;
+}
+
+async function loadBookings() {
+  const data = await fetch(API+'/bookings').then(r=>r.json());
+  if (!data.length) { document.getElementById('bookingsTable').innerHTML='<p class="empty-msg">No bookings</p>'; return; }
+  let html = '<table class="admin-table"><thead><tr><th>Booking ID</th><th>Swimmer ID</th><th>Name</th><th>Tournament</th><th>Events</th><th>Relay</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+  data.forEach(b => {
+    html += `<tr><td class="mono">${b.booking_id}</td><td class="mono">${b.swimmer_id}</td><td>${b.full_name||''}</td><td>${b.tournament_id}</td><td>—</td><td>${b.relay_opted?'Yes':'No'}</td><td>Rs.${b.total_paid||0}</td><td><span class="badge badge-paid">${b.payment_status}</span></td><td>${(b.created_at||'').split('T')[0]}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('bookingsTable').innerHTML = html;
+}
+
+async function loadEntries() {
+  const data = await fetch(API+'/heatsheet/GNMC-2026').then(r=>r.json());
+  if (!data.length) { document.getElementById('entriesTable').innerHTML='<p class="empty-msg">No entries. Generate heat sheet first.</p>'; return; }
+  let html = '<table class="admin-table"><thead><tr><th>HS ID</th><th>Event</th><th>Category</th><th>Gender</th><th>Heat</th><th>Lane</th><th>Swimmer</th><th>Academy</th><th>Seed Time</th></tr></thead><tbody>';
+  data.forEach(e => {
+    html += `<tr><td class="mono">${e.hs_id}</td><td>${e.event_name}</td><td><span class="badge badge-active">${e.category}</span></td><td>${e.gender}</td><td>${e.heat_no}</td><td><strong>${e.lane_no}</strong></td><td>${e.swimmer_name}</td><td>${e.academy_name||''}</td><td class="mono">${e.seed_time||'NT'}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('entriesTable').innerHTML = html;
+}
+
+async function loadAcademies() {
+  const data = await fetch(API+'/academies').then(r=>r.json());
+  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Short Name</th><th>Coach</th><th>Mobile</th><th>Email</th><th>City</th><th>Status</th></tr></thead><tbody>';
+  data.forEach(a => {
+    html += `<tr><td class="mono">${a.academy_id}</td><td><strong>${a.name}</strong></td><td>${a.short_name||''}</td><td>${a.head_coach||''}</td><td>${a.mobile||''}</td><td>${a.email||''}</td><td>${a.city||''}</td><td><span class="badge badge-active">${a.status}</span></td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('academiesTable').innerHTML = html;
+}
+
+async function loadHeatSheet() {
+  const data = await fetch(API+'/heatsheet/GNMC-2026').then(r=>r.json());
+  if (!data.length) { document.getElementById('heatsheetTable').innerHTML='<p class="empty-msg">No heat sheet generated. Click "Generate Heat Sheet" above.</p>'; return; }
+  let html = '<table class="admin-table"><thead><tr><th>Event</th><th>Category</th><th>Gender</th><th>Heat</th><th>Lane</th><th>Swimmer ID</th><th>Name</th><th>Academy</th><th>Seed</th><th>Start</th></tr></thead><tbody>';
+  data.forEach(h => {
+    html += `<tr><td>${h.event_name}</td><td>${h.category}</td><td>${h.gender}</td><td>${h.heat_no}</td><td><strong>${h.lane_no}</strong></td><td class="mono">${h.swimmer_id}</td><td>${h.swimmer_name}</td><td>${h.academy_name||''}</td><td class="mono">${h.seed_time||'NT'}</td><td>${h.start_time||''}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('heatsheetTable').innerHTML = html;
+}
+
+async function generateHeatSheet() {
+  const res = await fetch(API+'/heatsheet/generate/GNMC-2026', {method:'POST'}).then(r=>r.json());
+  alert(`Heat Sheet Generated!\n${res.total_heats} heats, ${res.total_entries} entries, ${res.lanes_used} lanes`);
+  loadHeatSheet();
+}
+
+function viewHeatSheet() {
+  window.open('heatsheet.html', '_blank');
+}
+
+// Load dashboard on page load
+loadDashboard();
+</script>
+
+<!-- Edit Event Modal -->
+<div id="editEventModal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,.7);backdrop-filter:blur(4px);z-index:900;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(0,0,0,.3)">
+    <div style="background:linear-gradient(135deg,#0a1628,#1d4ed8);padding:16px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color:#fff;font-size:1rem;font-weight:800;margin:0">Edit Tournament</h3>
+      <button onclick="closeEditEventModal()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer">&times;</button>
+    </div>
+    <form onsubmit="saveEditEvent(event)" style="padding:20px;display:flex;flex-direction:column;gap:10px">
+      <input type="hidden" id="editEvTid"/>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700">Event Name</label>
+        <input type="text" id="editEvName" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700">Venue</label>
+        <input type="text" id="editEvVenue" required style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Start Date</label>
+          <input type="date" id="editEvStart" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">End Date</label>
+          <input type="date" id="editEvEnd" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Reg. Deadline</label>
+          <input type="date" id="editEvDeadline" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Fee per Event</label>
+          <input type="number" id="editEvFee" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700">Lanes</label>
+        <input type="number" id="editEvLanes" min="6" max="10" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button type="submit" style="flex:1;padding:10px;background:#0a1628;color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer">Save Changes</button>
+        <button type="button" onclick="closeEditEventModal()" style="padding:10px 18px;background:transparent;color:#64748b;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

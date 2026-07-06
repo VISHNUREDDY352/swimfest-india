@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Participation Certificate — SwimFest India</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#f1f5f9;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+    .cert-actions{display:flex;gap:10px;margin-bottom:10px}
+    .cert-btn{padding:10px 24px;border-radius:999px;border:none;font-size:.88rem;font-weight:700;cursor:pointer;transition:transform .18s}
+    .cert-btn-download{background:#0a1628;color:#fff}
+    .cert-btn-download:hover{transform:translateY(-1px)}
+    .cert-btn-back{background:#fff;color:#0a1628;border:1.5px solid #e2e8f0}
+
+    /* Certificate */
+    .cert-container{width:900px;height:636px;position:relative;background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+
+    .cert-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a1628 0%,#1d4ed8 40%,#06b6d4 100%)}
+
+    .cert-inner{position:absolute;inset:20px;background:#fff;border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 50px;text-align:center}
+
+    /* Gold border */
+    .cert-inner::before{content:'';position:absolute;inset:8px;border:2px solid #d4af37;border-radius:2px}
+    .cert-inner::after{content:'';position:absolute;inset:12px;border:1px solid #e8d48b;border-radius:2px}
+
+    .cert-logo{font-size:1.6rem;margin-bottom:6px}
+    .cert-org{font-size:.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#1d4ed8;margin-bottom:16px}
+    .cert-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:#0a1628;margin-bottom:4px;letter-spacing:-0.5px}
+    .cert-subtitle{font-size:.82rem;color:#64748b;margin-bottom:20px}
+    .cert-text{font-size:.88rem;color:#374151;margin-bottom:6px}
+    .cert-name{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#0a1628;border-bottom:2px solid #d4af37;padding-bottom:4px;margin:8px 0 14px;display:inline-block}
+    .cert-event{font-size:.85rem;color:#374151;margin-bottom:4px}
+    .cert-event strong{color:#0a1628}
+    .cert-details{display:flex;gap:24px;margin:14px 0;font-size:.75rem;color:#64748b;flex-wrap:wrap;justify-content:center}
+    .cert-detail{display:flex;flex-direction:column;align-items:center;gap:2px}
+    .cert-detail-val{font-weight:800;color:#0a1628;font-size:.82rem}
+    .cert-footer{display:flex;justify-content:space-between;align-items:flex-end;width:100%;margin-top:20px;padding-top:14px;border-top:1px solid #f0f0f0}
+    .cert-sig{display:flex;flex-direction:column;align-items:center;gap:4px}
+    .cert-sig-line{width:120px;border-bottom:1px solid #0a1628}
+    .cert-sig-label{font-size:.65rem;color:#64748b}
+    .cert-id{font-size:.62rem;color:#94a3b8;font-family:monospace;position:absolute;bottom:28px;right:40px}
+    .cert-date-issued{font-size:.62rem;color:#94a3b8;position:absolute;bottom:28px;left:40px}
+
+    @media print{
+      body{padding:0;background:#fff}
+      .cert-actions{display:none}
+      .cert-container{box-shadow:none;width:100%;height:auto;aspect-ratio:900/636}
+    }
+    @media(max-width:940px){
+      .cert-container{width:100%;height:auto;aspect-ratio:900/636}
+    }
+  </style>
+</head>
+<body>
+
+<div class="cert-actions">
+  <button class="cert-btn cert-btn-download" onclick="downloadCert()">Download Certificate (PDF)</button>
+  <button class="cert-btn cert-btn-back" onclick="window.print()">Print</button>
+  <a href="player.html" class="cert-btn cert-btn-back" style="text-decoration:none;display:flex;align-items:center">Back to Profile</a>
+</div>
+
+<div class="cert-container" id="certificate">
+  <div class="cert-bg"></div>
+  <div class="cert-inner">
+    <div class="cert-logo">&#127946;</div>
+    <div class="cert-org">SwimFest India 2026</div>
+    <div class="cert-title">Certificate of Participation</div>
+    <div class="cert-subtitle">Golden Non-Medalist Championship</div>
+
+    <p class="cert-text">This is to certify that</p>
+    <div class="cert-name" id="certName">SWIMMER NAME</div>
+
+    <p class="cert-event">has participated in the <strong>Golden Non-Medalist Championship 2026</strong></p>
+    <p class="cert-event">organized by <strong>SwimFest India</strong> at <strong>SRM University, Kattankulathur</strong></p>
+
+    <div class="cert-details">
+      <div class="cert-detail"><span>Category</span><span class="cert-detail-val" id="certCategory">U-14 Boys</span></div>
+      <div class="cert-detail"><span>Events</span><span class="cert-detail-val" id="certEvents">3 Individual</span></div>
+      <div class="cert-detail"><span>Date</span><span class="cert-detail-val">June 20-22, 2026</span></div>
+      <div class="cert-detail"><span>Venue</span><span class="cert-detail-val">SRM University, TN</span></div>
+    </div>
+
+    <div class="cert-footer">
+      <div class="cert-sig">
+        <div class="cert-sig-line"></div>
+        <div class="cert-sig-label">Meet Director</div>
+      </div>
+      <div class="cert-sig">
+        <div class="cert-sig-line"></div>
+        <div class="cert-sig-label">Chief Referee</div>
+      </div>
+    </div>
+
+    <div class="cert-id" id="certId">CERT-2026-0000</div>
+    <div class="cert-date-issued" id="certDate">Issued: June 22, 2026</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // Load swimmer data
+  function loadCertData() {
+    const swId = localStorage.getItem('swimmer_id') || '';
+    fetch('/api/swimmers')
+      .then(r => r.json())
+      .then(data => {
+        const s = data.length > 0 ? data[data.length - 1] : null;
+        if (!s) return;
+        document.getElementById('certName').textContent = s.full_name || 'SWIMMER';
+        document.getElementById('certCategory').textContent = (s.age_group || '') + ' ' + (s.gender || '');
+        document.getElementById('certId').textContent = 'CERT-2026-' + (s.swimmer_id || '').split('-').pop();
+        
+        const today = new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+        document.getElementById('certDate').textContent = 'Issued: ' + today;
+      }).catch(() => {});
+  }
+
+  function downloadCert() {
+    const cert = document.getElementById('certificate');
+    html2canvas(cert, {scale:2, useCORS:true}).then(canvas => {
+      const {jsPDF} = window.jspdf;
+      const pdf = new jsPDF('landscape', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/png');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, (pdf.internal.pageSize.getHeight() - pdfHeight) / 2, pdfWidth, pdfHeight);
+      const name = document.getElementById('certName').textContent.replace(/\s+/g, '_');
+      pdf.save(`Participation_Certificate_${name}.pdf`);
+    });
+  }
+
+  loadCertData();
+</script>
+</body>
+</html>

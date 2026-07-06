@@ -1,0 +1,118 @@
+/* player.css — Player Profile Page */
+:root{--navy:#0a1628;--blue:#1d4ed8;--blue2:#3b82f6;--cyan:#06b6d4;--gold:#f59e0b;--green:#16a34a;--white:#fff;--bg:#f1f5f9;--card:#fff;--brd:#e2e8f0;--txt:#0f172a;--sub:#64748b;--r:10px;--sh:0 1px 6px rgba(0,0,0,.09)}
+
+/* HERO */
+.pp-hero{background:linear-gradient(135deg,#0a1628 0%,#1d4ed8 60%,#06b6d4 100%);padding:14px 20px}
+.pp-hero-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:16px}
+.pp-avatar-wrap{position:relative;flex-shrink:0}
+.pp-avatar{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.pp-status-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid #0a1628}
+.pp-hero-info{flex:1;min-width:0}
+.pp-hero-top{display:flex;align-items:center;gap:10px;margin-bottom:3px;flex-wrap:wrap}
+.pp-hero-top h1{font-size:clamp(1rem,2vw,1.3rem);font-weight:900;color:#fff;margin:0;white-space:nowrap}
+.pp-hero-id{font-size:.62rem;background:rgba(255,255,255,.15);color:rgba(255,255,255,.75);padding:2px 8px;border-radius:999px;font-family:monospace;font-weight:700}
+.pp-hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:3px}
+.pp-tag{padding:2px 10px;border-radius:999px;font-size:.62rem;font-weight:700}
+.pp-tag.category{background:rgba(255,255,255,.18);color:#fff}
+.pp-tag.academy{background:rgba(6,182,212,.25);color:#a5f3fc}
+.pp-tag.status-active{background:rgba(34,197,94,.2);color:#86efac}
+.pp-hero-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:.68rem;color:rgba(255,255,255,.55)}
+.pp-hero-actions{flex-shrink:0}
+.pp-btn-edit{padding:7px 16px;background:rgba(255,255,255,.12);color:#fff;border-radius:999px;font-size:.78rem;font-weight:600;border:1.5px solid rgba(255,255,255,.3);cursor:pointer;transition:background .18s;white-space:nowrap}
+.pp-btn-edit:hover{background:rgba(255,255,255,.22)}
+
+/* STATS STRIP */
+.pp-stats-strip{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08)}
+.pp-stats-strip{max-width:100%;display:flex;align-items:center;justify-content:center;padding:0 20px;height:52px;overflow-x:auto;gap:0}
+.pp-stat-item{display:flex;align-items:center;gap:10px;padding:0 22px;white-space:nowrap;flex-shrink:0}
+.pp-stat-num{font-size:1rem;font-weight:900;color:var(--cyan)}
+.pp-stat-lbl{font-size:.68rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.4px}
+.pp-stat-div{width:1px;height:20px;background:rgba(255,255,255,.12);flex-shrink:0}
+
+/* MAIN GRID */
+.pp-main{max-width:1400px;margin:0 auto;padding:16px 20px 24px;display:grid;grid-template-columns:340px 1fr 320px;gap:16px;align-items:start}
+
+/* CARDS */
+.pp-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:14px}
+.pp-card:last-child{margin-bottom:0}
+.pp-card-head{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--navy);padding-bottom:10px;border-bottom:2px solid var(--brd);margin-bottom:12px}
+
+/* DETAILS GRID */
+.pp-details-grid{display:flex;flex-direction:column;gap:0}
+.pp-detail-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:.82rem;gap:12px}
+.pp-detail-row:last-child{border-bottom:none}
+.pp-dl{color:var(--sub);font-weight:500;flex-shrink:0}
+.pp-dv{font-weight:700;color:var(--txt);text-align:right;overflow:hidden;text-overflow:ellipsis;word-break:break-all;min-width:0}
+
+/* PERSONAL BESTS TABLE */
+.pp-pb-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.pp-pb-table th{background:#f8fafc;padding:7px 10px;text-align:left;font-size:.68rem;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.4px}
+.pp-pb-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
+.pp-pb-table tr:last-child td{border-bottom:none}
+.pp-pb-table tr:hover td{background:#f8fafc}
+.pb-highlight td{background:#fffbeb}
+.pb-time{font-family:monospace;font-weight:800;color:var(--blue);font-size:.85rem}
+.pp-stroke-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.62rem;font-weight:800;color:#fff;margin-right:4px}
+.pp-stroke-badge.fs{background:#1d4ed8}
+.pp-stroke-badge.bk{background:#7c3aed}
+.pp-stroke-badge.br{background:#059669}
+.pp-stroke-badge.bf{background:#d97706}
+.pp-stroke-badge.im{background:#dc2626}
+.pp-stroke-badge.relay{background:#374151}
+
+/* BOOKING CARD */
+.pp-booking-card{background:#f8fafc;border-radius:var(--r);padding:14px;border:1px solid var(--brd)}
+.pp-bc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.pp-bc-badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.65rem;font-weight:700;color:#fff;margin-bottom:5px}
+.pp-bc-badge.nm{background:#059669}
+.pp-bc-header h4{font-size:.88rem;font-weight:800;color:var(--navy);margin-bottom:3px}
+.pp-bc-header p{font-size:.72rem;color:var(--sub)}
+.pp-bc-status{white-space:nowrap;font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:999px}
+.pp-bc-status.paid{background:#dcfce7;color:#166534}
+.pp-bc-events{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.pp-bc-ev{display:flex;align-items:center;gap:8px;font-size:.8rem;padding:6px 10px;background:#fff;border-radius:6px;border:1px solid var(--brd)}
+.pp-bc-ev.relay{background:#f0f9ff;border-color:#bae6fd}
+.pp-bc-seed{margin-left:auto;font-size:.7rem;color:var(--sub);font-family:monospace}
+.pp-bc-footer{display:flex;justify-content:space-between;font-size:.75rem;color:var(--sub);flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--brd)}
+
+/* HISTORY */
+.pp-history-item{border:1px solid var(--brd);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.pp-history-item:last-child{margin-bottom:0}
+.pp-hi-header{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--brd);flex-wrap:wrap}
+.pp-hi-date{display:flex;flex-direction:column;align-items:center;background:var(--navy);color:#fff;border-radius:6px;padding:6px 10px;flex-shrink:0}
+.pp-hi-month{font-size:.62rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--cyan)}
+.pp-hi-year{font-size:.85rem;font-weight:900;line-height:1}
+.pp-hi-info{flex:1;min-width:0}
+.pp-hi-info strong{font-size:.83rem;font-weight:800;color:var(--navy);display:block;margin-bottom:2px}
+.pp-hi-info p{font-size:.72rem;color:var(--sub)}
+.pp-hi-badge{font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.pp-hi-badge.top3{background:#fef9c3;color:#92400e;border:1px solid #fde047}
+.pp-hi-badge.participated{background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc}
+.pp-hi-results{padding:8px 14px;display:flex;flex-direction:column;gap:5px}
+.pp-hi-row{display:flex;align-items:center;gap:10px;font-size:.79rem;padding:5px 0;border-bottom:1px solid #f1f5f9}
+.pp-hi-row:last-child{border-bottom:none}
+.pp-hi-row.gold{background:linear-gradient(90deg,#fffbeb 0%,transparent 100%)}
+.pp-hi-row.silver{background:linear-gradient(90deg,#f9fafb 0%,transparent 100%)}
+.pp-hi-row.bronze{background:linear-gradient(90deg,#fff7ed 0%,transparent 100%)}
+.pp-hi-time{margin-left:auto;font-family:monospace;font-weight:800;color:var(--blue);font-size:.8rem}
+.pp-hi-rank{font-size:.72rem;font-weight:700;color:var(--sub);min-width:50px;text-align:right}
+
+/* DOCUMENTS */
+.pp-docs-list{display:flex;flex-direction:column;gap:0}
+.pp-doc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:.8rem}
+.pp-doc-row:last-child{border-bottom:none}
+.pp-doc-row.ok>span:first-child{color:#16a34a}
+.pp-doc-row span:nth-child(2){flex:1;font-weight:600;color:var(--txt)}
+.pp-doc-date{font-size:.7rem;color:var(--sub)}
+
+/* LEFT/CENTRE/RIGHT */
+.pp-left{display:flex;flex-direction:column}
+.pp-centre{display:flex;flex-direction:column}
+.pp-right{display:flex;flex-direction:column}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.pp-main{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.pp-main{grid-template-columns:1fr}.pp-hero-inner{flex-direction:column;text-align:center}.pp-hero-meta{justify-content:center}.pp-hero-tags{justify-content:center}.pp-hero-actions{justify-content:center}}
+
+/* Avatar photo */
+.pp-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}

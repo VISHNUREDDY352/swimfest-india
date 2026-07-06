@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Player Profile — SwimFest India</title>
+  <link rel="stylesheet" href="home.css?v=99"/>
+  <link rel="stylesheet" href="player.css?v=99"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<script>
+  if (!localStorage.getItem('swimmer_id') || localStorage.getItem('swimmer_id') === '') {
+    window.location.href = 'login.html';
+  }
+</script>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-wave">&#127946;</span> SwimFest India
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#events">Events</a></li>
+      <li><a href="player.html" class="active">My Profile</a></li>
+      <li><a href="index.html#results">Results</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-cta" style="text-decoration:none">&#8592; Back to Home</a>
+      <button class="nav-ham" id="navHam">&#9776;</button>
+    </div>
+  </div>
+  <ul class="nav-mob" id="navMob">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="player.html">My Profile</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- PROFILE HERO BANNER -->
+<div class="pp-hero" style="background:linear-gradient(135deg,#0a1628 0%,#1d4ed8 60%,#06b6d4 100%);padding:14px 20px">
+  <div class="pp-hero-inner" style="max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:16px">
+    <div class="pp-avatar-wrap" style="position:relative;flex-shrink:0">
+      <div class="pp-avatar" id="ppAvatar" style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden">&#127946;</div>
+      <div class="pp-status-dot" style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid #0a1628"></div>
+    </div>
+    <div class="pp-hero-info" style="flex:1;min-width:0">
+      <div class="pp-hero-top" style="display:flex;align-items:center;gap:10px;margin-bottom:3px;flex-wrap:wrap">
+        <h1 id="ppName" style="font-size:1.3rem;font-weight:900;color:#fff;margin:0">Swimmer</h1>
+        <span class="pp-hero-id" id="ppId" style="font-size:.62rem;background:rgba(255,255,255,.15);color:rgba(255,255,255,.75);padding:2px 8px;border-radius:999px;font-family:monospace;font-weight:700"></span>
+      </div>
+      <div class="pp-hero-tags" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:3px">
+        <span class="pp-tag category" id="ppCategory" style="padding:2px 10px;border-radius:999px;font-size:.62rem;font-weight:700;background:rgba(255,255,255,.18);color:#fff"></span>
+        <span class="pp-tag academy" id="ppAcademy" style="padding:2px 10px;border-radius:999px;font-size:.62rem;font-weight:700;background:rgba(6,182,212,.25);color:#a5f3fc"></span>
+        <span style="padding:2px 10px;border-radius:999px;font-size:.62rem;font-weight:700;background:rgba(34,197,94,.2);color:#86efac">&#128994; Active</span>
+      </div>
+      <div class="pp-hero-meta" style="display:flex;gap:14px;flex-wrap:wrap;font-size:.68rem;color:rgba(255,255,255,.55)"></div>
+    </div>
+    <div class="pp-hero-actions" style="flex-shrink:0">
+      <button class="pp-btn-edit" onclick="toggleEdit()" style="padding:7px 16px;background:rgba(255,255,255,.12);color:#fff;border-radius:999px;font-size:.78rem;font-weight:600;border:1.5px solid rgba(255,255,255,.3);cursor:pointer">&#9998; Edit Profile</button>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="pp-stats-strip">
+  <div class="pp-stat-item">
+    <span class="pp-stat-num">12</span>
+    <span class="pp-stat-lbl">Meets Competed</span>
+  </div>
+  <div class="pp-stat-div"></div>
+  <div class="pp-stat-item">
+    <span class="pp-stat-num">3</span>
+    <span class="pp-stat-lbl">Events Registered</span>
+  </div>
+  <div class="pp-stat-div"></div>
+  <div class="pp-stat-item">
+    <span class="pp-stat-num" style="color:#f59e0b">5</span>
+    <span class="pp-stat-lbl">Top 3 Finishes</span>
+  </div>
+  <div class="pp-stat-div"></div>
+  <div class="pp-stat-item">
+    <span class="pp-stat-num" style="color:#06b6d4">00:58.72</span>
+    <span class="pp-stat-lbl">PB — 100m Freestyle</span>
+  </div>
+  <div class="pp-stat-div"></div>
+  <div class="pp-stat-item">
+    <span class="pp-stat-num">4</span>
+    <span class="pp-stat-lbl">Academies Represented</span>
+  </div>
+</div>
+
+<!-- MAIN PROFILE GRID -->
+<div class="pp-main">
+
+  <!-- LEFT: Personal Info + Current Registration -->
+  <div class="pp-left">
+
+    <!-- Personal Details -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#128100; Personal Details</div>
+      <div class="pp-details-grid" id="personalDetails">
+        <div class="pp-detail-row"><span class="pp-dl">Full Name</span><span class="pp-dv">Arjun Kumar</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Gender</span><span class="pp-dv">Boy</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Date of Birth</span><span class="pp-dv">15 March 2013</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Age Group</span><span class="pp-dv"><span class="ap u14">U-14</span></span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Swimmer ID</span><span class="pp-dv" style="font-family:monospace;color:#1d4ed8">SWM-2026-4271</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Eligibility</span><span class="pp-dv" style="color:#16a34a;font-weight:700">&#9989; Non-Medalist</span></div>
+      </div>
+    </div>
+
+    <!-- Parent / Guardian -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#128222; Parent / Guardian</div>
+      <div class="pp-details-grid" id="parentDetails">
+        <div class="pp-detail-row"><span class="pp-dl">Name</span><span class="pp-dv">—</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Relationship</span><span class="pp-dv">—</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Mobile</span><span class="pp-dv">—</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Email</span><span class="pp-dv">—</span></div>
+      </div>
+    </div>
+
+    <!-- School -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#128218; School</div>
+      <div class="pp-details-grid" id="schoolDetails">
+        <div class="pp-detail-row"><span class="pp-dl">School Name</span><span class="pp-dv">—</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Board</span><span class="pp-dv">—</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Class</span><span class="pp-dv">—</span></div>
+      </div>
+    </div>
+
+    <!-- Academy -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#127946; Academy</div>
+      <div class="pp-details-grid">
+        <div class="pp-detail-row"><span class="pp-dl">Academy</span><span class="pp-dv">—</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Academy ID</span><span class="pp-dv" style="font-family:monospace">—</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CENTRE: Personal Bests + Upcoming -->
+  <div class="pp-centre">
+
+    <!-- Personal Bests -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#9201; Personal Bests</div>
+      <table class="pp-pb-table">
+        <thead>
+          <tr><th>Event</th><th>Distance</th><th>Best Time</th><th>Date</th><th>Meet</th></tr>
+        </thead>
+        <tbody>
+          <tr class="pb-highlight"><td><span class="pp-stroke-badge fs">FS</span> Freestyle</td><td>100m</td><td class="pb-time">00:58.72</td><td>Jan 2026</td><td>SRM Invitational</td></tr>
+          <tr><td><span class="pp-stroke-badge fs">FS</span> Freestyle</td><td>50m</td><td class="pb-time">00:27.44</td><td>Mar 2025</td><td>Chennai Open</td></tr>
+          <tr><td><span class="pp-stroke-badge bk">BK</span> Backstroke</td><td>100m</td><td class="pb-time">01:08.33</td><td>Nov 2025</td><td>TN Junior Open</td></tr>
+          <tr><td><span class="pp-stroke-badge br">BR</span> Breaststroke</td><td>100m</td><td class="pb-time">01:18.45</td><td>Nov 2025</td><td>TN Junior Open</td></tr>
+          <tr><td><span class="pp-stroke-badge bf">BF</span> Butterfly</td><td>100m</td><td class="pb-time">01:12.09</td><td>Jan 2026</td><td>SRM Invitational</td></tr>
+          <tr><td><span class="pp-stroke-badge im">IM</span> Ind. Medley</td><td>200m</td><td class="pb-time">02:34.11</td><td>Sep 2025</td><td>SwimFest 2025</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Current Registration -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#128203; Current Booking</div>
+      <div class="pp-booking-card">
+        <div class="pp-bc-header">
+          <div>
+            <span class="pp-bc-badge nm">Non-Medalist</span>
+            <h4>Golden Non-Medalist Championship 2026</h4>
+            <p>SRM University, Kattankulathur &nbsp;&middot;&nbsp; June 20&ndash;22, 2026</p>
+          </div>
+          <span class="pp-bc-status paid">&#9989; Paid</span>
+        </div>
+        <div class="pp-bc-events">
+          <div class="pp-bc-ev"><span class="pp-stroke-badge fs">FS</span><span>100m Freestyle</span><span class="pp-bc-seed">Seed: 00:58.72</span></div>
+          <div class="pp-bc-ev"><span class="pp-stroke-badge bk">BK</span><span>100m Backstroke</span><span class="pp-bc-seed">Seed: 01:08.33</span></div>
+          <div class="pp-bc-ev"><span class="pp-stroke-badge im">IM</span><span>200m Ind. Medley</span><span class="pp-bc-seed">Seed: 02:34.11</span></div>
+          <div class="pp-bc-ev relay"><span class="pp-stroke-badge relay">RLY</span><span>4&times;100m Relay</span><span class="pp-bc-seed">Opted In</span></div>
+        </div>
+        <div class="pp-bc-footer">
+          <span>Booking ID: <strong>SWM-2026-4271</strong></span>
+          <span>Total Paid: <strong>&#8377;1,062</strong> (incl. GST)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate Download — only shows after event is completed -->
+    <div class="pp-card" id="certSection" style="display:none">
+      <div class="pp-card-head">&#127941; Participation Certificate</div>
+      <div style="text-align:center;padding:12px 0">
+        <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">Congratulations! Your participation certificate is ready to download.</p>
+        <a href="certificate.html" target="_blank" style="display:inline-block;padding:10px 24px;background:#0a1628;color:#fff;border-radius:999px;font-size:.85rem;font-weight:700;text-decoration:none;transition:background .18s">Download Certificate (PDF)</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Past Competition History -->
+  <div class="pp-right">
+
+    <!-- Competition History -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#127942; Past Competition History</div>
+
+      <div class="pp-history-item">
+        <div class="pp-hi-header">
+          <div class="pp-hi-date"><span class="pp-hi-month">JAN</span><span class="pp-hi-year">2026</span></div>
+          <div class="pp-hi-info">
+            <strong>SRM Invitational Swim Cup 2026</strong>
+            <p>SRM University, Kattankulathur</p>
+          </div>
+          <span class="pp-hi-badge top3">Top 3</span>
+        </div>
+        <div class="pp-hi-results">
+          <div class="pp-hi-row gold"><span class="pp-stroke-badge fs">FS</span><span>100m Freestyle</span><span class="pp-hi-time">00:58.72</span><span class="pp-hi-rank">&#127941; 1st</span></div>
+          <div class="pp-hi-row silver"><span class="pp-stroke-badge bf">BF</span><span>100m Butterfly</span><span class="pp-hi-time">01:12.09</span><span class="pp-hi-rank">&#129352; 2nd</span></div>
+        </div>
+      </div>
+
+      <div class="pp-history-item">
+        <div class="pp-hi-header">
+          <div class="pp-hi-date"><span class="pp-hi-month">NOV</span><span class="pp-hi-year">2025</span></div>
+          <div class="pp-hi-info">
+            <strong>TN Junior Non-Medalist Open 2025</strong>
+            <p>Thiruvanmiyur Pool, Chennai</p>
+          </div>
+          <span class="pp-hi-badge participated">Participated</span>
+        </div>
+        <div class="pp-hi-results">
+          <div class="pp-hi-row bronze"><span class="pp-stroke-badge bk">BK</span><span>100m Backstroke</span><span class="pp-hi-time">01:08.33</span><span class="pp-hi-rank">&#129353; 3rd</span></div>
+          <div class="pp-hi-row"><span class="pp-stroke-badge br">BR</span><span>100m Breaststroke</span><span class="pp-hi-time">01:18.45</span><span class="pp-hi-rank">5th</span></div>
+        </div>
+      </div>
+
+      <div class="pp-history-item">
+        <div class="pp-hi-header">
+          <div class="pp-hi-date"><span class="pp-hi-month">SEP</span><span class="pp-hi-year">2025</span></div>
+          <div class="pp-hi-info">
+            <strong>SwimFest India 2025</strong>
+            <p>Nehru Indoor Stadium Pool, Chennai</p>
+          </div>
+          <span class="pp-hi-badge top3">Top 3</span>
+        </div>
+        <div class="pp-hi-results">
+          <div class="pp-hi-row silver"><span class="pp-stroke-badge im">IM</span><span>200m Ind. Medley</span><span class="pp-hi-time">02:34.11</span><span class="pp-hi-rank">&#129352; 2nd</span></div>
+          <div class="pp-hi-row"><span class="pp-stroke-badge fs">FS</span><span>50m Freestyle</span><span class="pp-hi-time">00:28.11</span><span class="pp-hi-rank">4th</span></div>
+        </div>
+      </div>
+
+      <div class="pp-history-item">
+        <div class="pp-hi-header">
+          <div class="pp-hi-date"><span class="pp-hi-month">MAR</span><span class="pp-hi-year">2025</span></div>
+          <div class="pp-hi-info">
+            <strong>Chennai Open Age-Group Meet 2025</strong>
+            <p>Nehru Indoor Stadium Pool, Chennai</p>
+          </div>
+          <span class="pp-hi-badge participated">Participated</span>
+        </div>
+        <div class="pp-hi-results">
+          <div class="pp-hi-row"><span class="pp-stroke-badge fs">FS</span><span>50m Freestyle</span><span class="pp-hi-time">00:27.44</span><span class="pp-hi-rank">&#127941; 1st PB</span></div>
+          <div class="pp-hi-row"><span class="pp-stroke-badge bk">BK</span><span>100m Backstroke</span><span class="pp-hi-time">01:10.22</span><span class="pp-hi-rank">6th</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Documents -->
+    <div class="pp-card">
+      <div class="pp-card-head">&#128196; Documents Submitted</div>
+      <div class="pp-docs-list">
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Birth Certificate</span><span class="pp-doc-date">Verified Jan 2026</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Aadhaar Card</span><span class="pp-doc-date">Verified Jan 2026</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Non-Medalist Declaration</span><span class="pp-doc-date">Signed by Coach + Parent</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Academy Authorization Letter</span><span class="pp-doc-date">Chennai Dolphins — ACD-002</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Parent Consent Form</span><span class="pp-doc-date">Signed 15 Jan 2026</span></div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /.pp-main -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">&#127946; SwimFest India</span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#events">Events</a>
+      <a href="player.html">My Profile</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <p>&copy; 2026 SwimFest India &middot; Age cut-off: 31 Dec 2026</p>
+  </div>
+</footer>
+
+<script>
+  const ham = document.getElementById('navHam');
+  const mob = document.getElementById('navMob');
+  if(ham) ham.addEventListener('click', () => mob.classList.toggle('open'));
+
+  function toggleEdit() {
+    document.getElementById('editModal').style.display = 'flex';
+    // Load saved avatar into preview
+    const swIdForAvatar = localStorage.getItem('swimmer_id') || '';
+    const savedAv = localStorage.getItem('avatar_photo_' + swIdForAvatar);
+    if (savedAv) {
+      document.getElementById('editAvatarPreview').innerHTML = `<img src="${savedAv}" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>`;
+    }
+    // Pre-fill with current data
+    const swId = localStorage.getItem('swimmer_id');
+    if (!swId) return;
+    fetch('/api/swimmers/' + swId)
+      .then(r => r.json())
+      .then(s => {
+        if (!s || s.error) return;
+        document.getElementById('editName').value = s.full_name || '';
+        document.getElementById('editGender').value = s.gender || '';
+        document.getElementById('editDob').value = s.dob || '';
+        document.getElementById('editMobile').value = s.parent_mobile || '';
+        document.getElementById('editEmail').value = s.parent_email || '';
+        document.getElementById('editParentName').value = s.parent_name || '';
+        document.getElementById('editRelationship').value = s.parent_relationship || '';
+        document.getElementById('editAddress').value = s.address || '';
+        document.getElementById('editSchoolName').value = s.school_name || '';
+        document.getElementById('editSchoolBoard').value = s.school_board || '';
+        document.getElementById('editSchoolClass').value = s.school_class || '';
+      }).catch(() => {});
+  }
+
+  function handleAvatarUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Photo must be less than 2MB.');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const swId = localStorage.getItem('swimmer_id') || '';
+      document.getElementById('ppAvatar').innerHTML = `<img src="${e.target.result}" alt="Profile Photo" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>`;
+      localStorage.setItem('avatar_photo_' + swId, e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function previewAvatar(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Photo must be less than 2MB.');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const swId = localStorage.getItem('swimmer_id') || '';
+      document.getElementById('editAvatarPreview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>`;
+      document.getElementById('ppAvatar').innerHTML = `<img src="${e.target.result}" alt="Profile Photo" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>`;
+      localStorage.setItem('avatar_photo_' + swId, e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Load saved avatar on page load
+  const currentSwId = localStorage.getItem('swimmer_id') || '';
+  const savedAvatar = localStorage.getItem('avatar_photo_' + currentSwId);
+  if (savedAvatar) {
+    document.getElementById('ppAvatar').innerHTML = `<img src="${savedAvatar}" alt="Profile Photo" style="width:100%;height:100%;border-radius:50%;object-fit:cover"/>`;
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+  }
+
+  function saveProfile(e) {
+    e.preventDefault();
+    const swId = localStorage.getItem('swimmer_id') || 'SWM-2026-FC14';
+    const updates = {
+      'Full Name': document.getElementById('editName').value,
+      'Gender': document.getElementById('editGender').value,
+      'Date of Birth': document.getElementById('editDob').value,
+      'Mobile': document.getElementById('editMobile').value,
+      'Address': document.getElementById('editAddress').value,
+      'Parent Name': document.getElementById('editParentName').value,
+      'Relationship': document.getElementById('editRelationship').value,
+      'Email': document.getElementById('editEmail').value,
+      'School Name': document.getElementById('editSchoolName').value,
+      'School Board': document.getElementById('editSchoolBoard').value,
+      'School Class': document.getElementById('editSchoolClass').value,
+    };
+    
+    fetch('/api/swimmers/' + swId, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updates)
+    })
+    .then(() => {
+      closeEditModal();
+      loadProfile();
+      alert('Profile updated successfully!');
+    })
+    .catch(() => {
+      closeEditModal();
+      alert('Profile saved locally.');
+    });
+  }
+
+  function loadProfile() {
+    const swId = localStorage.getItem('swimmer_id');
+    if (!swId || swId === 'DEMO' || swId === 'ADMIN') return;
+    fetch('/api/swimmers/' + swId)
+      .then(r => r.json())
+      .then(s => {
+        if (!s || s.error) return;
+        populateProfile(s);
+      })
+      .catch(err => console.log('Load error:', err));
+  }
+
+  function populateProfile(s) {
+    // Hero
+    document.getElementById('ppName').textContent = s.full_name || '';
+    document.getElementById('ppId').textContent = s.swimmer_id || '';
+    document.getElementById('ppCategory').textContent = (s.age_group||'') + ' ' + (s.gender||'');
+
+    // Personal Details
+    const dob = s.dob ? new Date(s.dob).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '';
+    const det = document.getElementById('personalDetails');
+    if (det) {
+      det.innerHTML = `
+        <div class="pp-detail-row"><span class="pp-dl">Full Name</span><span class="pp-dv">${s.full_name||''}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Gender</span><span class="pp-dv">${s.gender==='Boys'?'Boy':s.gender==='Girls'?'Girl':s.gender||''}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Date of Birth</span><span class="pp-dv">${dob}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Age Group</span><span class="pp-dv">${s.age_group||''}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Nationality</span><span class="pp-dv">${s.nationality||'Indian'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Address</span><span class="pp-dv">${s.address||'—'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Swimmer ID</span><span class="pp-dv" style="font-family:monospace;color:#1d4ed8">${s.swimmer_id||''}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Eligibility</span><span class="pp-dv" style="color:#16a34a;font-weight:700">${s.eligibility||'Non-Medalist'}</span></div>`;
+    }
+
+    // Parent (cards[1])
+    const cards = document.querySelectorAll('.pp-card');
+    const parentCard = document.getElementById('parentDetails');
+    if (parentCard) {
+      parentCard.innerHTML = `
+        <div class="pp-detail-row"><span class="pp-dl">Name</span><span class="pp-dv">${s.parent_name||'—'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Relationship</span><span class="pp-dv">${s.parent_relationship||'—'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Mobile</span><span class="pp-dv">${s.parent_mobile||'—'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Email</span><span class="pp-dv">${s.parent_email||'—'}</span></div>`;
+    }
+
+    // School (cards[2])
+    const schoolCard = document.getElementById('schoolDetails');
+    if (schoolCard) {
+      schoolCard.innerHTML = `
+        <div class="pp-detail-row"><span class="pp-dl">School Name</span><span class="pp-dv">${s.school_name || '—'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Board</span><span class="pp-dv">${s.school_board || '—'}</span></div>
+        <div class="pp-detail-row"><span class="pp-dl">Class</span><span class="pp-dv">${s.school_class || '—'}</span></div>`;
+    }
+
+    // Academy (cards[3])
+    if (s.academy_id) {
+      fetch('/api/academies').then(r=>r.json()).then(acads => {
+        const a = acads.find(x => x.academy_id === s.academy_id);
+        if (!a) return;
+        document.getElementById('ppAcademy').innerHTML = '&#127946; ' + a.name;
+        const acadCard = cards[3];
+        if (acadCard) {
+          const ag = acadCard.querySelector('.pp-details-grid');
+          if (ag) ag.innerHTML = `
+            <div class="pp-detail-row"><span class="pp-dl">Academy</span><span class="pp-dv">${a.name}</span></div>
+            <div class="pp-detail-row"><span class="pp-dl">Academy ID</span><span class="pp-dv" style="font-family:monospace">${a.academy_id}</span></div>`;
+        }
+      }).catch(()=>{});
+    }
+
+    // Hero meta
+    const metaEl = document.querySelector('.pp-hero-meta');
+    if (metaEl && s.dob) {
+      const age = Math.floor((new Date('2026-12-31') - new Date(s.dob)) / (365.25*86400000));
+      metaEl.innerHTML = `
+        <span>Born: ${dob}</span>
+        <span>Age: ${age} yrs (as of 31 Dec 2026)</span>
+        <span>${s.eligibility||'Non-Medalist'} Eligible</span>`;
+    }
+  }
+
+  loadProfile();
+
+  // Show certificate only if event is completed AND this swimmer has a booking for it
+  fetch('/api/tournaments').then(r=>r.json()).then(events => {
+    const completed = events.find(e => e.status === 'Completed');
+    if (completed) {
+      const swId = localStorage.getItem('swimmer_id');
+      if (!swId) return;
+      // Check if this swimmer has a booking for the completed tournament
+      fetch('/api/bookings').then(r=>r.json()).then(bookings => {
+        const hasBooking = bookings.find(b => b.swimmer_id === swId && b.tournament_id === completed.tournament_id);
+        if (hasBooking) {
+          const certSec = document.getElementById('certSection');
+          if (certSec) certSec.style.display = '';
+        }
+      }).catch(()=>{});
+    }
+  }).catch(() => {});
+</script>
+
+<!-- EDIT PROFILE MODAL -->
+<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,.7);backdrop-filter:blur(4px);z-index:900;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3)">
+    
+    <div style="background:linear-gradient(135deg,#0a1628,#1d4ed8);padding:16px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <h3 style="color:#fff;font-size:1rem;font-weight:800;margin:0">Edit Profile</h3>
+        <p style="color:rgba(255,255,255,.6);font-size:.75rem;margin:0">Update your swimmer details</p>
+      </div>
+      <button onclick="closeEditModal()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer">&times;</button>
+    </div>
+
+    <form onsubmit="saveProfile(event)" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+      
+      <!-- Photo Upload -->
+      <div style="display:flex;align-items:center;gap:14px;padding-bottom:12px;border-bottom:1px solid #e2e8f0">
+        <div id="editAvatarPreview" style="width:60px;height:60px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:1.8rem;overflow:hidden;border:2px solid #e2e8f0;flex-shrink:0">&#127946;</div>
+        <div style="flex:1">
+          <label style="font-size:.75rem;font-weight:700;color:#0a1628;display:block;margin-bottom:4px">Profile Photo</label>
+          <input type="file" id="editAvatarInput" accept="image/*" onchange="previewAvatar(this)" style="font-size:.75rem"/>
+          <p style="font-size:.68rem;color:#64748b;margin-top:3px">JPG or PNG, max 2MB</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700;color:#0a1628">Full Name</label>
+        <input type="text" id="editName" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Gender</label>
+          <select id="editGender" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <option value="Boys">Boy</option>
+            <option value="Girls">Girl</option>
+          </select>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Date of Birth</label>
+          <input type="date" id="editDob" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700;color:#0a1628">Address</label>
+        <input type="text" id="editAddress" placeholder="Door No, Street, City, State, Pincode" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:6px 0"/>
+      <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px">School</p>
+
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">School Name</label>
+          <input type="text" id="editSchoolName" placeholder="e.g. DAV Public School" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Board</label>
+          <select id="editSchoolBoard" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <option value="">Select</option>
+            <option value="CBSE">CBSE</option>
+            <option value="ICSE">ICSE</option>
+            <option value="State Board">State Board</option>
+            <option value="International">International (IB/IGCSE)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700;color:#0a1628">Class / Grade</label>
+        <input type="text" id="editSchoolClass" placeholder="e.g. 8th Standard" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:6px 0"/>
+      <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Parent / Guardian</p>
+
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Parent Name</label>
+          <input type="text" id="editParentName" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Relationship</label>
+          <select id="editRelationship" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <option value="Father">Father</option>
+            <option value="Mother">Mother</option>
+            <option value="Guardian">Guardian</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Mobile</label>
+          <input type="tel" id="editMobile" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700;color:#0a1628">Email</label>
+          <input type="email" id="editEmail" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:6px 0"/>
+      <p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Academy</p>
+
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700;color:#0a1628">Academy</label>
+        <select id="editAcademy" style="padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+          <option value="">Select Academy</option>
+          <option value="SRM Swim Club">SRM Swim Club</option>
+          <option value="Chennai Dolphins">Chennai Dolphins</option>
+          <option value="Madurai Marlins">Madurai Marlins</option>
+          <option value="Kattankulathur Aqua">Kattankulathur Aqua</option>
+          <option value="TN Swim Academy">TN Swim Academy</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button type="submit" style="flex:1;padding:11px;background:#0a1628;color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer">Save Changes</button>
+        <button type="button" onclick="closeEditModal()" style="padding:11px 20px;background:transparent;color:#64748b;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer">Cancel</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

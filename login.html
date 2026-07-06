@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Login — SwimFest India</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;background:linear-gradient(135deg,#0a1628 0%,#1d4ed8 50%,#06b6d4 100%);overflow:hidden;position:relative}
+
+    /* Background swimmer image overlay */
+    body::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1400&q=80') center/cover no-repeat;opacity:0.15;z-index:0}
+
+    .login-container{display:flex;width:100%;min-height:100vh;position:relative;z-index:1}
+
+    /* Left Panel — Branding */
+    .login-left{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px;text-align:center;color:#fff}
+    .login-left .logo{font-size:3rem;margin-bottom:12px}
+    .login-left h1{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:900;letter-spacing:-1px;margin-bottom:10px}
+    .login-left p{font-size:.95rem;color:rgba(255,255,255,.7);max-width:380px;line-height:1.7;margin-bottom:28px}
+    .login-features{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:320px}
+    .login-features .feat{display:flex;align-items:center;gap:10px;font-size:.82rem;color:rgba(255,255,255,.85);background:rgba(255,255,255,.08);padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1)}
+    .feat-icon{font-size:1.1rem;flex-shrink:0}
+
+    /* Right Panel — Form */
+    .login-right{width:100%;max-width:440px;display:flex;align-items:center;justify-content:center;padding:32px}
+    .login-card{background:#fff;border-radius:20px;padding:36px 32px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+    .login-card-header{text-align:center;margin-bottom:24px}
+    .login-card-header h2{font-size:1.3rem;font-weight:800;color:#0a1628;margin-bottom:4px}
+    .login-card-header p{font-size:.82rem;color:#64748b}
+
+    /* Tabs */
+    .login-tabs{display:flex;gap:0;margin-bottom:22px;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden}
+    .login-tab{flex:1;padding:10px;text-align:center;font-size:.82rem;font-weight:700;cursor:pointer;border:none;background:#f8fafc;color:#64748b;transition:all .2s}
+    .login-tab.active{background:#0a1628;color:#fff}
+    .login-tab:hover:not(.active){background:#f1f5f9}
+
+    /* Form */
+    .login-form{display:flex;flex-direction:column;gap:14px}
+    .form-grp{display:flex;flex-direction:column;gap:5px}
+    .form-grp label{font-size:.75rem;font-weight:700;color:#0a1628;text-transform:uppercase;letter-spacing:.5px}
+    .form-grp input,.form-grp select{padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.88rem;color:#0a1628;transition:border-color .18s}
+    .form-grp input:focus,.form-grp select:focus{outline:none;border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,.1)}
+    .form-grp input::placeholder{color:#94a3b8}
+
+    .form-row{display:flex;justify-content:space-between;align-items:center}
+    .form-remember{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#64748b;cursor:pointer}
+    .form-remember input{width:15px;height:15px;accent-color:#1d4ed8}
+    .form-forgot{font-size:.78rem;color:#1d4ed8;font-weight:600;text-decoration:none}
+    .form-forgot:hover{text-decoration:underline}
+
+    .btn-login{padding:12px;background:#0a1628;color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:800;cursor:pointer;transition:background .18s,transform .15s;margin-top:4px}
+    .btn-login:hover{background:#1d4ed8;transform:translateY(-1px)}
+
+    .divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:#94a3b8;font-size:.75rem}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0}
+
+    .social-btns{display:flex;gap:10px}
+    .social-btn{flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.8rem;font-weight:600;color:#0a1628;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .18s,background .18s}
+    .social-btn:hover{border-color:#1d4ed8;background:#f0f9ff}
+
+    .login-footer{text-align:center;margin-top:18px;font-size:.8rem;color:#64748b}
+    .login-footer a{color:#1d4ed8;font-weight:700;text-decoration:none}
+    .login-footer a:hover{text-decoration:underline}
+
+    /* Role badge */
+    .role-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.68rem;font-weight:700;margin-left:6px}
+    .role-swimmer{background:#dcfce7;color:#166534}
+    .role-coach{background:#e0f2fe;color:#0369a1}
+    .role-admin{background:#fef3c7;color:#92400e}
+
+    /* Success message */
+    .login-success{display:none;text-align:center;padding:20px 0}
+    .login-success .check{font-size:3rem;margin-bottom:12px}
+    .login-success h3{font-size:1.1rem;font-weight:800;color:#16a34a;margin-bottom:6px}
+    .login-success p{font-size:.82rem;color:#64748b;margin-bottom:14px}
+    .login-success .btn-continue{padding:10px 28px;background:#1d4ed8;color:#fff;border:none;border-radius:999px;font-size:.88rem;font-weight:700;cursor:pointer;transition:background .18s}
+    .login-success .btn-continue:hover{background:#3b82f6}
+
+    /* Responsive */
+    @media(max-width:900px){.login-left{display:none}.login-right{max-width:100%}}
+    @media(max-width:480px){.login-card{padding:24px 20px}.login-right{padding:16px}}
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+
+  <!-- LEFT: Branding -->
+  <div class="login-left">
+    <div class="logo">&#127946;</div>
+    <h1>SwimFest India</h1>
+    <p>Tamil Nadu's Premier Non-Medalist Swimming Championship. Register, book events, view heat sheets, and track your performance.</p>
+    <div class="login-features">
+      <div class="feat"><span class="feat-icon">&#128100;</span> Swimmer profiles with past results</div>
+      <div class="feat"><span class="feat-icon">&#128203;</span> Auto-generated heat sheets &amp; lane seeding</div>
+      <div class="feat"><span class="feat-icon">&#128176;</span> Online booking with UPI / Card payment</div>
+      <div class="feat"><span class="feat-icon">&#127942;</span> Live results &amp; team championship scoring</div>
+      <div class="feat"><span class="feat-icon">&#128222;</span> WhatsApp &amp; email confirmations</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Login Form -->
+  <div class="login-right">
+    <div class="login-card">
+
+      <div class="login-card-header">
+        <h2>Welcome Back &#128075;</h2>
+        <p>Sign in to your SwimFest India account</p>
+      </div>
+
+      <!-- Role Tabs -->
+      <div class="login-tabs">
+        <button class="login-tab active" data-role="swimmer" onclick="switchTab(this)">&#127946; Swimmer</button>
+        <button class="login-tab" data-role="admin" onclick="switchTab(this)">&#128272; Admin</button>
+      </div>
+
+      <!-- Login Form -->
+      <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+
+        <div class="form-grp" id="swimmerIdGroup" style="display:none">
+          <label>Swimmer ID</label>
+          <input type="text" id="loginSwimmerId" placeholder="e.g. SWM-2026-4271"/>
+        </div>
+
+        <div class="form-grp">
+          <label>Email or Mobile</label>
+          <input type="text" id="loginEmail" placeholder="Enter email or mobile number" required/>
+        </div>
+
+        <div class="form-grp">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required/>
+        </div>
+
+        <div class="form-grp" id="academyGroup" style="display:none">
+          <label>Academy</label>
+          <select id="loginAcademy">
+            <option value="">Select Academy</option>
+            <option>SRM Swim Club</option>
+            <option>Chennai Dolphins</option>
+            <option>Madurai Marlins</option>
+            <option>Kattankulathur Aqua</option>
+            <option>TN Swim Academy</option>
+          </select>
+        </div>
+
+        <div class="form-row" id="rememberForgotRow">
+          <label class="form-remember"><input type="checkbox" checked/> Remember me</label>
+          <a href="#" class="form-forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">Sign In as Swimmer</button>
+      </form>
+
+      <div class="divider" id="socialDivider">or continue with</div>
+
+      <div class="social-btns" id="socialBtns">
+        <button class="social-btn" onclick="socialLogin('google')">&#127760; Google</button>
+        <button class="social-btn" onclick="socialLogin('whatsapp')">&#128172; WhatsApp</button>
+      </div>
+
+      <div class="login-footer" id="loginFooter">
+        Don't have an account? <a href="signup.html">Create Account</a>
+      </div>
+
+      <!-- Success state -->
+      <div class="login-success" id="loginSuccess">
+        <div class="check">&#9989;</div>
+        <h3>Login Successful!</h3>
+        <p id="loginSuccessMsg">Redirecting to your dashboard...</p>
+        <button class="btn-continue" id="loginContinueBtn" onclick="redirectAfterLogin()">Continue &#8594;</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentRole = 'swimmer';
+let failedAttempts = 0;
+
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentRole = tab.dataset.role;
+
+  const swimmerIdGrp = document.getElementById('swimmerIdGroup');
+  const academyGrp   = document.getElementById('academyGroup');
+  const loginBtn     = document.getElementById('loginBtn');
+
+  swimmerIdGrp.style.display = 'none';
+
+  const labels = {swimmer:'Sign In as Swimmer', admin:'Sign In as Admin'};
+  loginBtn.textContent = labels[currentRole];
+
+  // Hide forgot/create/social for admin
+  const isAdmin = currentRole === 'admin';
+  document.getElementById('rememberForgotRow').style.display = isAdmin ? 'none' : '';
+  document.getElementById('socialDivider').style.display = isAdmin ? 'none' : '';
+  document.getElementById('socialBtns').style.display = isAdmin ? 'none' : '';
+  document.getElementById('loginFooter').style.display = isAdmin ? 'none' : '';
+
+  // Clear any error messages
+  hideError();
+}
+
+function showError(msg) {
+  let errEl = document.getElementById('loginError');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.id = 'loginError';
+    errEl.style.cssText = 'background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:#991b1b;line-height:1.5;animation:shake .4s ease';
+    document.getElementById('loginForm').prepend(errEl);
+  }
+  errEl.innerHTML = `<span style="font-size:1.1rem;flex-shrink:0">&#9888;&#65039;</span><div>${msg}</div>`;
+  errEl.style.display = '';
+
+  // Add shake animation
+  const style = document.createElement('style');
+  style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}';
+  if (!document.getElementById('shakeStyle')) { style.id='shakeStyle'; document.head.appendChild(style); }
+}
+
+function hideError() {
+  const errEl = document.getElementById('loginError');
+  if (errEl) errEl.style.display = 'none';
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  hideError();
+
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+
+  if (!email || !password) {
+    showError('Please enter both email/mobile and password.');
+    return;
+  }
+
+  // Try to authenticate against the backend
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password, role: currentRole })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      // Login failed
+      failedAttempts++;
+
+      if (currentRole === 'admin') {
+        // Admin: only show simple error, no reset/create links
+        showError(`<strong>Incorrect email or password.</strong>`);
+      } else if (failedAttempts >= 3) {
+        showError(`<strong>Incorrect email or password.</strong> You've tried ${failedAttempts} times.<br/><br/>
+          <a href="#" onclick="forgotPassword()" style="color:#1d4ed8;font-weight:700">&#128274; Reset your password</a> &nbsp;or&nbsp;
+          <a href="signup.html" style="color:#1d4ed8;font-weight:700">Create a new account</a>`);
+      } else if (failedAttempts === 2) {
+        showError(`<strong>Incorrect password.</strong> ${3 - failedAttempts} attempt remaining before account lockout suggestion.`);
+      } else {
+        showError(`<strong>Invalid email or password.</strong> Please check your credentials and try again.`);
+      }
+
+      // Shake the password field
+      const pwField = document.getElementById('loginPassword');
+      pwField.style.borderColor = '#dc2626';
+      pwField.style.animation = 'shake .4s ease';
+      setTimeout(() => { pwField.style.animation = ''; pwField.style.borderColor = ''; }, 500);
+      return;
+    }
+
+    // Login successful
+    failedAttempts = 0;
+    // Save swimmer_id to localStorage for profile page
+    localStorage.setItem('swimmer_id', data.swimmer_id || '');
+    localStorage.setItem('swimmer_name', data.name || '');
+    const form    = document.getElementById('loginForm');
+    const success = document.getElementById('loginSuccess');
+    const msg     = document.getElementById('loginSuccessMsg');
+    const divider = document.querySelector('.divider');
+    const social  = document.querySelector('.social-btns');
+    const footer  = document.querySelector('.login-footer');
+    const tabs    = document.querySelector('.login-tabs');
+
+    form.style.display    = 'none';
+    divider.style.display = 'none';
+    social.style.display  = 'none';
+    footer.style.display  = 'none';
+    tabs.style.display    = 'none';
+    success.style.display = '';
+
+    msg.textContent = `Welcome back, ${data.name || email}! Redirecting to home...`;
+    setTimeout(redirectAfterLogin, 2000);
+
+  } catch (err) {
+    // If backend is not running, use demo mode
+    // Demo credentials: any email + password "swim2026"
+    if (password === 'swim2026') {
+      failedAttempts = 0;
+      localStorage.setItem('swimmer_id', 'DEMO');
+      localStorage.setItem('swimmer_name', email);
+      const form    = document.getElementById('loginForm');
+      const success = document.getElementById('loginSuccess');
+      const msg     = document.getElementById('loginSuccessMsg');
+      const divider = document.querySelector('.divider');
+      const social  = document.querySelector('.social-btns');
+      const footer  = document.querySelector('.login-footer');
+      const tabs    = document.querySelector('.login-tabs');
+
+      form.style.display    = 'none';
+      divider.style.display = 'none';
+      social.style.display  = 'none';
+      footer.style.display  = 'none';
+      tabs.style.display    = 'none';
+      success.style.display = '';
+      msg.textContent = `Logged in (demo mode). Redirecting...`;
+      setTimeout(redirectAfterLogin, 2000);
+    } else {
+      failedAttempts++;
+      if (failedAttempts >= 3) {
+        showError(`<strong>Incorrect password.</strong> (${failedAttempts} failed attempts)<br/><br/>
+          &#128161; <strong>Demo password:</strong> <code style="background:#f1f5f9;padding:2px 8px;border-radius:4px">swim2026</code><br/><br/>
+          <a href="#" onclick="forgotPassword()" style="color:#1d4ed8;font-weight:700">&#128274; Forgot password?</a> &nbsp;|&nbsp;
+          <a href="signup.html" style="color:#1d4ed8;font-weight:700">Create Account</a>`);
+      } else {
+        showError(`<strong>Invalid credentials.</strong> Please check and try again. (Attempt ${failedAttempts}/3)`);
+      }
+    }
+  }
+}
+
+function forgotPassword() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (email) {
+    showError(`<span style="color:#16a34a">&#9989; Password reset link sent to <strong>${email}</strong>.</span><br/>Check your inbox and spam folder.`);
+  } else {
+    showError('Please enter your email address first, then click Forgot Password.');
+  }
+}
+
+function redirectAfterLogin() {
+  if (currentRole === 'admin') {
+    window.location.href = 'admin.html';
+  } else {
+    window.location.href = 'index.html';
+  }
+}
+
+function socialLogin(provider) {
+  alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login coming soon. Use email/password for now.\n\nDemo password: swim2026`);
+}
+</script>
+
+</body>
+</html>
