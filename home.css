@@ -550,3 +550,39 @@ body.modal-open{overflow:hidden}
 
 /* Fix scroll offset for sticky nav */
 [id]{scroll-margin-top:60px}
+
+/* ── SIZE OVERRIDES ── */
+.nav-inner{max-width:100% !important;padding:0 40px !important;height:62px !important}
+.nav-links li a{font-size:.95rem !important;padding:20px 16px !important}
+.nav-logo{font-size:1.15rem !important}
+
+.hero{min-height:480px !important}
+.hero-inner{max-width:100% !important;padding:60px 40px !important}
+.hero-text h1{font-size:clamp(2.8rem,5vw,4rem) !important}
+.hero-sub{font-size:1.05rem !important}
+.hero-eyebrow{font-size:.82rem !important}
+.btn-hero-primary,.btn-hero-ghost{padding:14px 32px !important;font-size:1rem !important}
+.chip-n{font-size:1.8rem !important}
+.chip-l{font-size:.72rem !important}
+
+.stats-inner{max-width:100% !important;padding:0 40px !important;height:52px !important}
+.stat-val{font-size:1.5rem !important}
+.stat-key{font-size:.78rem !important}
+
+.page-grid{max-width:100% !important;padding:24px 40px 0 !important;grid-template-columns:1fr 380px 320px !important;gap:24px !important}
+
+.section-head h2{font-size:1.2rem !important}
+.sh-icon{font-size:1.2rem !important}
+
+.ecard{padding:24px !important;gap:14px !important}
+.ecard h4{font-size:1.2rem !important}
+.ecard-meta{font-size:.88rem !important;gap:6px !important}
+.etag{font-size:.8rem !important;padding:5px 14px !important}
+.ecard-seats{font-size:.85rem !important}
+.btn-reg{padding:8px 20px !important;font-size:.85rem !important}
+
+.announce-item{font-size:.88rem !important}
+.announce-item p{font-size:.82rem !important}
+
+.cd-num{font-size:2.2rem !important}
+.cd-lbl{font-size:.75rem !important}
