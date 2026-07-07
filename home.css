@@ -59,12 +59,12 @@ a{text-decoration:none;color:inherit}
 .stats-bar{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08)}
 .stats-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:46px;overflow-x:auto}
 .stat-item{display:flex;align-items:center;gap:8px;padding:0 18px;white-space:nowrap;flex-shrink:0}
-.stat-val{font-size:1.1rem;font-weight:900;color:var(--cyan)}
+.stat-val{font-size:1.3rem;font-weight:900;color:var(--cyan)}
 .stat-key{font-size:.68rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.4px}
 .stat-div{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
 
 /* PAGE GRID */
-.page-grid{max-width:1300px;margin:0 auto;padding:16px 20px 0;display:grid;grid-template-columns:1fr 280px 260px;gap:16px;align-items:stretch}
+.page-grid{max-width:1400px;margin:0 auto;padding:20px 28px 0;display:grid;grid-template-columns:1fr 340px 300px;gap:20px;align-items:stretch}
 
 /* Force all columns to fill height equally */
 .col-left,.col-mid,.col-right{display:flex;flex-direction:column;gap:16px}
@@ -74,25 +74,25 @@ a{text-decoration:none;color:inherit}
 .ecard{flex:1}
 
 /* SECTION HEADS */
-.section-head{display:flex;align-items:center;gap:6px;margin-bottom:10px}
-.section-head h2{font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--txt);flex:1}
-.sh-icon{font-size:1rem}
-.sh-link{font-size:.78rem;color:var(--blue);font-weight:600}
+.section-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.section-head h2{font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--txt);flex:1}
+.sh-icon{font-size:1.1rem}
+.sh-link{font-size:.82rem;color:var(--blue);font-weight:600}
 .sh-link:hover{text-decoration:underline}
 
 /* EVENT CARDS */
-.event-list{display:flex;flex-direction:column;gap:12px}
-.ecard{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:10px;transition:box-shadow .2s,transform .2s}
+.event-list{display:flex;flex-direction:column;gap:14px}
+.ecard{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:22px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:12px;transition:box-shadow .2s,transform .2s}
 .ecard:hover{box-shadow:0 4px 18px rgba(0,0,0,.12);transform:translateY(-2px)}
 .ecard.featured{border-left:4px solid var(--blue)}
 .ecard-top{display:flex;align-items:center;justify-content:space-between}
-.etag{padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;color:#fff}
+.etag{padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:700;color:#fff}
 .etag.open{background:#2563eb}
 .etag.school{background:#7c3aed}
 .etag.nm{background:#059669}
-.ecard-seats{font-size:.75rem;font-weight:600;color:var(--sub)}
-.ecard h4{font-size:1rem;font-weight:800;color:var(--txt);line-height:1.3}
-.ecard-meta{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--sub)}
+.ecard-seats{font-size:.82rem;font-weight:600;color:var(--sub)}
+.ecard h4{font-size:1.12rem;font-weight:800;color:var(--txt);line-height:1.3}
+.ecard-meta{display:flex;flex-direction:column;gap:5px;font-size:.85rem;color:var(--sub)}
 .ecard-cats{display:flex;flex-wrap:wrap;gap:4px}
 .ep-label{display:flex;justify-content:space-between;font-size:.66rem;color:var(--sub);margin-bottom:3px}
 .ep-bar{height:5px;background:#e2e8f0;border-radius:999px;overflow:hidden}
