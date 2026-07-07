@@ -586,3 +586,60 @@ body.modal-open{overflow:hidden}
 
 .cd-num{font-size:2.2rem !important}
 .cd-lbl{font-size:.75rem !important}
+
+/* Align all column tops perfectly */
+.page-grid{align-items:start !important}
+.col-left,.col-mid,.col-right{padding-top:0 !important}
+.col-mid .section-head:first-child,
+.col-right .section-head:first-child,
+.col-right-block:first-child .section-head:first-child{margin-top:0 !important}
+
+/* Swimmer Directory & Age Categories - bigger cards */
+.dir-grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr)) !important;gap:12px !important}
+.dir-card{padding:14px !important;gap:12px !important}
+.dc-av{width:44px !important;height:44px !important;font-size:1.4rem !important}
+.dc-info strong{font-size:.9rem !important}
+.dc-info span{font-size:.78rem !important}
+
+.age-ref-section{padding:24px 40px !important}
+.age-ref-inner{max-width:100% !important}
+.age-ref-grid{gap:16px !important}
+.arc-card{padding:18px !important}
+.arc-card h4{font-size:1rem !important}
+.arc-card p, .arc-card li{font-size:.85rem !important}
+
+.past-list .past-row{padding:14px 18px !important;font-size:.9rem !important}
+
+/* ── GLOBAL BASE SIZE INCREASE ── */
+html { font-size: 17px !important; }
+
+/* All cards same padding and consistent look */
+.ecard,
+.elig-checker,
+.countdown-box,
+.announce-list,
+.past-list,
+.venue-card,
+.faq-list,
+.contact-inner,
+.dir-section .dir-inner,
+.age-ref-section .age-ref-inner,
+.arc-card,
+.pp-card {
+  font-size: 1rem !important;
+}
+
+/* Consistent card padding everywhere */
+.elig-checker { padding: 20px !important; }
+.announce-item { padding: 12px 0 !important; font-size: 0.95rem !important; }
+.announce-item strong { font-size: 1rem !important; }
+.announce-item p { font-size: 0.88rem !important; }
+.countdown-box { padding: 20px !important; }
+.cd-num { font-size: 2.5rem !important; }
+.cd-lbl { font-size: 0.82rem !important; }
+.faq-q span { font-size: 1rem !important; }
+.faq-a { font-size: 0.92rem !important; }
+.contact-item strong { font-size: 1rem !important; }
+.contact-item p { font-size: 0.9rem !important; }
+.qr-form label { font-size: 0.88rem !important; }
+.qr-form input, .qr-form select { font-size: 0.9rem !important; padding: 10px 12px !important; }
