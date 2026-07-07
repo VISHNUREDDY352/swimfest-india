@@ -145,3 +145,33 @@
 .hs-phases-list{list-style:none;display:flex;flex-direction:column;gap:10px}
 .hs-phases-list li{display:flex;align-items:flex-start;gap:12px;font-size:.84rem;color:var(--txt);line-height:1.55}
 .hs-phase-num{flex-shrink:0;background:var(--blue);color:#fff;font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap}
+
+/* ── SIZE OVERRIDES ── */
+.hs-page-header{padding:32px 40px !important}
+.hs-page-header-inner{max-width:100% !important}
+.hs-page-header h1{font-size:1.8rem !important}
+.hs-page-header p{font-size:.95rem !important}
+.hs-chip{font-size:.82rem !important;padding:5px 14px !important}
+
+.hs-pipeline{padding:12px 40px !important}
+.hs-pipeline-inner{max-width:100% !important}
+.hs-pipeline-steps{font-size:.85rem !important}
+.hs-ps{padding:5px 14px !important}
+
+.hs-controls-bar{padding:16px 40px !important}
+.hs-controls-inner{max-width:100% !important;gap:20px !important}
+.hs-ctrl-group label{font-size:.8rem !important}
+.hs-ctrl-group input,.hs-ctrl-group select{padding:10px 14px !important;font-size:.92rem !important;min-width:180px !important}
+.hs-lane-btn{padding:9px 18px !important;font-size:.9rem !important}
+.hs-btn-generate,.hs-btn-export{padding:10px 24px !important;font-size:.92rem !important}
+
+.hs-summary-bar{padding:10px 40px !important}
+.hs-summary-inner{max-width:100% !important;font-size:.9rem !important}
+
+.hs-table-area{max-width:100% !important;padding:20px 40px !important}
+.hs-event-block-header{padding:14px 18px !important}
+.hs-ev-title h3{font-size:1.05rem !important}
+
+.hs-heat-table{font-size:.92rem !important}
+.hs-heat-table th{padding:10px 14px !important;font-size:.82rem !important}
+.hs-heat-table td{padding:11px 14px !important}

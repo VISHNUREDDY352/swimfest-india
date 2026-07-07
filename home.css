@@ -643,3 +643,15 @@ html { font-size: 17px !important; }
 .contact-item p { font-size: 0.9rem !important; }
 .qr-form label { font-size: 0.88rem !important; }
 .qr-form input, .qr-form select { font-size: 0.9rem !important; padding: 10px 12px !important; }
+
+/* Swimmer Directory and FAQ - full width, aligned left */
+.dir-section{padding:20px 40px !important}
+.dir-inner{max-width:100% !important}
+.faq-section{padding:20px 40px !important}
+.faq-inner{max-width:100% !important}
+.faq-list{max-width:100% !important}
+.faq-search{font-size:.92rem !important;padding:10px 16px !important}
+.faq-q span{font-size:.95rem !important}
+.faq-a{font-size:.9rem !important}
+.contact-section{padding:20px 40px !important}
+.contact-inner{max-width:100% !important}
