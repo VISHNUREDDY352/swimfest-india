@@ -300,38 +300,11 @@ async function handleLogin(e) {
     setTimeout(redirectAfterLogin, 2000);
 
   } catch (err) {
-    // If backend is not running, use demo mode
-    // Demo credentials: any email + password "swim2026"
-    if (password === 'swim2026') {
-      failedAttempts = 0;
-      localStorage.setItem('swimmer_id', 'DEMO');
-      localStorage.setItem('swimmer_name', email);
-      const form    = document.getElementById('loginForm');
-      const success = document.getElementById('loginSuccess');
-      const msg     = document.getElementById('loginSuccessMsg');
-      const divider = document.querySelector('.divider');
-      const social  = document.querySelector('.social-btns');
-      const footer  = document.querySelector('.login-footer');
-      const tabs    = document.querySelector('.login-tabs');
-
-      form.style.display    = 'none';
-      divider.style.display = 'none';
-      social.style.display  = 'none';
-      footer.style.display  = 'none';
-      tabs.style.display    = 'none';
-      success.style.display = '';
-      msg.textContent = `Logged in (demo mode). Redirecting...`;
-      setTimeout(redirectAfterLogin, 2000);
+    failedAttempts++;
+    if (failedAttempts >= 3) {
+      showError(`<strong>Unable to connect.</strong> Please check your internet connection and try again.`);
     } else {
-      failedAttempts++;
-      if (failedAttempts >= 3) {
-        showError(`<strong>Incorrect password.</strong> (${failedAttempts} failed attempts)<br/><br/>
-          &#128161; <strong>Demo password:</strong> <code style="background:#f1f5f9;padding:2px 8px;border-radius:4px">swim2026</code><br/><br/>
-          <a href="#" onclick="forgotPassword()" style="color:#1d4ed8;font-weight:700">&#128274; Forgot password?</a> &nbsp;|&nbsp;
-          <a href="signup.html" style="color:#1d4ed8;font-weight:700">Create Account</a>`);
-      } else {
-        showError(`<strong>Invalid credentials.</strong> Please check and try again. (Attempt ${failedAttempts}/3)`);
-      }
+      showError(`<strong>Connection error.</strong> Please try again. (Attempt ${failedAttempts}/3)`);
     }
   }
 }
@@ -354,7 +327,7 @@ function redirectAfterLogin() {
 }
 
 function socialLogin(provider) {
-  alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login coming soon. Use email/password for now.\n\nDemo password: swim2026`);
+  alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login coming soon. Use email/password for now.`);
 }
 </script>
 

@@ -76,8 +76,8 @@ def login():
                 break
 
     # Accept login if:
-    # 1. Demo password "swim2026" works for swimmers only
-    # 2. Admin credentials
+    # 1. Admin credentials (role=admin only)
+    # 2. Registered swimmer credentials
     role = data.get('role', 'swimmer')
     
     # Admin login — ONLY accept admin credentials
@@ -86,12 +86,7 @@ def login():
             return jsonify({'success': True, 'name': 'Admin', 'swimmer_id': 'ADMIN'})
         return jsonify({'error': 'Incorrect email or password.'}), 401
 
-    # Swimmer login
-    if password == 'swim2026':
-        name = user['full_name'] if user else (email.split('@')[0] if '@' in email else 'Swimmer')
-        sid = user['swimmer_id'] if user else 'DEMO'
-        return jsonify({'success': True, 'name': name, 'swimmer_id': sid})
-
+    # Swimmer login — must be a registered user
     if user:
         return jsonify({'success': True, 'name': user['full_name'], 'swimmer_id': user['swimmer_id']})
 
