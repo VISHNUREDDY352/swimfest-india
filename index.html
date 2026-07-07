@@ -305,11 +305,6 @@
           <label>Academy</label>
           <select id="qrAcademy" required>
             <option value="">Select Academy</option>
-            <option>SRM Swim Club</option>
-            <option>Chennai Dolphins</option>
-            <option>Madurai Marlins</option>
-            <option>Kattankulathur Aqua</option>
-            <option>TN Swim Academy</option>
           </select>
         </div>
         <button type="submit" class="btn-continue">Continue to Events &#8594;</button>
@@ -343,22 +338,45 @@
       </div>
     </div>
     <div class="dir-grid" id="dirGrid">
-      <div class="dir-card" data-g="Boys" data-a="u14"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Yashwanth Reddy</strong><span>SRM Swim Club</span><span class="ap u14">U14</span></div></div>
-      <div class="dir-card" data-g="Boys" data-a="u14"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Arjun Kumar</strong><span>Chennai Dolphins</span><span class="ap u14">U14</span></div></div>
-      <div class="dir-card" data-g="Girls" data-a="u14"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Priya Sharma</strong><span>Blue Waves Academy</span><span class="ap u14">U14</span></div></div>
-      <div class="dir-card" data-g="Boys" data-a="u12"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Karthik M</strong><span>Aquatic Chennai</span><span class="ap u12">U12</span></div></div>
-      <div class="dir-card" data-g="Girls" data-a="u10"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Kavya Nair</strong><span>TN Swim Academy</span><span class="ap u10">U10</span></div></div>
-      <div class="dir-card" data-g="Boys" data-a="u16"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Rahul Mehta</strong><span>Madurai Marlins</span><span class="ap u16">U16</span></div></div>
-      <div class="dir-card" data-g="Girls" data-a="u12"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Sneha Iyer</strong><span>SRM Swim Club</span><span class="ap u12">U12</span></div></div>
-      <div class="dir-card" data-g="Boys" data-a="u8"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Aarav Patel</strong><span>Chennai Dolphins</span><span class="ap u10">U8</span></div></div>
-      <div class="dir-card" data-g="Girls" data-a="u16"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Meera Pillai</strong><span>Madurai Marlins</span><span class="ap u16">U16</span></div></div>
-      <div class="dir-card" data-g="Boys" data-a="u10"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Rohan Verma</strong><span>TN Swim Academy</span><span class="ap u10">U10</span></div></div>
-      <div class="dir-card" data-g="Girls" data-a="u8"><div class="dc-av girl">&#128103;</div><div class="dc-info"><strong>Ananya Reddy</strong><span>Kattankulathur Aqua</span><span class="ap u10">U8</span></div></div>
-      <div class="dir-card" data-g="Boys" data-a="u12"><div class="dc-av boy">&#128102;</div><div class="dc-info"><strong>Dev Krishnan</strong><span>SRM Swim Club</span><span class="ap u12">U12</span></div></div>
+      <p style="color:#64748b;font-size:.85rem;padding:8px">Loading swimmers...</p>
     </div>
     <button class="btn-view-all" onclick="showAllDir()">View All Swimmers</button>
   </div>
 </section>
+<script>
+(function loadDirectory(){
+  fetch('/api/swimmers').then(r=>r.json()).then(swimmers=>{
+    // Also get academies for name lookup
+    fetch('/api/academies').then(r=>r.json()).then(academies=>{
+      const acadMap = {};
+      academies.forEach(a=>{ acadMap[a.academy_id]=a.name; });
+      const grid = document.getElementById('dirGrid');
+      if(!grid) return;
+      if(!swimmers.length){ grid.innerHTML='<p style="color:#64748b;font-size:.85rem;padding:8px">No swimmers registered yet.</p>'; return; }
+      const ageClass = {'U-10':'u10','U-12':'u12','U-14':'u14','U-16':'u16'};
+      grid.innerHTML = swimmers.map(s=>{
+        const isBoy = s.gender==='Boys';
+        const av = isBoy ? '&#128102;' : '&#128103;';
+        const avCls = isBoy ? 'boy' : 'girl';
+        const ag = s.age_group || '';
+        const agCls = ageClass[ag] || 'u10';
+        const acad = acadMap[s.academy_id] || '';
+        const name = s.full_name.length>14 ? s.full_name.substring(0,13)+'…' : s.full_name;
+        return `<div class="dir-card" data-g="${s.gender}" data-a="${agCls}">
+          <div class="dc-av ${avCls}">${av}</div>
+          <div class="dc-info"><strong>${name}</strong><span>${acad}</span><span class="ap ${agCls}">${ag}</span></div>
+        </div>`;
+      }).join('');
+      // Also populate academy dropdowns
+      const opts = academies.map(a=>`<option value="${a.academy_id}">${a.name}</option>`).join('');
+      const qrAcad = document.getElementById('qrAcademy');
+      const instAcad = document.getElementById('institution');
+      if(qrAcad) qrAcad.innerHTML = '<option value="">Select Academy</option>' + opts;
+      if(instAcad) instAcad.innerHTML = '<option value="">Select Academy</option>' + opts + '<option value="Other">Other (type below)</option>';
+    }).catch(()=>{});
+  }).catch(()=>{});
+})();
+</script>
 
 <!-- AGE REFERENCE -->
 <section class="age-ref-section" id="eligibility-ref">
@@ -411,14 +429,29 @@
 
 <!-- CONTACT -->
 <section id="contact" class="contact-section">
-  <div class="contact-inner">
-    <div class="contact-item"><span>&#128205;</span><div><strong>Venue</strong><p>SRM University, Kattankulathur<br/>Tamil Nadu &ndash; 603203</p></div></div>
-    <div class="contact-item"><span>&#128197;</span><div><strong>Event Dates</strong><p>June 20&ndash;22, 2026</p></div></div>
-    <div class="contact-item"><span>&#8987;</span><div><strong>Reg. Deadline</strong><p>30 May 2026</p></div></div>
+  <div class="contact-inner" id="contactInfo">
+    <div class="contact-item"><span>&#128205;</span><div><strong>Venue</strong><p id="contactVenue">—</p></div></div>
+    <div class="contact-item"><span>&#128197;</span><div><strong>Event Dates</strong><p id="contactDates">—</p></div></div>
+    <div class="contact-item"><span>&#8987;</span><div><strong>Reg. Deadline</strong><p id="contactDeadline">—</p></div></div>
     <div class="contact-item"><span>&#128222;</span><div><strong>Phone</strong><p>+91 44 2745 2270</p></div></div>
     <div class="contact-item"><span>&#9993;&#65039;</span><div><strong>Email</strong><p>swimming@srmist.edu.in</p></div></div>
     <div class="contact-item"><span>&#128172;</span><div><strong>WhatsApp</strong><p>+91 98765 43210</p></div></div>
   </div>
+  <script>
+  (function(){
+    fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+      const open = events.find(e=>e.status==='Open') || events[0];
+      if(!open) return;
+      function fD(d){if(!d)return '—';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+      const vEl = document.getElementById('contactVenue');
+      const dEl = document.getElementById('contactDates');
+      const dlEl = document.getElementById('contactDeadline');
+      if(vEl) vEl.textContent = open.venue || '—';
+      if(dEl) dEl.textContent = fD(open.start_date) + ' – ' + fD(open.end_date);
+      if(dlEl) dlEl.textContent = fD(open.reg_deadline);
+    }).catch(()=>{});
+  })();
+  </script>
 </section>
 
 <!-- FOOTER -->
@@ -617,12 +650,6 @@
               <label>Academy Name</label>
               <select id="institution">
                 <option value="">Select Academy</option>
-                <option>SRM Swim Club</option>
-                <option>Chennai Dolphins</option>
-                <option>Madurai Marlins</option>
-                <option>Kattankulathur Aqua</option>
-                <option>TN Swim Academy</option>
-                <option value="Other">Other (type below)</option>
               </select>
             </div>
             <div class="wiz-group">
