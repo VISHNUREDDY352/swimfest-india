@@ -59,11 +59,11 @@
         <button onclick="openRegisterModal()" class="btn-hero-primary">&#128221; Register Now</button>
         <a href="#events" class="btn-hero-ghost">View Events</a>
       </div>
-      <div class="hero-chips">
-        <div class="hero-chip"><span class="chip-n">500+</span><span class="chip-l">Swimmers</span></div>
-        <div class="hero-chip"><span class="chip-n">40</span><span class="chip-l">Events</span></div>
-        <div class="hero-chip"><span class="chip-n">20</span><span class="chip-l">Academies</span></div>
-        <div class="hero-chip"><span class="chip-n">3</span><span class="chip-l">Days</span></div>
+      <div class="hero-chips" id="heroChips">
+        <div class="hero-chip"><span class="chip-n" id="heroSwimmers">—</span><span class="chip-l">Swimmers</span></div>
+        <div class="hero-chip"><span class="chip-n" id="heroEvents">—</span><span class="chip-l">Events</span></div>
+        <div class="hero-chip"><span class="chip-n" id="heroAcademies">—</span><span class="chip-l">Academies</span></div>
+        <div class="hero-chip"><span class="chip-n" id="heroDays">—</span><span class="chip-l">Days</span></div>
       </div>
     </div>
   </div>
@@ -90,20 +90,49 @@
 
 <!-- STATS BAR -->
 <div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat-item"><span class="stat-val">500+</span><span class="stat-key">Swimmers</span></div>
+  <div class="stats-inner" id="statsBar">
+    <div class="stat-item"><span class="stat-val" id="statSwimmers">—</span><span class="stat-key">Swimmers</span></div>
     <div class="stat-div"></div>
-    <div class="stat-item"><span class="stat-val">40</span><span class="stat-key">Events</span></div>
+    <div class="stat-item"><span class="stat-val" id="statBookings">—</span><span class="stat-key">Bookings</span></div>
     <div class="stat-div"></div>
     <div class="stat-item"><span class="stat-val">8</span><span class="stat-key">Categories</span></div>
     <div class="stat-div"></div>
-    <div class="stat-item"><span class="stat-val">20</span><span class="stat-key">Academies</span></div>
+    <div class="stat-item"><span class="stat-val" id="statAcademies">—</span><span class="stat-key">Academies</span></div>
     <div class="stat-div"></div>
-    <div class="stat-item"><span class="stat-val">3</span><span class="stat-key">Days</span></div>
+    <div class="stat-item"><span class="stat-val" id="statDays">—</span><span class="stat-key">Days to Go</span></div>
     <div class="stat-div"></div>
-    <div class="stat-item"><span class="stat-val">&#8377;300</span><span class="stat-key">Per Event</span></div>
+    <div class="stat-item"><span class="stat-val" id="statFee">&#8377;300</span><span class="stat-key">Per Event</span></div>
   </div>
 </div>
+<script>
+(function(){
+  fetch('/api/stats').then(r=>r.json()).then(s=>{
+    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+    set('statSwimmers', s.total_swimmers || 0);
+    set('statBookings', s.total_bookings || 0);
+    set('statAcademies', s.total_academies || 0);
+    set('heroSwimmers', s.total_swimmers || 0);
+    set('heroAcademies', s.total_academies || 0);
+    set('heroEvents', s.total_entries || 0);
+  }).catch(()=>{});
+
+  fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+    const open = events.find(e=>e.status==='Open') || events[0];
+    if(!open) return;
+    // Days to event start
+    const diff = Math.max(0, Math.ceil((new Date(open.start_date) - new Date()) / 86400000));
+    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+    set('statDays', diff);
+    set('heroDays', diff);
+    set('statFee', '₹' + (open.fee_per_event || 300));
+    // Duration in days
+    if(open.start_date && open.end_date){
+      const dur = Math.ceil((new Date(open.end_date) - new Date(open.start_date)) / 86400000) + 1;
+      set('heroDays', dur + ' Days');
+    }
+  }).catch(()=>{});
+})();
+</script>
 
 <!-- MAIN GRID -->
 <div class="page-grid" id="events">
