@@ -63,7 +63,6 @@
         <div class="hero-chip"><span class="chip-n" id="heroSwimmers">—</span><span class="chip-l">Swimmers</span></div>
         <div class="hero-chip"><span class="chip-n" id="heroEvents">—</span><span class="chip-l">Events</span></div>
         <div class="hero-chip"><span class="chip-n" id="heroAcademies">—</span><span class="chip-l">Academies</span></div>
-        <div class="hero-chip"><span class="chip-n" id="heroDays">—</span><span class="chip-l">Days</span></div>
       </div>
     </div>
   </div>
@@ -99,8 +98,6 @@
     <div class="stat-div"></div>
     <div class="stat-item"><span class="stat-val" id="statAcademies">—</span><span class="stat-key">Academies</span></div>
     <div class="stat-div"></div>
-    <div class="stat-item"><span class="stat-val" id="statDays">—</span><span class="stat-key">Days to Go</span></div>
-    <div class="stat-div"></div>
     <div class="stat-item"><span class="stat-val" id="statFee">&#8377;300</span><span class="stat-key">Per Event</span></div>
   </div>
 </div>
@@ -122,14 +119,7 @@
     // Days to event start
     const diff = Math.max(0, Math.ceil((new Date(open.start_date) - new Date()) / 86400000));
     const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-    set('statDays', diff);
-    set('heroDays', diff);
     set('statFee', '₹' + (open.fee_per_event || 300));
-    // Duration in days
-    if(open.start_date && open.end_date){
-      const dur = Math.ceil((new Date(open.end_date) - new Date(open.start_date)) / 86400000) + 1;
-      set('heroDays', dur + ' Days');
-    }
   }).catch(()=>{});
 })();
 </script>
@@ -510,8 +500,13 @@
           fetch('/api/tournaments').then(r=>r.json()).then(events=>{
             const container = document.getElementById('tournListDynamic');
             if(!container) return;
-            // Only show Open tournaments
-            const openEvents = events.filter(e => e.status === 'Open');
+            // Only show Open tournaments where deadline hasn't passed
+            const today = new Date();
+            const openEvents = events.filter(e => {
+              if(e.status !== 'Open') return false;
+              if(e.reg_deadline && new Date(e.reg_deadline + 'T23:59:59') < today) return false;
+              return true;
+            });
             if(openEvents.length === 0){
               container.innerHTML = '<p style="color:#64748b;font-size:.85rem">No open tournaments available for registration.</p>';
               return;
@@ -857,8 +852,20 @@ function loadHomeEvents() {
     const list = document.querySelector('.event-list');
     if (!list || !events.length) return;
     
-    // Filter out completed events — only show Open, Upcoming, Ongoing
-    const visibleEvents = events.filter(e => e.status !== 'Completed');
+    // Filter out completed events AND events whose deadline has passed
+    const today = new Date();
+    const visibleEvents = events.filter(e => {
+      if(e.status === 'Completed') return false;
+      return true;
+    });
+    // Sort: active (Open + deadline not passed) first, then the rest
+    visibleEvents.sort((a, b) => {
+      const aActive = a.status === 'Open' && (!a.reg_deadline || new Date(a.reg_deadline + 'T23:59:59') >= today);
+      const bActive = b.status === 'Open' && (!b.reg_deadline || new Date(b.reg_deadline + 'T23:59:59') >= today);
+      if (aActive && !bActive) return -1;
+      if (!aActive && bActive) return 1;
+      return 0;
+    });
     if (visibleEvents.length === 0) {
       list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
       return;
@@ -869,6 +876,7 @@ function loadHomeEvents() {
     let html = '';
     visibleEvents.forEach((ev, i) => {
       const isOpen = ev.status === 'Open';
+      const deadlinePassed = ev.reg_deadline ? new Date(ev.reg_deadline + 'T23:59:59') < new Date() : false;
       const badge = isOpen ? 'open' : ev.status === 'Upcoming' ? 'school' : 'nm';
       const badgeText = ev.status === 'Open' ? 'Open Event' : ev.status;
       const dates = ev.start_date && ev.end_date ? `${fmtDate(ev.start_date)} to ${fmtDate(ev.end_date)}` : '';
@@ -890,7 +898,10 @@ function loadHomeEvents() {
           <span class="ap u14">U14</span><span class="ap u16">U16</span>
         </div>
         <div class="ecard-btns">
-          <button onclick="openRegisterModal()" class="btn-reg">${isOpen?'Register':'View'}</button>
+          ${deadlinePassed 
+            ? `<span style="padding:5px 14px;background:#fee2e2;color:#dc2626;border-radius:6px;font-size:.8rem;font-weight:700">&#128274; Registration Closed</span>`
+            : `<button onclick="openRegisterModal()" class="btn-reg">Register</button>`
+          }
           <button onclick="openEventDetail(this)" class="btn-info" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#1d4ed8;font-weight:600">More Info &#8594;</button><button onclick="shareEvent(this)" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#64748b;font-weight:600;margin-left:4px">&#128279; Share</button><button onclick="showVenuePopup(this,'${(ev.venue||'').replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#dc2626;font-weight:600;margin-left:4px">&#128205; Venue</button>
         </div>
       </div>`;

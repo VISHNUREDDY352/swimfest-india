@@ -70,28 +70,23 @@
 <!-- STATS STRIP -->
 <div class="pp-stats-strip">
   <div class="pp-stat-item">
-    <span class="pp-stat-num">12</span>
+    <span class="pp-stat-num" id="statMeets">—</span>
     <span class="pp-stat-lbl">Meets Competed</span>
   </div>
   <div class="pp-stat-div"></div>
   <div class="pp-stat-item">
-    <span class="pp-stat-num">3</span>
+    <span class="pp-stat-num" id="statEventsReg">—</span>
     <span class="pp-stat-lbl">Events Registered</span>
   </div>
   <div class="pp-stat-div"></div>
   <div class="pp-stat-item">
-    <span class="pp-stat-num" style="color:#f59e0b">5</span>
+    <span class="pp-stat-num" id="statTop3" style="color:#f59e0b">—</span>
     <span class="pp-stat-lbl">Top 3 Finishes</span>
   </div>
   <div class="pp-stat-div"></div>
   <div class="pp-stat-item">
-    <span class="pp-stat-num" style="color:#06b6d4">00:58.72</span>
-    <span class="pp-stat-lbl">PB — 100m Freestyle</span>
-  </div>
-  <div class="pp-stat-div"></div>
-  <div class="pp-stat-item">
-    <span class="pp-stat-num">4</span>
-    <span class="pp-stat-lbl">Academies Represented</span>
+    <span class="pp-stat-num" id="statPB" style="color:#06b6d4">—</span>
+    <span class="pp-stat-lbl" id="statPBLabel">Personal Best</span>
   </div>
 </div>
 
@@ -151,44 +146,17 @@
 
     <!-- Personal Bests -->
     <div class="pp-card">
-      <div class="pp-card-head">&#9201; Personal Bests</div>
-      <table class="pp-pb-table">
-        <thead>
-          <tr><th>Event</th><th>Distance</th><th>Best Time</th><th>Date</th><th>Meet</th></tr>
-        </thead>
-        <tbody>
-          <tr class="pb-highlight"><td><span class="pp-stroke-badge fs">FS</span> Freestyle</td><td>100m</td><td class="pb-time">00:58.72</td><td>Jan 2026</td><td>SRM Invitational</td></tr>
-          <tr><td><span class="pp-stroke-badge fs">FS</span> Freestyle</td><td>50m</td><td class="pb-time">00:27.44</td><td>Mar 2025</td><td>Chennai Open</td></tr>
-          <tr><td><span class="pp-stroke-badge bk">BK</span> Backstroke</td><td>100m</td><td class="pb-time">01:08.33</td><td>Nov 2025</td><td>TN Junior Open</td></tr>
-          <tr><td><span class="pp-stroke-badge br">BR</span> Breaststroke</td><td>100m</td><td class="pb-time">01:18.45</td><td>Nov 2025</td><td>TN Junior Open</td></tr>
-          <tr><td><span class="pp-stroke-badge bf">BF</span> Butterfly</td><td>100m</td><td class="pb-time">01:12.09</td><td>Jan 2026</td><td>SRM Invitational</td></tr>
-          <tr><td><span class="pp-stroke-badge im">IM</span> Ind. Medley</td><td>200m</td><td class="pb-time">02:34.11</td><td>Sep 2025</td><td>SwimFest 2025</td></tr>
-        </tbody>
-      </table>
+      <div class="pp-card-head">&#9201; My Event Entries</div>
+      <div id="pbContent">
+        <p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No event entries found.</p>
+      </div>
     </div>
 
     <!-- Current Registration -->
     <div class="pp-card">
       <div class="pp-card-head">&#128203; Current Booking</div>
-      <div class="pp-booking-card">
-        <div class="pp-bc-header">
-          <div>
-            <span class="pp-bc-badge nm">Non-Medalist</span>
-            <h4>Golden Non-Medalist Championship 2026</h4>
-            <p>SRM University, Kattankulathur &nbsp;&middot;&nbsp; June 20&ndash;22, 2026</p>
-          </div>
-          <span class="pp-bc-status paid">&#9989; Paid</span>
-        </div>
-        <div class="pp-bc-events">
-          <div class="pp-bc-ev"><span class="pp-stroke-badge fs">FS</span><span>100m Freestyle</span><span class="pp-bc-seed">Seed: 00:58.72</span></div>
-          <div class="pp-bc-ev"><span class="pp-stroke-badge bk">BK</span><span>100m Backstroke</span><span class="pp-bc-seed">Seed: 01:08.33</span></div>
-          <div class="pp-bc-ev"><span class="pp-stroke-badge im">IM</span><span>200m Ind. Medley</span><span class="pp-bc-seed">Seed: 02:34.11</span></div>
-          <div class="pp-bc-ev relay"><span class="pp-stroke-badge relay">RLY</span><span>4&times;100m Relay</span><span class="pp-bc-seed">Opted In</span></div>
-        </div>
-        <div class="pp-bc-footer">
-          <span>Booking ID: <strong>SWM-2026-4271</strong></span>
-          <span>Total Paid: <strong>&#8377;1,062</strong> (incl. GST)</span>
-        </div>
+      <div id="bookingCardContent">
+        <p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No active booking found.</p>
       </div>
     </div>
 
@@ -209,78 +177,19 @@
     <!-- Competition History -->
     <div class="pp-card">
       <div class="pp-card-head">&#127942; Past Competition History</div>
-
-      <div class="pp-history-item">
-        <div class="pp-hi-header">
-          <div class="pp-hi-date"><span class="pp-hi-month">JAN</span><span class="pp-hi-year">2026</span></div>
-          <div class="pp-hi-info">
-            <strong>SRM Invitational Swim Cup 2026</strong>
-            <p>SRM University, Kattankulathur</p>
-          </div>
-          <span class="pp-hi-badge top3">Top 3</span>
-        </div>
-        <div class="pp-hi-results">
-          <div class="pp-hi-row gold"><span class="pp-stroke-badge fs">FS</span><span>100m Freestyle</span><span class="pp-hi-time">00:58.72</span><span class="pp-hi-rank">&#127941; 1st</span></div>
-          <div class="pp-hi-row silver"><span class="pp-stroke-badge bf">BF</span><span>100m Butterfly</span><span class="pp-hi-time">01:12.09</span><span class="pp-hi-rank">&#129352; 2nd</span></div>
-        </div>
+      <div id="historyContent">
+        <p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No competition history found.</p>
       </div>
-
-      <div class="pp-history-item">
-        <div class="pp-hi-header">
-          <div class="pp-hi-date"><span class="pp-hi-month">NOV</span><span class="pp-hi-year">2025</span></div>
-          <div class="pp-hi-info">
-            <strong>TN Junior Non-Medalist Open 2025</strong>
-            <p>Thiruvanmiyur Pool, Chennai</p>
-          </div>
-          <span class="pp-hi-badge participated">Participated</span>
-        </div>
-        <div class="pp-hi-results">
-          <div class="pp-hi-row bronze"><span class="pp-stroke-badge bk">BK</span><span>100m Backstroke</span><span class="pp-hi-time">01:08.33</span><span class="pp-hi-rank">&#129353; 3rd</span></div>
-          <div class="pp-hi-row"><span class="pp-stroke-badge br">BR</span><span>100m Breaststroke</span><span class="pp-hi-time">01:18.45</span><span class="pp-hi-rank">5th</span></div>
-        </div>
-      </div>
-
-      <div class="pp-history-item">
-        <div class="pp-hi-header">
-          <div class="pp-hi-date"><span class="pp-hi-month">SEP</span><span class="pp-hi-year">2025</span></div>
-          <div class="pp-hi-info">
-            <strong>SwimFest India 2025</strong>
-            <p>Nehru Indoor Stadium Pool, Chennai</p>
-          </div>
-          <span class="pp-hi-badge top3">Top 3</span>
-        </div>
-        <div class="pp-hi-results">
-          <div class="pp-hi-row silver"><span class="pp-stroke-badge im">IM</span><span>200m Ind. Medley</span><span class="pp-hi-time">02:34.11</span><span class="pp-hi-rank">&#129352; 2nd</span></div>
-          <div class="pp-hi-row"><span class="pp-stroke-badge fs">FS</span><span>50m Freestyle</span><span class="pp-hi-time">00:28.11</span><span class="pp-hi-rank">4th</span></div>
-        </div>
-      </div>
-
-      <div class="pp-history-item">
-        <div class="pp-hi-header">
-          <div class="pp-hi-date"><span class="pp-hi-month">MAR</span><span class="pp-hi-year">2025</span></div>
-          <div class="pp-hi-info">
-            <strong>Chennai Open Age-Group Meet 2025</strong>
-            <p>Nehru Indoor Stadium Pool, Chennai</p>
-          </div>
-          <span class="pp-hi-badge participated">Participated</span>
-        </div>
-        <div class="pp-hi-results">
-          <div class="pp-hi-row"><span class="pp-stroke-badge fs">FS</span><span>50m Freestyle</span><span class="pp-hi-time">00:27.44</span><span class="pp-hi-rank">&#127941; 1st PB</span></div>
-          <div class="pp-hi-row"><span class="pp-stroke-badge bk">BK</span><span>100m Backstroke</span><span class="pp-hi-time">01:10.22</span><span class="pp-hi-rank">6th</span></div>
-        </div>
-      </div>
-
     </div>
 
     <!-- Documents -->
     <div class="pp-card">
       <div class="pp-card-head">&#128196; Documents Submitted</div>
       <div class="pp-docs-list">
-        <div class="pp-doc-row ok"><span>&#9989;</span><span>Birth Certificate</span><span class="pp-doc-date">Verified Jan 2026</span></div>
-        <div class="pp-doc-row ok"><span>&#9989;</span><span>Aadhaar Card</span><span class="pp-doc-date">Verified Jan 2026</span></div>
-        <div class="pp-doc-row ok"><span>&#9989;</span><span>Non-Medalist Declaration</span><span class="pp-doc-date">Signed by Coach + Parent</span></div>
-        <div class="pp-doc-row ok"><span>&#9989;</span><span>Academy Authorization Letter</span><span class="pp-doc-date">Chennai Dolphins — ACD-002</span></div>
-        <div class="pp-doc-row ok"><span>&#9989;</span><span>Parent Consent Form</span><span class="pp-doc-date">Signed 15 Jan 2026</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Birth Certificate</span><span class="pp-doc-date">Please verify at check-in</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Aadhaar Card</span><span class="pp-doc-date">Please verify at check-in</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Non-Medalist Declaration</span><span class="pp-doc-date">Required on Day 1</span></div>
+        <div class="pp-doc-row ok"><span>&#9989;</span><span>Parent Consent Form</span><span class="pp-doc-date">Required on Day 1</span></div>
       </div>
     </div>
 
@@ -422,8 +331,112 @@
       .then(s => {
         if (!s || s.error) return;
         populateProfile(s);
+        loadBookingData(swId);
       })
       .catch(err => console.log('Load error:', err));
+  }
+
+  function loadBookingData(swId) {
+    // Load bookings for this swimmer
+    fetch('/api/bookings')
+      .then(r => r.json())
+      .then(bookings => {
+        const myBookings = bookings.filter(b => b.swimmer_id === swId);
+        
+        // Stats
+        const totalEvents = myBookings.reduce((sum, b) => sum + (b.relay_opted ? 1 : 0), 0);
+        document.getElementById('statMeets') && (document.getElementById('statMeets').textContent = myBookings.length);
+        
+        if (myBookings.length === 0) {
+          document.getElementById('bookingCardContent').innerHTML = '<p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No bookings yet. <a href="index.html" style="color:#1d4ed8;font-weight:700">Register now</a></p>';
+          document.getElementById('pbContent').innerHTML = '<p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No event entries yet.</p>';
+          document.getElementById('historyContent').innerHTML = '<p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No competition history.</p>';
+          return;
+        }
+
+        // Latest booking
+        const latest = myBookings[0];
+        fetch('/api/bookings/' + latest.booking_id)
+          .then(r => r.json())
+          .then(data => {
+            const b = data.booking;
+            const events = data.events || [];
+
+            // Update stats
+            const statEv = document.getElementById('statEventsReg');
+            if(statEv) statEv.textContent = events.length;
+
+            // Top 3 finishes
+            const top3 = events.filter(e => e.overall_place && e.overall_place <= 3).length;
+            const statT3 = document.getElementById('statTop3');
+            if(statT3) statT3.textContent = top3;
+
+            // Best time
+            const withTimes = events.filter(e => e.final_time && e.final_time !== 'NT');
+            if(withTimes.length > 0) {
+              const pb = document.getElementById('statPB');
+              const pbl = document.getElementById('statPBLabel');
+              if(pb) pb.textContent = withTimes[0].final_time;
+              if(pbl) pbl.textContent = 'PB — ' + withTimes[0].event_name;
+            } else {
+              const pb = document.getElementById('statPB');
+              if(pb) pb.textContent = '—';
+            }
+
+            // Current Booking card
+            const evHtml = events.map(e => {
+              const seed = e.seed_time && e.seed_time !== 'NT' ? `Seed: ${e.seed_time}` : 'NT';
+              return `<div class="pp-bc-ev"><span class="pp-stroke-badge fs" style="background:#1d4ed8">${e.event_code||'EV'}</span><span>${e.event_name}</span><span class="pp-bc-seed">${seed}</span></div>`;
+            }).join('');
+
+            document.getElementById('bookingCardContent').innerHTML = `
+              <div class="pp-booking-card">
+                <div class="pp-bc-header">
+                  <div>
+                    <span class="pp-bc-badge nm">Non-Medalist</span>
+                    <h4>${latest.name || 'Tournament'}</h4>
+                  </div>
+                  <span class="pp-bc-status paid">&#9989; ${b.payment_status}</span>
+                </div>
+                <div class="pp-bc-events">${evHtml || '<p style="font-size:.82rem;color:#64748b">No events found.</p>'}</div>
+                <div class="pp-bc-footer">
+                  <span>Booking ID: <strong>${b.booking_id}</strong></span>
+                  <span>Total Paid: <strong>&#8377;${b.total_paid}</strong> (incl. GST)</span>
+                </div>
+              </div>`;
+
+            // Event entries as "My Events" table
+            document.getElementById('pbContent').innerHTML = `
+              <table class="pp-pb-table">
+                <thead><tr><th>Event</th><th>Seed Time</th><th>Heat</th><th>Lane</th><th>Final Time</th><th>Place</th></tr></thead>
+                <tbody>${events.map(e => `
+                  <tr>
+                    <td>${e.event_name}</td>
+                    <td class="pb-time">${e.seed_time||'NT'}</td>
+                    <td>${e.heat_no||'—'}</td>
+                    <td>${e.lane_no||'—'}</td>
+                    <td class="pb-time">${e.final_time||'—'}</td>
+                    <td>${e.overall_place ? '#'+e.overall_place : '—'}</td>
+                  </tr>`).join('')}
+                </tbody>
+              </table>`;
+
+            // History — group all bookings by tournament
+            const histHtml = myBookings.map(bk => {
+              const d = bk.created_at ? new Date(bk.created_at) : new Date();
+              const mon = d.toLocaleString('en',{month:'short'}).toUpperCase();
+              const yr = d.getFullYear();
+              return `<div class="pp-history-item">
+                <div class="pp-hi-header">
+                  <div class="pp-hi-date"><span class="pp-hi-month">${mon}</span><span class="pp-hi-year">${yr}</span></div>
+                  <div class="pp-hi-info"><strong>${bk.tournament_id}</strong><p>Booking: ${bk.booking_id}</p></div>
+                  <span class="pp-hi-badge participated">&#9989; ${bk.payment_status}</span>
+                </div>
+              </div>`;
+            }).join('');
+            document.getElementById('historyContent').innerHTML = histHtml || '<p style="font-size:.85rem;color:#64748b;text-align:center;padding:12px 0">No history.</p>';
+          }).catch(() => {});
+      }).catch(() => {});
   }
 
   function populateProfile(s) {
