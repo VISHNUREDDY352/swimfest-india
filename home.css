@@ -655,3 +655,7 @@ html { font-size: 17px !important; }
 .faq-a{font-size:.9rem !important}
 .contact-section{padding:20px 40px !important}
 .contact-inner{max-width:100% !important}
+
+/* Centre column cards stretch full width */
+.col-mid > *{width:100% !important;box-sizing:border-box !important}
+.elig-checker{width:100% !important}
