@@ -683,3 +683,26 @@ if __name__ == '__main__':
     print(f"  Supabase: {SUPABASE_URL}")
     print("=" * 50 + "\n")
     app.run(host='0.0.0.0', debug=False, port=port)
+
+
+# ══════════════════════════════════════════
+#  API ROUTES — HOME PAGE DATA (single call)
+# ══════════════════════════════════════════
+@app.route('/api/home', methods=['GET'])
+def get_home_data():
+    """Single endpoint returning all data needed for home page"""
+    tournaments = supabase.table('tournaments').select('*').order('start_date').execute()
+    stats_swimmers = supabase.table('swimmers').select('swimmer_id', count='exact').execute()
+    stats_bookings = supabase.table('bookings').select('booking_id', count='exact').eq('payment_status', 'Paid').execute()
+    stats_academies = supabase.table('academies').select('academy_id', count='exact').eq('status', 'Active').execute()
+    academies = supabase.table('academies').select('academy_id, name, short_name').eq('status', 'Active').order('name').execute()
+    
+    return jsonify({
+        'tournaments': tournaments.data,
+        'stats': {
+            'total_swimmers': stats_swimmers.count or 0,
+            'total_bookings': stats_bookings.count or 0,
+            'total_academies': stats_academies.count or 0,
+        },
+        'academies': academies.data,
+    })

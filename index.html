@@ -103,24 +103,75 @@
 </div>
 <script>
 (function(){
-  fetch('/api/stats').then(r=>r.json()).then(s=>{
+  // Single API call for all home page data
+  fetch('/api/home').then(r=>r.json()).then(home=>{
+    const s = home.stats || {};
+    const events = home.tournaments || [];
+    const academies = home.academies || [];
     const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+
+    // Stats bar
     set('statSwimmers', s.total_swimmers || 0);
     set('statBookings', s.total_bookings || 0);
     set('statAcademies', s.total_academies || 0);
     set('heroSwimmers', s.total_swimmers || 0);
     set('heroAcademies', s.total_academies || 0);
-    set('heroEvents', s.total_entries || 0);
+    set('heroEvents', s.total_bookings || 0);
+
+    // Fee from open tournament
+    const open = events.find(e=>e.status==='Open') || events[0];
+    if(open) set('statFee', '₹' + (open.fee_per_event || 300));
+
+    // Populate academy dropdowns
+    const opts = academies.map(a=>`<option value="${a.academy_id}">${a.name}</option>`).join('');
+    const qrAcad = document.getElementById('qrAcademy');
+    const instAcad = document.getElementById('institution');
+    if(qrAcad) qrAcad.innerHTML = '<option value="">Select Academy</option>' + opts;
+    if(instAcad) instAcad.innerHTML = '<option value="">Select Academy</option>' + opts + '<option value="Other">Other (type below)</option>';
+
+    // Ticker
+    if(open){
+      function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+      const txt = `Registration Open — ${open.name} \u2022 Deadline: ${fD(open.reg_deadline)} \u2022 ${open.venue||''} \u2022 U10 \u00b7 U12 \u00b7 U14 \u00b7 U16 \u2022 Boys & Girls \u2022 Rs.${open.fee_per_event||300}/event \u2022 Register before spots fill up!`;
+      const tickerEl = document.getElementById('tickerText');
+      if(tickerEl) tickerEl.textContent = txt;
+      // Countdown
+      if(open.reg_deadline) startCountdown(open.reg_deadline);
+    }
+
+    // Load home events using cached data
+    _homeEvents = events;
+    renderHomeEvents(events);
+
+    // Announcements
+    if(open){
+      function fDa(d){if(!d)return '—';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+      const startD = open.start_date ? fDa(open.start_date) : '—';
+      const announceEl = document.getElementById('announceList');
+      if(announceEl) announceEl.innerHTML = `
+        <div class="announce-item"><span class="an-dot urgent-dot"></span><div><strong>Registration Deadline</strong><p>Entries close ${fDa(open.reg_deadline)}. No late entries accepted.</p></div></div>
+        <div class="announce-item"><span class="an-dot"></span><div><strong>Document Check-in</strong><p>Day 1 (${startD}) at 08:00 AM. Bring all originals.</p></div></div>
+        <div class="announce-item"><span class="an-dot info-dot"></span><div><strong>Heat Sheets</strong><p>Published 24 hrs before race day on this website.</p></div></div>
+        <div class="announce-item"><span class="an-dot info-dot"></span><div><strong>Relay Teams</strong><p>Relay medalists from other meets are eligible. 4&#215;50m / 4&#215;100m.</p></div></div>`;
+    }
+
+    // Contact section
+    if(open){
+      function fDc(d){if(!d)return '—';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+      const vEl=document.getElementById('contactVenue');
+      const dEl=document.getElementById('contactDates');
+      const dlEl=document.getElementById('contactDeadline');
+      const dirLink=document.getElementById('venueDirectionsLink');
+      if(vEl) vEl.textContent=open.venue||'—';
+      if(dEl) dEl.textContent=fDc(open.start_date)+' – '+fDc(open.end_date);
+      if(dlEl) dlEl.textContent=fDc(open.reg_deadline);
+      if(dirLink) dirLink.href='https://maps.google.com/?q='+encodeURIComponent(open.venue||'');
+    }
   }).catch(()=>{});
 
-  fetch('/api/tournaments').then(r=>r.json()).then(events=>{
-    const open = events.find(e=>e.status==='Open') || events[0];
-    if(!open) return;
-    // Days to event start
-    const diff = Math.max(0, Math.ceil((new Date(open.start_date) - new Date()) / 86400000));
-    const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-    set('statFee', '₹' + (open.fee_per_event || 300));
-  }).catch(()=>{});
+  // Store for visibility change refresh
+  let _homeEvents = [];
+  window._homeEvents = _homeEvents;
 })();
 </script>
 
@@ -910,50 +961,85 @@
 
 <!-- Load events dynamically from backend -->
 <script>
-function loadHomeEvents() {
-  fetch('/api/tournaments').then(r=>r.json()).then(events => {
-    const list = document.querySelector('.event-list');
-    if (!list || !events.length) return;
-    
-    // Filter out completed events AND events whose deadline has passed
-    const today = new Date();
-    const visibleEvents = events.filter(e => {
-      if(e.status === 'Completed') return false;
-      return true;
-    });
-    // Sort: active (Open + deadline not passed) first, then the rest
-    visibleEvents.sort((a, b) => {
-      const aActive = a.status === 'Open' && (!a.reg_deadline || new Date(a.reg_deadline + 'T23:59:59') >= today);
-      const bActive = b.status === 'Open' && (!b.reg_deadline || new Date(b.reg_deadline + 'T23:59:59') >= today);
-      if (aActive && !bActive) return -1;
-      if (!aActive && bActive) return 1;
-      return 0;
-    });
-    if (visibleEvents.length === 0) {
-      list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
-      return;
+function renderHomeEvents(events) {
+  const list = document.querySelector('.event-list');
+  if (!list) return;
+  if (!events || !events.length) {
+    list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
+    return;
+  }
+  const today = new Date();
+  const visibleEvents = events.filter(e => e.status !== 'Completed');
+  visibleEvents.sort((a, b) => {
+    const aActive = a.status === 'Open' && (!a.reg_deadline || new Date(a.reg_deadline + 'T23:59:59') >= today);
+    const bActive = b.status === 'Open' && (!b.reg_deadline || new Date(b.reg_deadline + 'T23:59:59') >= today);
+    if (aActive && bActive) {
+      const aD = a.reg_deadline ? new Date(a.reg_deadline) : new Date('9999-12-31');
+      const bD = b.reg_deadline ? new Date(b.reg_deadline) : new Date('9999-12-31');
+      return aD - bD;
     }
-    
-    function fmtDate(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-    
-    let html = '';
-    visibleEvents.forEach((ev, i) => {
-      const isOpen = ev.status === 'Open';
-      const deadlinePassed = ev.reg_deadline ? new Date(ev.reg_deadline + 'T23:59:59') < new Date() : false;
-      const badge = isOpen ? 'open' : ev.status === 'Upcoming' ? 'school' : 'nm';
-      const badgeText = ev.status === 'Open' ? 'Open Event' : ev.status;
-      const dates = ev.start_date && ev.end_date ? `${fmtDate(ev.start_date)} to ${fmtDate(ev.end_date)}` : '';
-      
-      html += `<div class="ecard ${i===0?'featured':''}">
-        <div class="ecard-top">
-          <span class="etag ${badge}">${badgeText}</span>
-          <span class="ecard-seats" style="color:${isOpen?'#16a34a':'#64748b'}">${isOpen?'&#128994; Open':'&#128274; '+ev.status}</span>
-        </div>
-        <h4>${ev.name}</h4>
+    if (aActive && !bActive) return -1;
+    if (!aActive && bActive) return 1;
+    return 0;
+  });
+  if (!visibleEvents.length) {
+    list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
+    return;
+  }
+  function fmtDate(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+  let html = '';
+  visibleEvents.forEach((ev, i) => {
+    const isOpen = ev.status === 'Open';
+    const deadlinePassed = ev.reg_deadline ? new Date(ev.reg_deadline + 'T23:59:59') < today : false;
+    const badge = isOpen ? 'open' : ev.status === 'Upcoming' ? 'school' : 'nm';
+    const badgeText = ev.status === 'Open' ? 'Open Event' : ev.status;
+    const dates = ev.start_date && ev.end_date ? `${fmtDate(ev.start_date)} to ${fmtDate(ev.end_date)}` : '';
+    html += `<div class="ecard ${i===0?'featured':''}">
+      <div class="ecard-top">
+        <span class="etag ${badge}">${badgeText}</span>
+        <span class="ecard-seats" style="color:${isOpen&&!deadlinePassed?'#16a34a':'#64748b'}">${isOpen&&!deadlinePassed?'&#128994; Open':'&#128274; '+ev.status}</span>
+      </div>
+      <h4>${ev.name}</h4>
+      <div class="ecard-meta">
+        <span>&#128197; ${dates}</span>
+        <span>&#128205; ${ev.venue || ''}</span>
+        <span>&#128176; &#8377;${ev.fee_per_event || 300}/event</span>
+        <span>&#8987; Reg. Deadline: ${ev.reg_deadline ? fmtDate(ev.reg_deadline) : '—'}</span>
+        <span>&#127946; Max 3 events + 1 relay per swimmer</span>
+      </div>
+      <div class="ecard-cats">
+        <span class="ap u10">U10</span><span class="ap u12">U12</span>
+        <span class="ap u14">U14</span><span class="ap u16">U16</span>
+      </div>
+      <div class="ecard-btns">
+        ${deadlinePassed
+          ? `<span style="padding:5px 14px;background:#fee2e2;color:#dc2626;border-radius:6px;font-size:.8rem;font-weight:700">&#128274; Registration Closed</span>`
+          : `<button onclick="openRegisterModal()" class="btn-reg">Register</button>`
+        }
+        <button onclick="openEventDetail(this)" class="btn-info" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#1d4ed8;font-weight:600">More Info &#8594;</button>
+        <button onclick="shareEvent(this)" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#64748b;font-weight:600;margin-left:4px">&#128279; Share</button>
+        <button onclick="showVenuePopup(this,'${(ev.venue||'').replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#dc2626;font-weight:600;margin-left:4px">&#128205; Venue</button>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function loadHomeEvents() {
+  fetch('/api/home').then(r=>r.json()).then(home=>{
+    window._homeEvents = home.tournaments || [];
+    renderHomeEvents(window._homeEvents);
+  }).catch(()=>{});
+}
+loadHomeEvents();
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) loadHomeEvents();
+});
         <div class="ecard-meta">
           <span>&#128197; ${dates}</span>
           <span>&#128205; ${ev.venue || ''}</span>
           <span>&#128176; &#8377;${ev.fee_per_event || 300}/event</span>
+          <span>&#8987; Reg. Deadline: ${ev.reg_deadline ? fmtDate(ev.reg_deadline) : '—'}</span>
           <span>&#127946; Max 3 events + 1 relay per swimmer</span>
         </div>
         <div class="ecard-cats">
