@@ -281,6 +281,41 @@ function exportCSV(){
   URL.revokeObjectURL(a.href);
 }
 
+function exportPDF(){
+  // Use browser print with a clean print stylesheet
+  const printContent = document.getElementById('hs-table-area') || document.querySelector('.hs-table-area');
+  if(!printContent){
+    alert('Generate heat sheet first before exporting PDF.');
+    return;
+  }
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Heat Sheet — SwimFest India</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11px;margin:20px}
+    h1{font-size:16px;margin-bottom:4px}
+    p{margin:2px 0;color:#555}
+    table{width:100%;border-collapse:collapse;margin-bottom:20px}
+    th{background:#0a1628;color:#fff;padding:6px 8px;text-align:left;font-size:10px}
+    td{padding:5px 8px;border-bottom:1px solid #ddd;font-size:11px}
+    tr:nth-child(even){background:#f9f9f9}
+    .event-header{background:#1d4ed8;color:#fff;padding:8px 10px;margin-top:14px;font-weight:bold;font-size:12px}
+    @media print{@page{size:A4;margin:15mm}}
+  </style>
+</head>
+<body>
+  <h1>SwimFest India — Heat Sheet</h1>
+  <p>Generated: ${new Date().toLocaleString()}</p>
+  <hr/>
+  ${printContent.innerHTML}
+</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>{ win.print(); }, 500);
+}
+
 document.querySelectorAll('.hs-lane-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.hs-lane-btn').forEach(b=>b.classList.remove('active'));

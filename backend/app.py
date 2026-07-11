@@ -14,11 +14,19 @@ from datetime import datetime
 from email_service import send_booking_confirmation
 from supabase_config import SUPABASE_URL, SUPABASE_SERVICE_KEY
 
-app = Flask(__name__, static_folder='../')
-CORS(app)
+import hashlib
+
+supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(password, hashed):
+    return hashlib.sha256(password.encode()).hexdigest() == hashed
 
 # Initialize Supabase client (service_role key bypasses RLS)
-supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+app = Flask(__name__, static_folder='../')
+CORS(app)
 
 
 # ══════════════════════════════════════════
@@ -59,8 +67,8 @@ def login():
     # Normalize mobile — strip spaces, +91, leading 0
     normalized = email.replace(' ', '').replace('+91', '').replace('-', '').lstrip('0')
 
-    # Check swimmers table — match by email or mobile
-    result = supabase.table('swimmers').select('swimmer_id, full_name, parent_email, parent_mobile').or_(
+    # Check swimmers table — match by email or mobile (fetch password_hash too)
+    result = supabase.table('swimmers').select('swimmer_id, full_name, parent_email, parent_mobile, password_hash').or_(
         f"parent_email.eq.{email},parent_mobile.eq.{email}"
     ).execute()
     
@@ -68,7 +76,7 @@ def login():
     
     # If not found by exact match, try normalized mobile
     if not user and normalized:
-        all_swimmers = supabase.table('swimmers').select('swimmer_id, full_name, parent_email, parent_mobile').execute()
+        all_swimmers = supabase.table('swimmers').select('swimmer_id, full_name, parent_email, parent_mobile, password_hash').execute()
         for s in all_swimmers.data:
             s_mobile = (s.get('parent_mobile') or '').replace(' ', '').replace('+91', '').replace('-', '').lstrip('0')
             if s_mobile == normalized:
@@ -77,7 +85,7 @@ def login():
 
     # Accept login if:
     # 1. Admin credentials (role=admin only)
-    # 2. Registered swimmer credentials
+    # 2. Registered swimmer with correct password
     role = data.get('role', 'swimmer')
     
     # Admin login — ONLY accept admin credentials
@@ -86,9 +94,17 @@ def login():
             return jsonify({'success': True, 'name': 'Admin', 'swimmer_id': 'ADMIN'})
         return jsonify({'error': 'Incorrect email or password.'}), 401
 
-    # Swimmer login — must be a registered user
+    # Swimmer login
     if user:
-        return jsonify({'success': True, 'name': user['full_name'], 'swimmer_id': user['swimmer_id']})
+        stored_hash = user.get('password_hash')
+        if stored_hash:
+            # Verify password hash
+            if verify_password(password, stored_hash):
+                return jsonify({'success': True, 'name': user['full_name'], 'swimmer_id': user['swimmer_id']})
+            return jsonify({'error': 'Incorrect password. Please try again.'}), 401
+        else:
+            # No password set — accept any password (legacy accounts)
+            return jsonify({'success': True, 'name': user['full_name'], 'swimmer_id': user['swimmer_id']})
 
     return jsonify({'error': 'Account not found. Please check your email/mobile or create a new account.'}), 401
 
@@ -220,6 +236,10 @@ def create_swimmer():
         'school_class': data.get('school_class', ''),
         'status': 'Active'
     }
+    # Hash password if provided
+    raw_password = data.get('password', '')
+    if raw_password:
+        row['password_hash'] = hash_password(raw_password)
     supabase.table('swimmers').insert(row).execute()
     return jsonify({'swimmer_id': sid, 'age_group': age_group, 'message': 'Swimmer registered'}), 201
 

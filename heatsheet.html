@@ -474,6 +474,7 @@
 
     <button class="hs-btn-generate" onclick="generateHeats()">&#9889; Re-Generate Heats</button>
     <button class="hs-btn-export" onclick="exportCSV()">&#11015;&#65039; Export CSV</button>
+    <button class="hs-btn-export" onclick="exportPDF()" style="background:#0a1628;color:#fff;border-color:#0a1628">&#128196; Export PDF</button>
   </div>
 </div>
 
@@ -485,7 +486,7 @@
 </div>
 
 <!-- HEAT SHEET TABLE -->
-<div class="hs-table-area">
+<div class="hs-table-area" id="hs-table-area">
   <div class="hs-table-inner" id="heatSheetOutput">
     <!-- filled by JS -->
   </div>

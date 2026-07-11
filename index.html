@@ -140,48 +140,53 @@
     <div class="section-head" id="results" style="margin-top:18px">
       <span class="sh-icon">&#127942;</span><h2>Past Event Results</h2>
     </div>
-    <div class="past-list">
-      <div class="past-row" onclick="toggleResult('r2025',this)">
-        <div class="past-info"><span class="past-year">2025</span><span class="past-name">SwimFest India 2025 Results</span></div>
-        <span class="past-chev">&#9660;</span>
-      </div>
-      <div class="past-panel" id="r2025">
-        <table class="mini-results">
-          <thead><tr><th>Event</th><th>Winner</th><th>Time</th></tr></thead>
-          <tbody>
-            <tr><td>50m Freestyle U12 Boys</td><td>Arjun Kumar</td><td>32.18s</td></tr>
-            <tr><td>100m Backstroke U14 Girls</td><td>Priya Sharma</td><td>1:12.44</td></tr>
-            <tr><td>50m Butterfly U10 Boys</td><td>Aarav Patel</td><td>38.05s</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="past-row" onclick="toggleResult('r2024',this)">
-        <div class="past-info"><span class="past-year">2024</span><span class="past-name">SwimFest India 2024 Results</span></div>
-        <span class="past-chev">&#9660;</span>
-      </div>
-      <div class="past-panel" id="r2024">
-        <table class="mini-results">
-          <thead><tr><th>Event</th><th>Winner</th><th>Time</th></tr></thead>
-          <tbody>
-            <tr><td>100m Freestyle U16 Boys</td><td>Rahul Mehta</td><td>58.72s</td></tr>
-            <tr><td>50m Breaststroke U12 Girls</td><td>Sneha Iyer</td><td>41.33s</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="past-row" onclick="toggleResult('r2023',this)">
-        <div class="past-info"><span class="past-year">2023</span><span class="past-name">SwimFest India 2023 Results</span></div>
-        <span class="past-chev">&#9660;</span>
-      </div>
-      <div class="past-panel" id="r2023">
-        <table class="mini-results">
-          <thead><tr><th>Event</th><th>Winner</th><th>Time</th></tr></thead>
-          <tbody>
-            <tr><td>200m IM U14 Boys</td><td>Karthik M</td><td>2:34.11</td></tr>
-            <tr><td>50m Freestyle U10 Girls</td><td>Kavya Nair</td><td>36.88s</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="past-list" id="pastResultsList">
+      <p style="color:#64748b;font-size:.85rem;padding:10px">Loading results...</p>
     </div>
+    <script>
+    (function(){
+      fetch('/api/tournaments').then(r=>r.json()).then(tournaments=>{
+        const completed = tournaments.filter(t=>t.status==='Completed');
+        const list = document.getElementById('pastResultsList');
+        if(!list) return;
+        if(!completed.length){
+          list.innerHTML='<p style="color:#64748b;font-size:.85rem;padding:10px">No completed events yet.</p>';
+          return;
+        }
+        function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+        let html='';
+        completed.forEach(t=>{
+          const yr = t.start_date ? t.start_date.split('-')[0] : '';
+          html+=`<div class="past-row" onclick="toggleResult('r${t.tournament_id}',this)">
+            <div class="past-info"><span class="past-year">${yr}</span><span class="past-name">${t.name}</span></div>
+            <span class="past-chev">&#9660;</span>
+          </div>
+          <div class="past-panel" id="r${t.tournament_id}" style="display:none">
+            <p style="color:#64748b;font-size:.82rem;padding:10px">Loading results...</p>
+          </div>`;
+        });
+        list.innerHTML = html;
+        // Load results for each completed tournament on expand
+        completed.forEach(t=>{
+          const row = list.querySelector(`[onclick*="r${t.tournament_id}"]`);
+          if(row) row.addEventListener('click', function(){
+            const panel = document.getElementById('r'+t.tournament_id);
+            if(panel && panel.innerHTML.includes('Loading')){
+              fetch('/api/results/'+t.tournament_id).then(r=>r.json()).then(results=>{
+                if(!results.length){panel.innerHTML='<p style="color:#64748b;font-size:.82rem;padding:10px">No results recorded yet.</p>';return;}
+                let tbl=`<table class="mini-results"><thead><tr><th>Event</th><th>Swimmer</th><th>Time</th><th>Place</th></tr></thead><tbody>`;
+                results.slice(0,10).forEach(r=>{
+                  tbl+=`<tr><td>${r.event_name}</td><td>${r.full_name||''}</td><td>${r.final_time||'—'}</td><td>${r.overall_place?'#'+r.overall_place:'—'}</td></tr>`;
+                });
+                tbl+='</tbody></table>';
+                panel.innerHTML=tbl;
+              }).catch(()=>{panel.innerHTML='<p style="color:#64748b;font-size:.82rem;padding:10px">Results unavailable.</p>';});
+            }
+          });
+        });
+      }).catch(()=>{});
+    })();
+    </script>
   </div>
 
   <!-- CENTRE -->
@@ -296,6 +301,34 @@
       </script>
     </div>
 
+    <!-- How It Works — order:3, last -->
+    <div class="col-right-block" style="order:3">
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.09)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e2e8f0">
+          <span style="font-size:1.1rem">&#128221;</span>
+          <h2 style="font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#0f172a;margin:0">How It Works</h2>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+            <div><strong style="font-size:.86rem;color:#0a1628">Create Account</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Sign up with swimmer details. Age group auto-detected.</p></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">
+            <div style="width:32px;height:32px;border-radius:50%;background:#059669;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+            <div><strong style="font-size:.86rem;color:#0a1628">Register for Event</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Pick tournament, up to 3 events + 1 relay.</p></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#faf5ff;border-radius:8px;border:1px solid #e9d5ff">
+            <div style="width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+            <div><strong style="font-size:.86rem;color:#0a1628">Pay Online</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Razorpay — UPI, card or net banking.</p></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#fffbeb;border-radius:8px;border:1px solid #fde68a">
+            <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>
+            <div><strong style="font-size:.86rem;color:#0a1628">Compete &amp; Win</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Arrive Day 1, check in and race!</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="col-right-block" style="order:2">
       <div class="section-head">
         <span class="sh-icon">&#128100;</span><h2>Quick Register</h2>
@@ -329,38 +362,6 @@
         </div>
         <button type="submit" class="btn-continue">Continue to Events &#8594;</button>
       </form>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS — full width -->
-<div style="padding:0 40px 20px">
-  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,.09)">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #e2e8f0">
-      <span style="font-size:1.2rem">&#128221;</span>
-      <h2 style="font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#0f172a;margin:0">How It Works</h2>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
-      <div style="text-align:center;padding:24px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0">
-        <div style="width:60px;height:60px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">1</div>
-        <strong style="font-size:1rem;color:#0a1628;display:block;margin-bottom:8px">Create Account</strong>
-        <p style="font-size:.85rem;color:#64748b;line-height:1.6">Sign up with swimmer details — name, DOB, gender, parent info and academy. Age group is auto-detected.</p>
-      </div>
-      <div style="text-align:center;padding:24px 16px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0">
-        <div style="width:60px;height:60px;border-radius:50%;background:#059669;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">2</div>
-        <strong style="font-size:1rem;color:#0a1628;display:block;margin-bottom:8px">Register for Event</strong>
-        <p style="font-size:.85rem;color:#64748b;line-height:1.6">Select tournament, choose up to 3 individual events + 1 relay, enter seed times and confirm booking.</p>
-      </div>
-      <div style="text-align:center;padding:24px 16px;background:#faf5ff;border-radius:12px;border:1px solid #e9d5ff">
-        <div style="width:60px;height:60px;border-radius:50%;background:#7c3aed;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">3</div>
-        <strong style="font-size:1rem;color:#0a1628;display:block;margin-bottom:8px">Pay Online</strong>
-        <p style="font-size:.85rem;color:#64748b;line-height:1.6">Pay via Razorpay — UPI, card or net banking. Email &amp; WhatsApp confirmation sent instantly.</p>
-      </div>
-      <div style="text-align:center;padding:24px 16px;background:#fffbeb;border-radius:12px;border:1px solid #fde68a">
-        <div style="width:60px;height:60px;border-radius:50%;background:#f59e0b;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">4</div>
-        <strong style="font-size:1rem;color:#0a1628;display:block;margin-bottom:8px">Compete &amp; Win</strong>
-        <p style="font-size:.85rem;color:#64748b;line-height:1.6">Arrive on Day 1 with documents, check in, get your heat sheet and race. Top 3 get medals &amp; certificates!</p>
-      </div>
     </div>
   </div>
 </div>
@@ -781,7 +782,7 @@
           </div>
 
           <div class="wiz-doc-note">
-            &#9432; Documents will be verified at check-in on Day 1 (June 20, 2026). Originals must be produced. Incomplete documents may result in disqualification.
+            &#9432; Documents will be verified at check-in on Day 1. Originals must be produced. Incomplete documents may result in disqualification.
           </div>
 
           <script>
@@ -858,7 +859,7 @@
           <div class="wiz-consents">
             <label class="wiz-consent"><input type="checkbox" id="consentRules" required/><span><strong>Tournament Rules</strong> &mdash; I agree to abide by all FINA-based rules and Referee decisions.</span></label>
             <label class="wiz-consent"><input type="checkbox" id="consentRefund" required/><span><strong>Refund Policy</strong> &mdash; Fees are non-refundable. Organiser cancellation = full refund in 7 days.</span></label>
-            <label class="wiz-consent"><input type="checkbox" id="consentParent" required/><span><strong>Parent Consent</strong> &mdash; I consent to this swimmer participating at SRM University, June 20&ndash;22, 2026.</span></label>
+            <label class="wiz-consent"><input type="checkbox" id="consentParent" required/><span id="consentParentText"><strong>Parent Consent</strong> &mdash; I consent to this swimmer participating in the registered tournament.</span></label>
             <label class="wiz-consent"><input type="checkbox" id="consentMedical" required/><span><strong>Medical Consent</strong> &mdash; Officials may seek emergency treatment if I cannot be reached.</span></label>
             <label class="wiz-consent"><input type="checkbox" id="consentNonMedalist" required/><span><strong>Non-Medalist Declaration</strong> &mdash; This swimmer has NOT won any individual medal at State/Zonal/National/School Games meets.</span></label>
           </div>
@@ -889,7 +890,7 @@
             <h3>Booking Confirmed!</h3>
             <p class="wiz-conf-sub">Payment received &middot; Registration complete</p>
             <div class="wiz-conf-details" id="bcDetails"></div>
-            <div class="wiz-conf-notice">&#128140; Confirmation sent to your email &amp; WhatsApp. Carry all required documents on <strong>Day 1 &mdash; June 20, 2026 at 08:00 AM</strong> at SRM University.</div>
+            <div class="wiz-conf-notice" id="wizConfNotice">&#128140; Confirmation sent to your email &amp; WhatsApp. Carry all required documents on Day 1 at the venue.</div>
             <div class="wiz-conf-actions">
               <button type="button" class="wiz-btn-next" onclick="viewBooking()">&#128203; View Booking</button>
               <button type="button" class="wiz-btn-back" onclick="downloadReceipt()">&#11015;&#65039; Receipt</button>

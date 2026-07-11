@@ -57,6 +57,7 @@
     <button onclick="showPanel('entries')">Event Entries</button>
     <button onclick="showPanel('academies')">Academies</button>
     <button onclick="showPanel('heatsheet')">Heat Sheet</button>
+    <button onclick="openResultsModal()" style="background:rgba(5,150,105,.3);border-color:rgba(5,150,105,.5)">Results Upload</button>
     <a href="index.html" style="padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.15);color:#fff;font-size:.75rem;font-weight:600;text-decoration:none">Home</a>
     <button onclick="adminLogout()" style="padding:6px 14px;border-radius:999px;background:#dc2626;color:#fff;font-size:.75rem;font-weight:600;border:none;cursor:pointer">Logout</button>
   </div>
@@ -330,9 +331,22 @@ async function loadDashboard() {
 async function loadSwimmers() {
   const data = await fetch(API+'/swimmers').then(r=>r.json());
   if (!data.length) { document.getElementById('swimmersTable').innerHTML='<p class="empty-msg">No swimmers registered</p>'; return; }
-  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Age Group</th><th>Academy</th><th>Parent</th><th>Mobile</th><th>Email</th></tr></thead><tbody>';
+  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Age Group</th><th>Academy</th><th>Parent</th><th>Mobile</th><th>Email</th><th>Action</th></tr></thead><tbody>';
   data.forEach(s => {
-    html += `<tr><td class="mono">${s.swimmer_id}</td><td><strong>${s.full_name}</strong></td><td>${s.gender}</td><td>${s.dob}</td><td><span class="badge badge-active">${s.age_group||''}</span></td><td>${s.academy_id||''}</td><td>${s.parent_name||''}</td><td>${s.parent_mobile||''}</td><td>${s.parent_email||''}</td></tr>`;
+    html += `<tr>
+      <td class="mono">${s.swimmer_id}</td>
+      <td><strong>${s.full_name}</strong></td>
+      <td>${s.gender}</td>
+      <td>${s.dob}</td>
+      <td><span class="badge badge-active">${s.age_group||''}</span></td>
+      <td>${s.academy_id||''}</td>
+      <td>${s.parent_name||''}</td>
+      <td>${s.parent_mobile||''}</td>
+      <td>${s.parent_email||''}</td>
+      <td>
+        <button onclick="openEditSwimmer('${s.swimmer_id}','${(s.full_name||'').replace(/'/g,"\\'")}','${s.gender||''}','${s.dob||''}','${s.parent_mobile||''}','${s.parent_email||''}')" style="padding:4px 10px;font-size:.7rem;background:#1d4ed8;color:#fff;border:none;border-radius:6px;cursor:pointer">Edit</button>
+      </td>
+    </tr>`;
   });
   html += '</tbody></table>';
   document.getElementById('swimmersTable').innerHTML = html;
@@ -393,6 +407,146 @@ function viewHeatSheet() {
 
 // Load dashboard on page load
 loadDashboard();
+</script>
+
+<!-- Edit Swimmer Modal -->
+<div id="editSwimmerModal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,.7);backdrop-filter:blur(4px);z-index:900;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,.3)">
+    <div style="background:linear-gradient(135deg,#0a1628,#1d4ed8);padding:16px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color:#fff;font-size:1rem;font-weight:800;margin:0">Edit Swimmer</h3>
+      <button onclick="document.getElementById('editSwimmerModal').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer">&times;</button>
+    </div>
+    <form onsubmit="saveEditSwimmer(event)" style="padding:20px;display:flex;flex-direction:column;gap:10px">
+      <input type="hidden" id="editSwId"/>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label style="font-size:.72rem;font-weight:700">Full Name</label>
+        <input type="text" id="editSwName" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Gender</label>
+          <select id="editSwGender" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <option value="Boys">Boy</option>
+            <option value="Girls">Girl</option>
+          </select>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Date of Birth</label>
+          <input type="date" id="editSwDob" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Parent Mobile</label>
+          <input type="tel" id="editSwMobile" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <label style="font-size:.72rem;font-weight:700">Parent Email</label>
+          <input type="email" id="editSwEmail" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button type="submit" style="flex:1;padding:10px;background:#0a1628;color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer">Save Changes</button>
+        <button type="button" onclick="document.getElementById('editSwimmerModal').style.display='none'" style="padding:10px 18px;background:transparent;color:#64748b;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.85rem;cursor:pointer">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Results Upload Modal -->
+<div id="resultsModal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,.7);backdrop-filter:blur(4px);z-index:900;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3)">
+    <div style="background:linear-gradient(135deg,#0a1628,#1d4ed8);padding:16px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="color:#fff;font-size:1rem;font-weight:800;margin:0">Upload Results</h3>
+      <button onclick="document.getElementById('resultsModal').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.2rem;cursor:pointer">&times;</button>
+    </div>
+    <div style="padding:20px">
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+        <label style="font-size:.72rem;font-weight:700">Select Tournament</label>
+        <select id="resultsTournament" style="padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem" onchange="loadResultEntries()">
+          <option value="">Select...</option>
+        </select>
+      </div>
+      <div id="resultEntriesTable"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openEditSwimmer(id, name, gender, dob, mobile, email) {
+  document.getElementById('editSwId').value = id;
+  document.getElementById('editSwName').value = name;
+  document.getElementById('editSwGender').value = gender;
+  document.getElementById('editSwDob').value = dob;
+  document.getElementById('editSwMobile').value = mobile;
+  document.getElementById('editSwEmail').value = email;
+  document.getElementById('editSwimmerModal').style.display = 'flex';
+}
+
+async function saveEditSwimmer(e) {
+  e.preventDefault();
+  const id = document.getElementById('editSwId').value;
+  const updates = {
+    'Full Name': document.getElementById('editSwName').value,
+    'Gender': document.getElementById('editSwGender').value,
+    'Date of Birth': document.getElementById('editSwDob').value,
+    'Mobile': document.getElementById('editSwMobile').value,
+    'Email': document.getElementById('editSwEmail').value,
+  };
+  await fetch(API+'/swimmers/'+id, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(updates)});
+  document.getElementById('editSwimmerModal').style.display = 'none';
+  loadSwimmers();
+  alert('Swimmer updated!');
+}
+
+async function openResultsModal() {
+  document.getElementById('resultsModal').style.display = 'flex';
+  const tournaments = await fetch(API+'/tournaments').then(r=>r.json());
+  const sel = document.getElementById('resultsTournament');
+  sel.innerHTML = '<option value="">Select tournament...</option>' + tournaments.map(t=>`<option value="${t.tournament_id}">${t.name}</option>`).join('');
+}
+
+async function loadResultEntries() {
+  const tid = document.getElementById('resultsTournament').value;
+  if(!tid) return;
+  const entries = await fetch(API+'/heatsheet/'+tid).then(r=>r.json());
+  const container = document.getElementById('resultEntriesTable');
+  if(!entries.length){container.innerHTML='<p style="color:#64748b;font-size:.85rem">No entries found. Generate heat sheet first.</p>';return;}
+  let html = '<table class="admin-table" style="font-size:.75rem"><thead><tr><th>Swimmer</th><th>Event</th><th>Heat</th><th>Lane</th><th>Final Time</th><th>Place</th><th>Save</th></tr></thead><tbody>';
+  entries.forEach(e=>{
+    html+=`<tr>
+      <td>${e.swimmer_name}</td>
+      <td>${e.event_name}</td>
+      <td>${e.heat_no||'—'}</td>
+      <td>${e.lane_no||'—'}</td>
+      <td><input type="text" placeholder="00:00.00" id="ft_${e.hs_id}" style="width:80px;padding:3px 6px;border:1px solid #e2e8f0;border-radius:4px;font-size:.75rem"/></td>
+      <td><input type="number" placeholder="#" id="pl_${e.hs_id}" style="width:50px;padding:3px 6px;border:1px solid #e2e8f0;border-radius:4px;font-size:.75rem"/></td>
+      <td><button onclick="saveResult('${e.hs_id}','${e.swimmer_id}','${tid}')" style="padding:3px 8px;background:#059669;color:#fff;border:none;border-radius:4px;font-size:.7rem;cursor:pointer">Save</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+async function saveResult(hsId, swimmerId, tid) {
+  const finalTime = document.getElementById('ft_'+hsId)?.value;
+  const place = document.getElementById('pl_'+hsId)?.value;
+  if(!finalTime) { alert('Enter final time'); return; }
+  // Find entry_id from event_entries
+  const entries = await fetch(API+'/bookings').then(r=>r.json());
+  // Use results update endpoint directly
+  await fetch(API+'/results/update', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      entry_id: hsId, // using hs_id as reference — backend maps to entry
+      final_time: finalTime,
+      overall_place: parseInt(place)||null,
+      status: 'OK'
+    })
+  });
+  alert('Result saved!');
+}
 </script>
 
 <!-- Edit Event Modal -->
