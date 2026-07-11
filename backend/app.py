@@ -661,6 +661,46 @@ def payment_config():
 
 
 # ══════════════════════════════════════════
+#  API ROUTES — HOME PAGE DATA (single call)
+# ══════════════════════════════════════════
+@app.route('/api/home', methods=['GET'])
+def get_home_data():
+    """Single endpoint with in-memory cache (60s TTL) for fast loads"""
+    import time as _time
+    from concurrent.futures import ThreadPoolExecutor
+    
+    cache = getattr(app, '_home_cache', None)
+    cache_time = getattr(app, '_home_cache_time', 0)
+    
+    # Return cached data if fresh (< 60 seconds old)
+    if cache and (_time.time() - cache_time) < 60:
+        return jsonify(cache)
+    
+    def get_tournaments():
+        return supabase.table('tournaments').select('*').order('start_date').execute().data
+    def get_stats():
+        sw = supabase.table('swimmers').select('swimmer_id', count='exact').execute().count or 0
+        bk = supabase.table('bookings').select('booking_id', count='exact').eq('payment_status', 'Paid').execute().count or 0
+        ac = supabase.table('academies').select('academy_id', count='exact').eq('status', 'Active').execute().count or 0
+        return {'total_swimmers': sw, 'total_bookings': bk, 'total_academies': ac}
+    def get_academies():
+        return supabase.table('academies').select('academy_id, name, short_name').eq('status', 'Active').order('name').execute().data
+
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        ft = ex.submit(get_tournaments)
+        fs = ex.submit(get_stats)
+        fa = ex.submit(get_academies)
+        tournaments = ft.result()
+        stats = fs.result()
+        academies = fa.result()
+
+    result = {'tournaments': tournaments, 'stats': stats, 'academies': academies}
+    app._home_cache = result
+    app._home_cache_time = _time.time()
+    return jsonify(result)
+
+
+# ══════════════════════════════════════════
 #  SERVE FRONTEND + START
 # ══════════════════════════════════════════
 @app.route('/')
@@ -682,27 +722,15 @@ if __name__ == '__main__':
     print(f"  API Base: http://localhost:{port}/api")
     print(f"  Supabase: {SUPABASE_URL}")
     print("=" * 50 + "\n")
+    # Pre-warm the cache in background thread
+    import threading
+    def warm_cache():
+        import time as _t
+        _t.sleep(2)  # wait for server to start
+        try:
+            import urllib.request as _u
+            _u.urlopen(f'http://localhost:{port}/api/home')
+            print("  Cache warmed up!")
+        except: pass
+    threading.Thread(target=warm_cache, daemon=True).start()
     app.run(host='0.0.0.0', debug=False, port=port)
-
-
-# ══════════════════════════════════════════
-#  API ROUTES — HOME PAGE DATA (single call)
-# ══════════════════════════════════════════
-@app.route('/api/home', methods=['GET'])
-def get_home_data():
-    """Single endpoint returning all data needed for home page"""
-    tournaments = supabase.table('tournaments').select('*').order('start_date').execute()
-    stats_swimmers = supabase.table('swimmers').select('swimmer_id', count='exact').execute()
-    stats_bookings = supabase.table('bookings').select('booking_id', count='exact').eq('payment_status', 'Paid').execute()
-    stats_academies = supabase.table('academies').select('academy_id', count='exact').eq('status', 'Active').execute()
-    academies = supabase.table('academies').select('academy_id, name, short_name').eq('status', 'Active').order('name').execute()
-    
-    return jsonify({
-        'tournaments': tournaments.data,
-        'stats': {
-            'total_swimmers': stats_swimmers.count or 0,
-            'total_bookings': stats_bookings.count or 0,
-            'total_academies': stats_academies.count or 0,
-        },
-        'academies': academies.data,
-    })
