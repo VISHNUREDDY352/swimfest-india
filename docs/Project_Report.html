@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Project_Report</title>
+  
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; margin: 0; padding: 0; }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 50px; }
+  h1 { color: #0a1628; font-size: 24px; border-bottom: 3px solid #1d4ed8; padding-bottom: 8px; margin-top: 30px; }
+  h2 { color: #1d4ed8; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+  h3 { color: #0a1628; font-size: 15px; margin-top: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  th { background: #0a1628; color: white; padding: 8px 12px; text-align: left; }
+  td { padding: 7px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  pre { background: #f1f5f9; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+  pre code { background: none; padding: 0; }
+  blockquote { border-left: 4px solid #1d4ed8; margin: 12px 0; padding: 8px 16px; background: #eff6ff; color: #374151; }
+  hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin-bottom: 4px; }
+  p { line-height: 1.6; margin: 8px 0; }
+  @media print {
+    @page { size: A4; margin: 15mm 15mm; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+  }
+</style>
+
+</head>
+<body>
+<div class="page">
+<h1>SwimFest India — Project Report</h1>
+<h2>Golden Non-Medalist Championship 2026</h2>
+<hr />
+<h2>1. Project Overview</h2>
+<p><strong>Project Name:</strong> SwimFest India — Swimming Competition Management System<br />
+<strong>Client:</strong> SwimFest India / SRM University, Kattankulathur<br />
+<strong>Developer:</strong> Vishnu Reddy<br />
+<strong>Technology Stack:</strong> Flask (Python), Supabase (PostgreSQL), HTML/CSS/JavaScript<br />
+<strong>Live URL:</strong> https://swimfest-india.onrender.com<br />
+<strong>GitHub:</strong> https://github.com/VISHNUREDDY352/swimfest-india  </p>
+<h3>Purpose</h3>
+<p>SwimFest India is a full-stack web application for managing swimming competitions. It handles swimmer registration, event booking, payment processing, heat sheet generation, and result management for the Golden Non-Medalist Championship 2026 — a competition exclusively for swimmers who have never won an individual medal at State, Zonal, National, or major School Games.</p>
+<hr />
+<h2>2. Features</h2>
+<h3>For Swimmers</h3>
+<ul>
+<li>Account creation with full profile (personal, school, academy, parent details)</li>
+<li>Age group auto-detection from date of birth</li>
+<li>Tournament registration wizard (7-step booking flow)</li>
+<li>Event selection (max 3 individual + 1 relay)</li>
+<li>Seed time entry</li>
+<li>Online payment via Razorpay (UPI, card, net banking)</li>
+<li>Email + WhatsApp confirmation after booking</li>
+<li>Player profile page with booking history and event entries</li>
+<li>Participation certificate (available after event completion)</li>
+<li>Eligibility checker on home page</li>
+</ul>
+<h3>For Administrators</h3>
+<ul>
+<li>Secure admin login (separate credentials)</li>
+<li>Dashboard with live stats (swimmers, bookings, entries, academies)</li>
+<li>Create, edit, and manage tournaments</li>
+<li>Update tournament status (Open / Upcoming / Ongoing / Closed / Completed)</li>
+<li>View all registered swimmers and edit profiles</li>
+<li>View all bookings and event entries</li>
+<li>Generate heat sheets (lane assignment based on seed time)</li>
+<li>Upload results (final time and placement)</li>
+<li>Export heat sheet as CSV or PDF</li>
+</ul>
+<h3>General</h3>
+<ul>
+<li>Live ticker banner with event details</li>
+<li>Announcements section (dynamic from DB)</li>
+<li>Swimmer directory (loaded from DB)</li>
+<li>Registration deadline countdown timer</li>
+<li>Event cards sorted by soonest deadline</li>
+<li>Share event card via WhatsApp</li>
+<li>Venue popup with Google Maps directions</li>
+<li>Swimming tips and How It Works section</li>
+<li>Past event results</li>
+<li>FAQ section</li>
+<li>Contact section</li>
+<li>Fully responsive (desktop + mobile)</li>
+</ul>
+<hr />
+<h2>3. Technology Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>HTML5, CSS3, Vanilla JavaScript</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Python 3, Flask 3.0.3</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>Supabase (PostgreSQL)</td>
+</tr>
+<tr>
+<td>Hosting</td>
+<td>Render (free tier)</td>
+</tr>
+<tr>
+<td>Payment</td>
+<td>Razorpay (test mode)</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Gmail SMTP</td>
+</tr>
+<tr>
+<td>PDF</td>
+<td>html2canvas + jsPDF (certificates)</td>
+</tr>
+<tr>
+<td>Version Control</td>
+<td>Git + GitHub</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>4. System Architecture</h2>
+<pre><code>Browser (HTML/CSS/JS)
+        |
+        | HTTP requests
+        v
+Flask Backend (app.py)
+        |
+        | Supabase Python Client
+        v
+Supabase PostgreSQL (Cloud DB)
+</code></pre>
+<ul>
+<li>Flask serves all frontend static files from the root directory</li>
+<li>All API routes are prefixed with <code>/api/</code></li>
+<li>Root URL <code>/</code> redirects to <code>login.html</code></li>
+<li>Authentication is session-based using localStorage (swimmer_id)</li>
+</ul>
+<hr />
+<h2>5. Database Schema</h2>
+<h3>Table: swimmers</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>swimmer_id</td>
+<td>TEXT PK</td>
+<td>e.g. SWM-2026-XXXX</td>
+</tr>
+<tr>
+<td>full_name</td>
+<td>TEXT</td>
+<td>Swimmer's official name</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>TEXT</td>
+<td>Boys / Girls</td>
+</tr>
+<tr>
+<td>dob</td>
+<td>TEXT</td>
+<td>Date of birth (YYYY-MM-DD)</td>
+</tr>
+<tr>
+<td>year_of_birth</td>
+<td>INTEGER</td>
+<td>Derived from DOB</td>
+</tr>
+<tr>
+<td>age_group</td>
+<td>TEXT</td>
+<td>U-10 / U-12 / U-14 / U-16</td>
+</tr>
+<tr>
+<td>mobile</td>
+<td>TEXT</td>
+<td>Swimmer's mobile</td>
+</tr>
+<tr>
+<td>parent_name</td>
+<td>TEXT</td>
+<td>Parent/Guardian name</td>
+</tr>
+<tr>
+<td>parent_relationship</td>
+<td>TEXT</td>
+<td>Father / Mother / Guardian</td>
+</tr>
+<tr>
+<td>parent_mobile</td>
+<td>TEXT</td>
+<td>Parent contact</td>
+</tr>
+<tr>
+<td>parent_email</td>
+<td>TEXT</td>
+<td>Parent email</td>
+</tr>
+<tr>
+<td>academy_id</td>
+<td>TEXT FK</td>
+<td>References academies</td>
+</tr>
+<tr>
+<td>school_name</td>
+<td>TEXT</td>
+<td>School name</td>
+</tr>
+<tr>
+<td>school_board</td>
+<td>TEXT</td>
+<td>CBSE / ICSE / State Board</td>
+</tr>
+<tr>
+<td>school_class</td>
+<td>TEXT</td>
+<td>Grade/Class</td>
+</tr>
+<tr>
+<td>address</td>
+<td>TEXT</td>
+<td>Full address</td>
+</tr>
+<tr>
+<td>nationality</td>
+<td>TEXT</td>
+<td>Default: Indian</td>
+</tr>
+<tr>
+<td>eligibility</td>
+<td>TEXT</td>
+<td>Non-Medalist</td>
+</tr>
+<tr>
+<td>password_hash</td>
+<td>TEXT</td>
+<td>SHA-256 hashed password</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TEXT</td>
+<td>Active</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMPTZ</td>
+<td>Auto</td>
+</tr>
+</tbody>
+</table>
+<h3>Table: academies</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>academy_id</td>
+<td>TEXT PK</td>
+<td>e.g. ACD-001</td>
+</tr>
+<tr>
+<td>name</td>
+<td>TEXT</td>
+<td>Academy name</td>
+</tr>
+<tr>
+<td>short_name</td>
+<td>TEXT</td>
+<td>Abbreviation</td>
+</tr>
+<tr>
+<td>head_coach</td>
+<td>TEXT</td>
+<td>Coach name</td>
+</tr>
+<tr>
+<td>mobile</td>
+<td>TEXT</td>
+<td>Contact</td>
+</tr>
+<tr>
+<td>email</td>
+<td>TEXT</td>
+<td>Email</td>
+</tr>
+<tr>
+<td>city</td>
+<td>TEXT</td>
+<td>City</td>
+</tr>
+<tr>
+<td>address</td>
+<td>TEXT</td>
+<td>Address</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TEXT</td>
+<td>Active</td>
+</tr>
+</tbody>
+</table>
+<h3>Table: tournaments</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tournament_id</td>
+<td>TEXT PK</td>
+<td>e.g. GNMC-2026</td>
+</tr>
+<tr>
+<td>name</td>
+<td>TEXT</td>
+<td>Tournament name</td>
+</tr>
+<tr>
+<td>venue</td>
+<td>TEXT</td>
+<td>Venue address</td>
+</tr>
+<tr>
+<td>start_date</td>
+<td>TEXT</td>
+<td>YYYY-MM-DD</td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>TEXT</td>
+<td>YYYY-MM-DD</td>
+</tr>
+<tr>
+<td>reg_deadline</td>
+<td>TEXT</td>
+<td>Registration deadline</td>
+</tr>
+<tr>
+<td>fee_per_event</td>
+<td>REAL</td>
+<td>Per event fee (INR)</td>
+</tr>
+<tr>
+<td>relay_fee</td>
+<td>REAL</td>
+<td>Relay fee</td>
+</tr>
+<tr>
+<td>gst_rate</td>
+<td>REAL</td>
+<td>0.18 = 18%</td>
+</tr>
+<tr>
+<td>lanes</td>
+<td>INTEGER</td>
+<td>Pool lanes (6/8/10)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TEXT</td>
+<td>Open/Upcoming/Ongoing/Closed/Completed</td>
+</tr>
+</tbody>
+</table>
+<h3>Table: bookings</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>booking_id</td>
+<td>TEXT PK</td>
+<td>e.g. BKG-XXXXXXXX</td>
+</tr>
+<tr>
+<td>swimmer_id</td>
+<td>TEXT FK</td>
+<td>References swimmers</td>
+</tr>
+<tr>
+<td>tournament_id</td>
+<td>TEXT FK</td>
+<td>References tournaments</td>
+</tr>
+<tr>
+<td>total_fee</td>
+<td>REAL</td>
+<td>Subtotal</td>
+</tr>
+<tr>
+<td>gst</td>
+<td>REAL</td>
+<td>GST amount</td>
+</tr>
+<tr>
+<td>total_paid</td>
+<td>REAL</td>
+<td>Total paid</td>
+</tr>
+<tr>
+<td>payment_method</td>
+<td>TEXT</td>
+<td>upi/card/netbanking</td>
+</tr>
+<tr>
+<td>payment_status</td>
+<td>TEXT</td>
+<td>Pending / Paid</td>
+</tr>
+<tr>
+<td>relay_opted</td>
+<td>INTEGER</td>
+<td>0 or 1</td>
+</tr>
+<tr>
+<td>consent_*</td>
+<td>INTEGER</td>
+<td>Consent flags</td>
+</tr>
+</tbody>
+</table>
+<h3>Table: event_entries</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>entry_id</td>
+<td>TEXT PK</td>
+<td>e.g. ENT-XXXXXXXX</td>
+</tr>
+<tr>
+<td>booking_id</td>
+<td>TEXT FK</td>
+<td>References bookings</td>
+</tr>
+<tr>
+<td>swimmer_id</td>
+<td>TEXT FK</td>
+<td>References swimmers</td>
+</tr>
+<tr>
+<td>tournament_id</td>
+<td>TEXT FK</td>
+<td>References tournaments</td>
+</tr>
+<tr>
+<td>event_name</td>
+<td>TEXT</td>
+<td>e.g. 100m Freestyle</td>
+</tr>
+<tr>
+<td>event_code</td>
+<td>TEXT</td>
+<td>FS/BK/BR/BF/IM/RLY</td>
+</tr>
+<tr>
+<td>distance</td>
+<td>TEXT</td>
+<td>50m / 100m / 200m</td>
+</tr>
+<tr>
+<td>seed_time</td>
+<td>TEXT</td>
+<td>MM:SS.ss or NT</td>
+</tr>
+<tr>
+<td>heat_no</td>
+<td>INTEGER</td>
+<td>Assigned heat</td>
+</tr>
+<tr>
+<td>lane_no</td>
+<td>INTEGER</td>
+<td>Assigned lane</td>
+</tr>
+<tr>
+<td>final_time</td>
+<td>TEXT</td>
+<td>Race result</td>
+</tr>
+<tr>
+<td>overall_place</td>
+<td>INTEGER</td>
+<td>Final placement</td>
+</tr>
+<tr>
+<td>status</td>
+<td>TEXT</td>
+<td>Registered / OK / DQ</td>
+</tr>
+</tbody>
+</table>
+<h3>Table: heat_sheets</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hs_id</td>
+<td>TEXT PK</td>
+<td>Generated ID</td>
+</tr>
+<tr>
+<td>tournament_id</td>
+<td>TEXT FK</td>
+<td>References tournaments</td>
+</tr>
+<tr>
+<td>event_name</td>
+<td>TEXT</td>
+<td>Event name</td>
+</tr>
+<tr>
+<td>category</td>
+<td>TEXT</td>
+<td>Age group</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>TEXT</td>
+<td>Boys/Girls</td>
+</tr>
+<tr>
+<td>heat_no</td>
+<td>INTEGER</td>
+<td>Heat number</td>
+</tr>
+<tr>
+<td>lane_no</td>
+<td>INTEGER</td>
+<td>Lane number</td>
+</tr>
+<tr>
+<td>swimmer_id</td>
+<td>TEXT</td>
+<td>Swimmer reference</td>
+</tr>
+<tr>
+<td>swimmer_name</td>
+<td>TEXT</td>
+<td>Denormalized name</td>
+</tr>
+<tr>
+<td>academy_name</td>
+<td>TEXT</td>
+<td>Denormalized academy</td>
+</tr>
+<tr>
+<td>seed_time</td>
+<td>TEXT</td>
+<td>Seed time</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>TEXT</td>
+<td>Scheduled start</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>6. API Endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/api/home</td>
+<td>Combined home page data (cached)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/auth/login</td>
+<td>Login (swimmer + admin)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/academies</td>
+<td>List active academies</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/academies</td>
+<td>Create academy</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/swimmers</td>
+<td>List all swimmers</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/swimmers/:id</td>
+<td>Get swimmer by ID</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/api/swimmers/:id</td>
+<td>Update swimmer profile</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/swimmers</td>
+<td>Register new swimmer</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/tournaments</td>
+<td>List tournaments</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/tournaments</td>
+<td>Create tournament</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/api/tournaments/:id</td>
+<td>Edit tournament</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/api/tournaments/:id</td>
+<td>Delete tournament</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/api/tournaments/:id/status</td>
+<td>Update status</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/bookings</td>
+<td>List all bookings</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/bookings</td>
+<td>Create booking</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/bookings/:id</td>
+<td>Get booking details</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/payment/create-order</td>
+<td>Create Razorpay order</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/payment/verify</td>
+<td>Verify payment signature</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/payment/config</td>
+<td>Get Razorpay key</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/heatsheet/generate/:tid</td>
+<td>Generate heat sheet</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/heatsheet/:tid</td>
+<td>Get heat sheet</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/results/:tid</td>
+<td>Get results</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/api/results/update</td>
+<td>Update result entry</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/api/stats</td>
+<td>Dashboard statistics</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>7. Age Categories</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Birth Years</th>
+<th>Individual Events</th>
+<th>Relay</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U-10</td>
+<td>2016–2017</td>
+<td>50m FS, 100m FS, 50m BK, 50m BR, 50m BF, 100m IM</td>
+<td>4×50m</td>
+</tr>
+<tr>
+<td>U-12</td>
+<td>2014–2015</td>
+<td>50m FS, 100m FS, 50m BK, 50m BR, 50m BF, 100m IM</td>
+<td>4×50m</td>
+</tr>
+<tr>
+<td>U-14</td>
+<td>2012–2013</td>
+<td>50m FS, 100m FS, 100m BK, 100m BR, 100m BF, 200m IM</td>
+<td>4×100m</td>
+</tr>
+<tr>
+<td>U-16</td>
+<td>2010–2011</td>
+<td>50m FS, 100m FS, 100m BK, 100m BR, 100m BF, 200m IM</td>
+<td>4×100m</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Age cut-off:</strong> 31 December 2026<br />
+<strong>Max events per swimmer:</strong> 3 individual + 1 relay  </p>
+<hr />
+<h2>8. Payment Flow</h2>
+<ol>
+<li>User selects events → wizard calculates total (events × ₹300 + GST 18%)</li>
+<li>Frontend calls <code>/api/payment/create-order</code> with amount</li>
+<li>Backend creates Razorpay order and returns <code>order_id</code></li>
+<li>Razorpay checkout opens in browser</li>
+<li>User pays via UPI/card/net banking</li>
+<li>On success, Razorpay returns <code>payment_id</code> and <code>signature</code></li>
+<li>Frontend calls <code>/api/payment/verify</code> to validate signature</li>
+<li>Backend marks booking as Paid and sends confirmation email</li>
+</ol>
+<p><strong>Razorpay:</strong> Test mode (Key: rzp_test_T3l0Fu0bS5Yvi6)</p>
+<hr />
+<h2>9. Heat Sheet Generation</h2>
+<ol>
+<li>Admin clicks "Generate Heat Sheet" for a tournament</li>
+<li>Backend fetches all event_entries for the tournament</li>
+<li>Entries are grouped by <code>age_group + gender + event_name</code></li>
+<li>Within each group, swimmers are sorted by seed time (NT last)</li>
+<li>Groups are split into heats of <code>lanes</code> size</li>
+<li>Lane assignment uses centre-out seeding pattern:</li>
+<li>8 lanes: fastest → lanes 4,5,3,6,2,7,1,8</li>
+<li>Start times are calculated at 3 min/heat + 5 min break between events</li>
+<li>Heat sheet records saved to <code>heat_sheets</code> table</li>
+</ol>
+<hr />
+<h2>10. Security</h2>
+<ul>
+<li>Admin credentials: stored in backend code (not in DB)</li>
+<li>Swimmer passwords: SHA-256 hashed before storage</li>
+<li>Razorpay payment signature verified server-side (HMAC-SHA256)</li>
+<li>CORS enabled for API routes</li>
+<li>Row Level Security (RLS) enabled on all Supabase tables</li>
+<li>Service role key (bypasses RLS) used only in backend</li>
+</ul>
+<hr />
+<h2>11. Deployment</h2>
+<h3>Local Development</h3>
+<pre><code class="language-bash">cd c:\Users\vishn\DEV
+python backend/app.py
+# Access at http://localhost:5000
+</code></pre>
+<h3>Production (Render)</h3>
+<ul>
+<li><strong>Platform:</strong> Render.com (free tier)</li>
+<li><strong>Start Command:</strong> <code>gunicorn --chdir backend app:app</code></li>
+<li><strong>Build Command:</strong> <code>pip install -r requirements.txt</code></li>
+<li><strong>Environment Variable:</strong> <code>PYTHON_VERSION=3.11.0</code></li>
+<li><strong>Auto Deploy:</strong> On every push to <code>main</code> branch</li>
+</ul>
+<h3>Database</h3>
+<ul>
+<li><strong>Platform:</strong> Supabase (free tier, PostgreSQL)</li>
+<li><strong>Project ID:</strong> gacgkcfsjdqikjudqhto</li>
+<li><strong>Region:</strong> US East</li>
+</ul>
+<hr />
+<h2>12. File Structure</h2>
+<pre><code>DEV/
+├── backend/
+│   ├── app.py              # Flask backend + all API routes
+│   ├── email_service.py    # Gmail SMTP email sender
+│   ├── supabase_config.py  # Supabase credentials
+│   └── setup_supabase.py   # DB seed script
+├── index.html              # Home page
+├── login.html              # Login / Register
+├── signup.html             # Create account
+├── player.html             # Swimmer profile
+├── admin.html              # Admin panel
+├── heatsheet.html          # Heat sheet generator
+├── certificate.html        # Participation certificate
+├── home.css                # Main styles
+├── home.js                 # Home page JS
+├── app.js                  # Registration wizard JS
+├── heatsheet.js            # Heat sheet JS
+├── player.css              # Profile page styles
+├── heatsheet.css           # Heat sheet styles
+├── requirements.txt        # Python dependencies
+├── Procfile                # Render start command
+└── docs/
+    ├── Project_Report.md   # This document
+    └── User_Manual.md      # User guide
+</code></pre>
+<hr />
+<p><em>Document prepared by: Vishnu Reddy</em><br />
+<em>Project: SwimFest India 2026</em><br />
+<em>Date: July 2026</em></p>
+</div>
+</body>
+</html>

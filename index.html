@@ -75,17 +75,6 @@
     <span id="tickerText">Loading event info...</span>
   </div>
 </div>
-<script>
-(function(){
-  fetch('/api/tournaments').then(r=>r.json()).then(events=>{
-    const open = events.find(e=>e.status==='Open') || events[0];
-    if(!open) return;
-    function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-    const txt = `Registration Open — ${open.name} \u2022 Deadline: ${fD(open.reg_deadline)} \u2022 ${open.venue||''} \u2022 U10 \u00b7 U12 \u00b7 U14 \u00b7 U16 \u2022 Boys & Girls \u2022 Rs.${open.fee_per_event||300}/event \u2022 Register before spots fill up!`;
-    document.getElementById('tickerText').textContent = txt;
-  }).catch(()=>{});
-})();
-</script>
 
 <!-- STATS BAR -->
 <div class="stats-bar">
@@ -1032,34 +1021,6 @@ function loadHomeEvents() {
   }).catch(()=>{});
 }
 loadHomeEvents();
-document.addEventListener('visibilitychange', function() {
-  if (!document.hidden) loadHomeEvents();
-});
-        <div class="ecard-meta">
-          <span>&#128197; ${dates}</span>
-          <span>&#128205; ${ev.venue || ''}</span>
-          <span>&#128176; &#8377;${ev.fee_per_event || 300}/event</span>
-          <span>&#8987; Reg. Deadline: ${ev.reg_deadline ? fmtDate(ev.reg_deadline) : '—'}</span>
-          <span>&#127946; Max 3 events + 1 relay per swimmer</span>
-        </div>
-        <div class="ecard-cats">
-          <span class="ap u10">U10</span><span class="ap u12">U12</span>
-          <span class="ap u14">U14</span><span class="ap u16">U16</span>
-        </div>
-        <div class="ecard-btns">
-          ${deadlinePassed 
-            ? `<span style="padding:5px 14px;background:#fee2e2;color:#dc2626;border-radius:6px;font-size:.8rem;font-weight:700">&#128274; Registration Closed</span>`
-            : `<button onclick="openRegisterModal()" class="btn-reg">Register</button>`
-          }
-          <button onclick="openEventDetail(this)" class="btn-info" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#1d4ed8;font-weight:600">More Info &#8594;</button><button onclick="shareEvent(this)" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#64748b;font-weight:600;margin-left:4px">&#128279; Share</button><button onclick="showVenuePopup(this,'${(ev.venue||'').replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#dc2626;font-weight:600;margin-left:4px">&#128205; Venue</button>
-        </div>
-      </div>`;
-    });
-    list.innerHTML = html;
-  }).catch(() => {});
-}
-loadHomeEvents();
-// Auto-refresh events when user switches back to this tab
 document.addEventListener('visibilitychange', function() {
   if (!document.hidden) loadHomeEvents();
 });
