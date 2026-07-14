@@ -12,7 +12,7 @@ a{text-decoration:none;color:inherit}
 
 /* NAV */
 .nav{background:var(--navy);position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:56px;gap:24px}
+.nav-inner{max-width:100%;margin:0;display:flex;align-items:center;padding:0 20px;height:56px;gap:24px}
 .nav-logo{color:#fff;font-weight:800;font-size:1rem;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .nav-logo-wave{font-size:1.2rem}
 .nav-links{display:flex;list-style:none;flex:1;justify-content:center}
@@ -33,8 +33,8 @@ a{text-decoration:none;color:inherit}
     url('https://images.unsplash.com/photo-1530549387789-4c1017266635?w=1400&q=80') center 40%/cover no-repeat;
   min-height:420px;display:flex;align-items:center;margin:0
 }
-.hero-inner{max-width:1300px;margin:0 auto;padding:52px 20px;width:100%}
-.hero-text{max-width:520px}
+.hero-inner{max-width:100%;margin:0;padding:52px 20px;width:100%}
+.hero-text{max-width:100%}
 .hero-eyebrow{display:inline-block;background:rgba(6,182,212,.18);border:1px solid rgba(6,182,212,.45);color:var(--cyan);font-size:.72rem;font-weight:700;padding:4px 14px;border-radius:999px;margin-bottom:14px;letter-spacing:.5px;text-transform:uppercase}
 .hero-text h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-1.5px;margin-bottom:8px}
 .hero-sub{font-size:.9rem;color:rgba(255,255,255,.65);margin-bottom:22px}
@@ -57,14 +57,14 @@ a{text-decoration:none;color:inherit}
 
 /* STATS BAR */
 .stats-bar{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08)}
-.stats-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:46px;overflow-x:auto}
+.stats-inner{max-width:100%;margin:0;display:flex;align-items:center;padding:0 20px;height:46px;overflow-x:auto}
 .stat-item{display:flex;align-items:center;gap:8px;padding:0 18px;white-space:nowrap;flex-shrink:0}
 .stat-val{font-size:1.3rem;font-weight:900;color:var(--cyan)}
 .stat-key{font-size:.68rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.4px}
 .stat-div{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
 
 /* PAGE GRID */
-.page-grid{max-width:1400px;margin:0 auto;padding:20px 28px 0;display:grid;grid-template-columns:1fr 340px 300px;gap:20px;align-items:stretch}
+.page-grid{max-width:100%;margin:0;padding:16px 20px 0;display:grid;grid-template-columns:1fr 280px 260px;gap:16px;align-items:stretch}
 
 /* Force all columns to fill height equally */
 .col-left,.col-mid,.col-right{display:flex;flex-direction:column;gap:16px}
@@ -210,7 +210,7 @@ a{text-decoration:none;color:inherit}
 
 /* AGE REFERENCE */
 .age-ref-section{background:#f8fafc;border-top:1px solid var(--brd);padding:16px 20px}
-.age-ref-inner{max-width:1300px;margin:0 auto}
+.age-ref-inner{max-width:100%;margin:0}
 .age-ref-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}
 .arc-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:12px;box-shadow:var(--sh)}
 .u10c{border-top:3px solid #f97316}
@@ -551,111 +551,20 @@ body.modal-open{overflow:hidden}
 /* Fix scroll offset for sticky nav */
 [id]{scroll-margin-top:60px}
 
-/* ── SIZE OVERRIDES ── */
-.nav-inner{max-width:100% !important;padding:0 40px !important;height:62px !important}
-.nav-links li a{font-size:.95rem !important;padding:20px 16px !important}
-.nav-logo{font-size:1.15rem !important}
-
-.hero{min-height:480px !important}
-.hero-inner{max-width:100% !important;padding:60px 40px !important}
-.hero-text h1{font-size:clamp(2.8rem,5vw,4rem) !important}
-.hero-sub{font-size:1.05rem !important}
-.hero-eyebrow{font-size:.82rem !important}
-.btn-hero-primary,.btn-hero-ghost{padding:14px 32px !important;font-size:1rem !important}
-.chip-n{font-size:1.8rem !important}
-.chip-l{font-size:.72rem !important}
-
-.stats-inner{max-width:100% !important;padding:0 40px !important;height:52px !important}
-.stat-val{font-size:1.5rem !important}
-.stat-key{font-size:.78rem !important}
-
-.page-grid{max-width:100% !important;padding:24px 40px 0 !important;grid-template-columns:1fr 380px 320px !important;gap:24px !important}
-
-.section-head h2{font-size:1.2rem !important}
-.sh-icon{font-size:1.2rem !important}
-
-.ecard{padding:24px !important;gap:14px !important}
-.ecard h4{font-size:1.2rem !important}
-.ecard-meta{font-size:.88rem !important;gap:6px !important}
-.etag{font-size:.8rem !important;padding:5px 14px !important}
-.ecard-seats{font-size:.85rem !important}
-.btn-reg{padding:8px 20px !important;font-size:.85rem !important}
-
-.announce-item{font-size:.88rem !important}
-.announce-item p{font-size:.82rem !important}
-
-.cd-num{font-size:2.2rem !important}
-.cd-lbl{font-size:.75rem !important}
-
-/* Align all column tops perfectly */
-.page-grid{align-items:start !important}
-.col-left,.col-mid,.col-right{padding-top:0 !important}
+/* Align all column tops */
+.page-grid{align-items:start}
+.col-left,.col-mid,.col-right{padding-top:0}
 .col-mid .section-head:first-child,
-.col-right .section-head:first-child,
-.col-right-block:first-child .section-head:first-child{margin-top:0 !important}
-
-/* Swimmer Directory & Age Categories - bigger cards */
-.dir-grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr)) !important;gap:12px !important}
-.dir-card{padding:14px !important;gap:12px !important}
-.dc-av{width:44px !important;height:44px !important;font-size:1.4rem !important}
-.dc-info strong{font-size:.9rem !important}
-.dc-info span{font-size:.78rem !important}
-
-.age-ref-section{padding:24px 40px !important}
-.age-ref-inner{max-width:100% !important}
-.age-ref-grid{gap:16px !important}
-.arc-card{padding:18px !important}
-.arc-card h4{font-size:1rem !important}
-.arc-card p, .arc-card li{font-size:.85rem !important}
-
-.past-list .past-row{padding:14px 18px !important;font-size:.9rem !important}
-
-/* ── GLOBAL BASE SIZE INCREASE ── */
-html { font-size: 17px !important; }
-
-/* All cards same padding and consistent look */
-.ecard,
-.elig-checker,
-.countdown-box,
-.announce-list,
-.past-list,
-.venue-card,
-.faq-list,
-.contact-inner,
-.dir-section .dir-inner,
-.age-ref-section .age-ref-inner,
-.arc-card,
-.pp-card {
-  font-size: 1rem !important;
-}
-
-/* Consistent card padding everywhere */
-.elig-checker { padding: 20px !important; }
-.announce-item { padding: 12px 0 !important; font-size: 0.95rem !important; }
-.announce-item strong { font-size: 1rem !important; }
-.announce-item p { font-size: 0.88rem !important; }
-.countdown-box { padding: 20px !important; }
-.cd-num { font-size: 2.5rem !important; }
-.cd-lbl { font-size: 0.82rem !important; }
-.faq-q span { font-size: 1rem !important; }
-.faq-a { font-size: 0.92rem !important; }
-.contact-item strong { font-size: 1rem !important; }
-.contact-item p { font-size: 0.9rem !important; }
-.qr-form label { font-size: 0.88rem !important; }
-.qr-form input, .qr-form select { font-size: 0.9rem !important; padding: 10px 12px !important; }
-
-/* Swimmer Directory and FAQ - full width, aligned left */
-.dir-section{padding:20px 40px !important}
-.dir-inner{max-width:100% !important}
-.faq-section{padding:20px 40px !important}
-.faq-inner{max-width:100% !important}
-.faq-list{max-width:100% !important}
-.faq-search{font-size:.92rem !important;padding:10px 16px !important}
-.faq-q span{font-size:.95rem !important}
-.faq-a{font-size:.9rem !important}
-.contact-section{padding:20px 40px !important}
-.contact-inner{max-width:100% !important}
+.col-right-block:first-child .section-head:first-child{margin-top:0}
 
 /* Centre column cards stretch full width */
-.col-mid > *{width:100% !important;box-sizing:border-box !important}
+.col-mid > *{width:100%;box-sizing:border-box}
+
+/* Swimmer Directory and FAQ - full width */
+.dir-section{padding:20px}
+.dir-inner{max-width:100%}
+.faq-section{padding:20px}
+.faq-inner{max-width:100%}
+.contact-section{padding:20px}
+.contact-inner{max-width:100%}
 .elig-checker{width:100% !important}

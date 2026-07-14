@@ -118,14 +118,22 @@
     if(qrAcad) qrAcad.innerHTML = '<option value="">Select Academy</option>' + opts;
     if(instAcad) instAcad.innerHTML = '<option value="">Select Academy</option>' + opts + '<option value="Other">Other (type below)</option>';
 
-    // Ticker
-    if(open){
+    // Ticker — show all open events with active deadlines
+    if(events && events.length > 0){
       function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-      const txt = `Registration Open — ${open.name} \u2022 Deadline: ${fD(open.reg_deadline)} \u2022 ${open.venue||''} \u2022 U10 \u00b7 U12 \u00b7 U14 \u00b7 U16 \u2022 Boys & Girls \u2022 Rs.${open.fee_per_event||300}/event \u2022 Register before spots fill up!`;
+      const todayD = new Date();
+      const activeEvs = events.filter(e =>
+        e.status === 'Open' && (!e.reg_deadline || new Date(e.reg_deadline + 'T23:59:59') >= todayD)
+      ).sort((a,b) => new Date(a.reg_deadline||'9999-12-31') - new Date(b.reg_deadline||'9999-12-31'));
       const tickerEl = document.getElementById('tickerText');
-      if(tickerEl) tickerEl.textContent = txt;
-      // Countdown
-      if(open.reg_deadline) startCountdown(open.reg_deadline);
+      if(tickerEl && activeEvs.length > 0){
+        const parts = activeEvs.map(ev =>
+          `\u2605 ${ev.name} \u2022 Deadline: ${fD(ev.reg_deadline)} \u2022 ${ev.venue||''} \u2022 Rs.${ev.fee_per_event||300}/event`
+        );
+        tickerEl.textContent = parts.join('   \u2022\u2022\u2022   ') + '   \u2014 Register before spots fill up!';
+      }
+      // Countdown for soonest deadline
+      if(open && open.reg_deadline) startCountdown(open.reg_deadline);
     }
 
     // Load home events using cached data
