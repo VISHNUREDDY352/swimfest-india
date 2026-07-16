@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Test_Cases_Part2</title>
+  
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; margin: 0; padding: 0; }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 50px; }
+  h1 { color: #0a1628; font-size: 24px; border-bottom: 3px solid #1d4ed8; padding-bottom: 8px; margin-top: 30px; }
+  h2 { color: #1d4ed8; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+  h3 { color: #0a1628; font-size: 15px; margin-top: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  th { background: #0a1628; color: white; padding: 8px 12px; text-align: left; }
+  td { padding: 7px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  pre { background: #f1f5f9; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+  pre code { background: none; padding: 0; }
+  blockquote { border-left: 4px solid #1d4ed8; margin: 12px 0; padding: 8px 16px; background: #eff6ff; color: #374151; }
+  hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin-bottom: 4px; }
+  p { line-height: 1.6; margin: 8px 0; }
+  @media print {
+    @page { size: A4; margin: 15mm 15mm; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+  }
+</style>
+
+</head>
+<body>
+<div class="page">
+<h1>Part 2 – UI &amp; API Automation Validation</h1>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Module</th>
+<th>Screen/Page</th>
+<th>UI Component</th>
+<th>User Action</th>
+<th>API Endpoint</th>
+<th>Request Validation</th>
+<th>Response Validation</th>
+<th>UI Validation</th>
+<th>Success Scenario</th>
+<th>Failure Scenario</th>
+<th>Error Message</th>
+<th>Loading State</th>
+<th>Database Validation</th>
+<th>Automation Priority</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI-001</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Swimmer Tab</td>
+<td>Click Swimmer tab</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Email, Password visible; No Swimmer ID field; Forgot/Create links shown</td>
+<td>Tab active state</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Default tab</td>
+</tr>
+<tr>
+<td>UI-002</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Admin Tab</td>
+<td>Click Admin tab</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Only Email+Password; No forgot/create/social links</td>
+<td>Tab switch correct</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Clean admin UI</td>
+</tr>
+<tr>
+<td>UI-003</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Login Form</td>
+<td>Submit valid swimmer credentials</td>
+<td>POST /api/auth/login</td>
+<td>email, password, role in body</td>
+<td>200 with success=true</td>
+<td>Redirect to index.html</td>
+<td>Swimmer logged in, localStorage set</td>
+<td>401 shown</td>
+<td>"Account not found..."</td>
+<td>N/A</td>
+<td>swimmers table queried</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-004</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Login Form</td>
+<td>Submit valid admin credentials</td>
+<td>POST /api/auth/login</td>
+<td>email, password, role=admin</td>
+<td>200 with swimmer_id=ADMIN</td>
+<td>Redirect to admin.html</td>
+<td>Admin panel opens</td>
+<td>401 shown</td>
+<td>"Incorrect email or password."</td>
+<td>N/A</td>
+<td>No DB write</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-005</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Error Display</td>
+<td>3 failed swimmer attempts</td>
+<td>POST /api/auth/login</td>
+<td>Wrong credentials 3x</td>
+<td>401 each time</td>
+<td>Error with Reset/Create links shown</td>
+<td>N/A</td>
+<td>Error box visible</td>
+<td>"Incorrect email or password..." with links</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-006</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Error Display</td>
+<td>Failed admin attempt</td>
+<td>POST /api/auth/login</td>
+<td>Wrong admin password</td>
+<td>401</td>
+<td>Simple error, no links</td>
+<td>N/A</td>
+<td>Only "Incorrect email or password."</td>
+<td>No reset/create links</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-007</td>
+<td>Auth</td>
+<td>login.html</td>
+<td>Social Login</td>
+<td>Click Google/WhatsApp</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Alert "coming soon"</td>
+<td>N/A</td>
+<td>Alert shown</td>
+<td>"...login coming soon..."</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P3</td>
+<td>Placeholder</td>
+</tr>
+<tr>
+<td>UI-008</td>
+<td>Registration</td>
+<td>signup.html</td>
+<td>Create Account Form</td>
+<td>Fill all fields and submit</td>
+<td>POST /api/swimmers</td>
+<td>full_name, gender, dob, address, parent_*, password</td>
+<td>201 with swimmer_id</td>
+<td>Redirect to login.html</td>
+<td>Account created</td>
+<td>Validation error</td>
+<td>"Passwords do not match"</td>
+<td>N/A</td>
+<td>New row in swimmers</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-009</td>
+<td>Registration</td>
+<td>signup.html</td>
+<td>Password Validation</td>
+<td>Mismatched passwords</td>
+<td>N/A</td>
+<td>pw != confirm</td>
+<td>N/A</td>
+<td>Alert "Passwords do not match"</td>
+<td>N/A</td>
+<td>Form not submitted</td>
+<td>"Passwords do not match."</td>
+<td>N/A</td>
+<td>No DB insert</td>
+<td>P1</td>
+<td>Frontend check</td>
+</tr>
+<tr>
+<td>UI-010</td>
+<td>Registration</td>
+<td>signup.html</td>
+<td>School/Academy Rule</td>
+<td>Neither filled</td>
+<td>N/A</td>
+<td>school_name="" &amp;&amp; academy=""</td>
+<td>N/A</td>
+<td>Alert "fill at least..."</td>
+<td>N/A</td>
+<td>Form blocked</td>
+<td>"Please fill at least School..."</td>
+<td>N/A</td>
+<td>No DB insert</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-011</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Event Cards</td>
+<td>Page load</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>tournaments array</td>
+<td>Cards rendered with name, venue, dates, fee, deadline</td>
+<td>Events shown sorted by deadline</td>
+<td>"Loading events..." persists</td>
+<td>N/A</td>
+<td>"Loading events..."</td>
+<td>tournaments table</td>
+<td>P1</td>
+<td>Dynamic from DB</td>
+</tr>
+<tr>
+<td>UI-012</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Event Card Sort</td>
+<td>Multiple open events</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>Multiple tournaments</td>
+<td>Soonest deadline at top</td>
+<td>Correct order</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Deadline-based sort</td>
+</tr>
+<tr>
+<td>UI-013</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Registration Closed</td>
+<td>Event with past deadline</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>Tournament with past reg_deadline</td>
+<td>"Registration Closed" badge, no Register button</td>
+<td>Badge shown</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Frontend date check</td>
+</tr>
+<tr>
+<td>UI-014</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Register Button</td>
+<td>Click Register on open event</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Wizard modal opens</td>
+<td>Modal visible</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>openRegisterModal()</td>
+</tr>
+<tr>
+<td>UI-015</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Countdown Timer</td>
+<td>Page load with open event</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>reg_deadline in response</td>
+<td>Timer shows Days:Hrs:Min:Sec counting down</td>
+<td>Timer ticks every second</td>
+<td>Shows 00:00:00:00 after deadline</td>
+<td>N/A</td>
+<td>Timer visible</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Dynamic from reg_deadline</td>
+</tr>
+<tr>
+<td>UI-016</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Ticker</td>
+<td>Page load</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>Active events list</td>
+<td>All open events shown in scrolling ticker</td>
+<td>Ticker scrolls with event names</td>
+<td>"Loading event info..."</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Multiple events displayed</td>
+</tr>
+<tr>
+<td>UI-017</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Announcements</td>
+<td>Page load</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>Open tournament data</td>
+<td>Deadline, Day 1 date shown</td>
+<td>Dynamic dates</td>
+<td>Generic messages</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>From first Open tournament</td>
+</tr>
+<tr>
+<td>UI-018</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Stats Bar</td>
+<td>Page load</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>stats object</td>
+<td>Swimmers, Bookings, Academies, Fee shown</td>
+<td>Real counts</td>
+<td>Shows "—"</td>
+<td>N/A</td>
+<td>"—" initial</td>
+<td>swimmers, bookings, academies tables</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-019</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Eligibility Checker</td>
+<td>Enter DOB + Gender</td>
+<td>N/A</td>
+<td>dob, gender</td>
+<td>N/A</td>
+<td>Age group and eligible events shown</td>
+<td>Badge + events list</td>
+<td>"DOB outside eligible range"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Frontend calc</td>
+</tr>
+<tr>
+<td>UI-020</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Share Button</td>
+<td>Click Share on event card</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Share card popup with WhatsApp/Copy buttons</td>
+<td>Dark themed card visible</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Visual share card</td>
+</tr>
+<tr>
+<td>UI-021</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Venue Button</td>
+<td>Click Venue on event card</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Venue popup with location + Directions link</td>
+<td>Popup with Google Maps link</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Opens maps</td>
+</tr>
+<tr>
+<td>UI-022</td>
+<td>Home</td>
+<td>index.html</td>
+<td>More Info</td>
+<td>Click More Info on event card</td>
+<td>GET /api/tournaments</td>
+<td>N/A</td>
+<td>Tournament data</td>
+<td>Event detail modal with info grid</td>
+<td>Modal opens with correct data</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Dynamic from API</td>
+</tr>
+<tr>
+<td>UI-023</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Swimmer Directory</td>
+<td>Page load</td>
+<td>GET /api/swimmers + /api/academies</td>
+<td>N/A</td>
+<td>Swimmer list</td>
+<td>Cards with names, academies, age groups</td>
+<td>Real swimmers shown</td>
+<td>"No swimmers registered"</td>
+<td>"Loading swimmers..."</td>
+<td>swimmers table</td>
+<td>P2</td>
+<td>Dynamic</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-024</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Academy Dropdowns</td>
+<td>Page load</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>academies array</td>
+<td>Quick Register + Wizard dropdowns populated</td>
+<td>Academy names in dropdowns</td>
+<td>Empty dropdown</td>
+<td>N/A</td>
+<td>academies table</td>
+<td>P1</td>
+<td>Both dropdowns</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-025</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 1 - Tournament</td>
+<td>Open registration modal</td>
+<td>GET /api/tournaments</td>
+<td>N/A</td>
+<td>Open events with active deadlines</td>
+<td>Only registerable events shown</td>
+<td>Cards with radio selection</td>
+<td>"No open tournaments"</td>
+<td>N/A</td>
+<td>tournaments table</td>
+<td>P1</td>
+<td>Filtered</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-026</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 2 - Profile</td>
+<td>Navigate to step 2</td>
+<td>GET /api/swimmers/id</td>
+<td>swimmer_id from localStorage</td>
+<td>Swimmer data</td>
+<td>Fields auto-filled from profile</td>
+<td>Pre-populated form</td>
+<td>Empty if no profile</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>swimmers table</td>
+<td>P1</td>
+<td>Auto-fill</td>
+</tr>
+<tr>
+<td>UI-027</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 2 - Validation</td>
+<td>Click Next without required fields</td>
+<td>N/A</td>
+<td>Empty name or DOB</td>
+<td>N/A</td>
+<td>Alert with specific missing field</td>
+<td>N/A</td>
+<td>Form blocked</td>
+<td>"Please enter swimmer name" etc.</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>validateStep(2)</td>
+</tr>
+<tr>
+<td>UI-028</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 3 - Events</td>
+<td>Select events for age group</td>
+<td>N/A</td>
+<td>Checkboxes</td>
+<td>N/A</td>
+<td>Max 3 individual + 1 relay enforced</td>
+<td>Events checked</td>
+<td>Alert if &gt;3</td>
+<td>"Maximum 3 events"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Frontend limit</td>
+</tr>
+<tr>
+<td>UI-029</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 5 - Consents</td>
+<td>All 5 checkboxes</td>
+<td>N/A</td>
+<td>Required checkboxes</td>
+<td>N/A</td>
+<td>All must be checked to proceed</td>
+<td>Proceed to payment</td>
+<td>Alert if unchecked</td>
+<td>"Please accept all..."</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>UI-030</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 6 - Payment</td>
+<td>Click Proceed to Payment</td>
+<td>POST /api/payment/create-order</td>
+<td>amount in paise</td>
+<td>order_id returned</td>
+<td>Razorpay popup opens</td>
+<td>Payment successful</td>
+<td>Razorpay error shown</td>
+<td>"Payment failed"</td>
+<td>N/A</td>
+<td>bookings table after success</td>
+<td>P1</td>
+<td>Razorpay integration</td>
+</tr>
+<tr>
+<td>UI-031</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Step 7 - Confirmation</td>
+<td>Payment success</td>
+<td>POST /api/bookings</td>
+<td>Full booking data</td>
+<td>201 with booking_id</td>
+<td>Confirmation screen with booking details</td>
+<td>Booking ID, events, total shown</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>bookings + event_entries rows created</td>
+<td>P1</td>
+<td>Final step</td>
+</tr>
+<tr>
+<td>UI-032</td>
+<td>Wizard</td>
+<td>index.html</td>
+<td>Modal Close</td>
+<td>Click X button</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Modal closes</td>
+<td>Modal hidden</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Only X closes</td>
+</tr>
+<tr>
+<td>UI-033</td>
+<td>Profile</td>
+<td>player.html</td>
+<td>Personal Details</td>
+<td>Page load</td>
+<td>GET /api/swimmers/id</td>
+<td>swimmer_id from localStorage</td>
+<td>Swimmer record</td>
+<td>Name, Gender, DOB, Age Group, ID, Eligibility shown</td>
+<td>All fields from DB</td>
+<td>"No data" for missing fields</td>
+<td>N/A</td>
+<td>Loading state</td>
+<td>swimmers table</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-034</td>
+<td>Profile</td>
+<td>player.html</td>
+<td>Parent Card</td>
+<td>Page load</td>
+<td>GET /api/swimmers/id</td>
+<td>N/A</td>
+<td>parent_name, relationship, mobile, email</td>
+<td>Parent details shown</td>
+<td>Correct parent data</td>
+<td>"—" for empty</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-035</td>
+<td>Profile</td>
+<td>player.html</td>
+<td>Edit Profile</td>
+<td>Click Edit + Save</td>
+<td>PUT /api/swimmers/id</td>
+<td>Updated fields</td>
+<td>200 "Profile updated"</td>
+<td>Fields updated on page</td>
+<td>Alert "Profile updated!"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>swimmers row updated</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-036</td>
+<td>Profile</td>
+<td>player.html</td>
+<td>Photo Upload</td>
+<td>Upload image in edit modal</td>
+<td>N/A</td>
+<td>File &lt; 2MB, image type</td>
+<td>N/A</td>
+<td>Photo shown in avatar</td>
+<td>localStorage updated per swimmer_id</td>
+<td>Alert "must be less than 2MB"</td>
+<td>"Photo must be less than 2MB."</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Per-user storage</td>
+</tr>
+<tr>
+<td>UI-037</td>
+<td>Profile</td>
+<td>player.html</td>
+<td>Booking Card</td>
+<td>Page load with booking</td>
+<td>GET /api/bookings</td>
+<td>N/A</td>
+<td>Swimmer's bookings</td>
+<td>Events, seed times, payment status shown</td>
+<td>Booking details visible</td>
+<td>"No active booking"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>bookings + event_entries</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-038</td>
+<td>Profile</td>
+<td>player.html</td>
+<td>Certificate</td>
+<td>Tournament marked Completed + swimmer has booking</td>
+<td>GET /api/tournaments + /api/bookings</td>
+<td>N/A</td>
+<td>Completed status + matching booking</td>
+<td>Certificate card visible</td>
+<td>Download link shown</td>
+<td>Card hidden</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Both tables checked</td>
+<td>P1</td>
+<td>Two conditions</td>
+</tr>
+<tr>
+<td>UI-039</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Dashboard</td>
+<td>Page load</td>
+<td>GET /api/stats</td>
+<td>N/A</td>
+<td>Stats counts</td>
+<td>4 stat cards shown</td>
+<td>Correct numbers</td>
+<td>All zeros</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>swimmers, bookings, entries, academies</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-040</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Events Tab</td>
+<td>Click Events</td>
+<td>GET /api/tournaments</td>
+<td>N/A</td>
+<td>Tournament list</td>
+<td>Table with ID, Name, Venue, Dates, Fee, Lanes, Status, Edit</td>
+<td>All events listed</td>
+<td>"No events created"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>tournaments table</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-041</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Create Event</td>
+<td>Fill form + submit</td>
+<td>POST /api/tournaments</td>
+<td>name, venue, dates, fee, lanes, status</td>
+<td>201 with tournament_id</td>
+<td>Alert "Event created" + table refreshes</td>
+<td>New row in table</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>New row in tournaments</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-042</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Edit Event</td>
+<td>Click Edit + Save</td>
+<td>PUT /api/tournaments/tid</td>
+<td>Updated fields</td>
+<td>200 "Tournament updated"</td>
+<td>Table refreshes with new data</td>
+<td>Alert "Tournament updated!"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>tournaments row updated</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-043</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Status Change</td>
+<td>Change dropdown</td>
+<td>PUT /api/tournaments/tid/status</td>
+<td>status value</td>
+<td>200</td>
+<td>Dropdown stays on new value</td>
+<td>Status persisted</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>status column updated</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-044</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Swimmers Tab</td>
+<td>Click Swimmers</td>
+<td>GET /api/swimmers</td>
+<td>N/A</td>
+<td>All swimmers</td>
+<td>Table with Edit button per row</td>
+<td>All registered swimmers listed</td>
+<td>"No swimmers registered"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>swimmers table</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-045</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Edit Swimmer</td>
+<td>Click Edit + modify + Save</td>
+<td>PUT /api/swimmers/id</td>
+<td>Name, Gender, DOB, Mobile, Email</td>
+<td>200</td>
+<td>Alert "Swimmer updated!" + table refreshes</td>
+<td>Row updated</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>swimmers row updated</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-046</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Results Upload</td>
+<td>Click Results Upload + enter times</td>
+<td>POST /api/results/update</td>
+<td>entry_id, final_time, overall_place</td>
+<td>200</td>
+<td>Alert "Result saved!"</td>
+<td>Entry updated</td>
+<td>Alert "Enter final time"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>event_entries.final_time updated</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-047</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Heat Sheet Gen</td>
+<td>Select tournament + Generate</td>
+<td>POST /api/heatsheet/generate/tid</td>
+<td>tournament_id</td>
+<td>200 with total_heats</td>
+<td>Table shows heat/lane assignments</td>
+<td>Heat sheet displayed</td>
+<td>"Tournament not found"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>heat_sheets table populated</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-048</td>
+<td>Admin</td>
+<td>admin.html</td>
+<td>Logout</td>
+<td>Click Logout</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Redirect to login.html, localStorage cleared</td>
+<td>Login page shown</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-049</td>
+<td>Heat Sheet</td>
+<td>heatsheet.html</td>
+<td>PDF Export</td>
+<td>Click Export PDF</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Print dialog opens with formatted content</td>
+<td>PDF generated</td>
+<td>Alert "Generate heat sheet first"</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Browser print</td>
+</tr>
+<tr>
+<td>UI-050</td>
+<td>Heat Sheet</td>
+<td>heatsheet.html</td>
+<td>CSV Export</td>
+<td>Click Export CSV</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>CSV file downloaded</td>
+<td>.csv file saved</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Blob download</td>
+</tr>
+<tr>
+<td>UI-051</td>
+<td>Navigation</td>
+<td>All pages</td>
+<td>Logout</td>
+<td>Click Logout in nav</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>localStorage cleared, redirect to login.html</td>
+<td>Login page shown</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-052</td>
+<td>Navigation</td>
+<td>index.html</td>
+<td>Mobile Nav</td>
+<td>Click hamburger menu</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Menu opens with Profile + Logout links</td>
+<td>All nav items visible</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P2</td>
+<td>Responsive</td>
+</tr>
+<tr>
+<td>UI-053</td>
+<td>Auth Guard</td>
+<td>All pages</td>
+<td>Redirect</td>
+<td>Access page without login</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Redirect to login.html</td>
+<td>Login page shown</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>P1</td>
+<td>localStorage check</td>
+</tr>
+<tr>
+<td>UI-054</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Contact Section</td>
+<td>Page load</td>
+<td>GET /api/home</td>
+<td>N/A</td>
+<td>Open tournament data</td>
+<td>Venue, Dates, Deadline shown dynamically</td>
+<td>Correct event data</td>
+<td>"—" for missing</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>tournaments table</td>
+<td>P2</td>
+<td></td>
+</tr>
+<tr>
+<td>UI-055</td>
+<td>Home</td>
+<td>index.html</td>
+<td>Past Results</td>
+<td>Click completed event accordion</td>
+<td>GET /api/results/tid</td>
+<td>tournament_id</td>
+<td>Results array</td>
+<td>Table with swimmer, event, time, place</td>
+<td>Results displayed</td>
+<td>"No results recorded"</td>
+<td>"Loading results..."</td>
+<td>event_entries table</td>
+<td>P2</td>
+<td>Lazy load</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

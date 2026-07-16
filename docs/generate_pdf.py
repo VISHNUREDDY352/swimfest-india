@@ -11,6 +11,8 @@ docs_dir = os.path.dirname(os.path.abspath(__file__))
 files = [
     ('Project_Report.md', 'Project_Report.pdf'),
     ('User_Manual.md', 'User_Manual.pdf'),
+    ('Test_Cases_Part1.md', 'Test_Cases_Part1.pdf'),
+    ('Test_Cases_Part2.md', 'Test_Cases_Part2.pdf'),
 ]
 
 CSS = """

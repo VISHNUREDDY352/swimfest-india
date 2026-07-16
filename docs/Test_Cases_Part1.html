@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Test_Cases_Part1</title>
+  
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; margin: 0; padding: 0; }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 50px; }
+  h1 { color: #0a1628; font-size: 24px; border-bottom: 3px solid #1d4ed8; padding-bottom: 8px; margin-top: 30px; }
+  h2 { color: #1d4ed8; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+  h3 { color: #0a1628; font-size: 15px; margin-top: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  th { background: #0a1628; color: white; padding: 8px 12px; text-align: left; }
+  td { padding: 7px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  pre { background: #f1f5f9; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+  pre code { background: none; padding: 0; }
+  blockquote { border-left: 4px solid #1d4ed8; margin: 12px 0; padding: 8px 16px; background: #eff6ff; color: #374151; }
+  hr { border: none; border-top: 2px solid #e2e8f0; margin: 24px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin-bottom: 4px; }
+  p { line-height: 1.6; margin: 8px 0; }
+  @media print {
+    @page { size: A4; margin: 15mm 15mm; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+  }
+</style>
+
+</head>
+<body>
+<div class="page">
+<h1>Part 1 – Business Logic Validation</h1>
+<table>
+<thead>
+<tr>
+<th>Test Case ID</th>
+<th>Module</th>
+<th>Feature</th>
+<th>Business Rule</th>
+<th>Scenario</th>
+<th>Input</th>
+<th>Expected Result</th>
+<th>Success Validation</th>
+<th>Failure Validation</th>
+<th>Edge Cases</th>
+<th>Database Validation</th>
+<th>API Validation</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BL-001</td>
+<td>Auth</td>
+<td>Admin Login</td>
+<td>Only vishnureddi04@gmail.com + viSHNU@19696 accepted</td>
+<td>Valid admin credentials</td>
+<td>email=vishnureddi04@gmail.com, password=viSHNU@19696, role=admin</td>
+<td>Login success, swimmer_id=ADMIN</td>
+<td>Response success=true, name=Admin</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>No DB write</td>
+<td>POST /api/auth/login returns 200</td>
+<td>Single admin account</td>
+</tr>
+<tr>
+<td>BL-002</td>
+<td>Auth</td>
+<td>Admin Login</td>
+<td>Reject all other credentials for admin role</td>
+<td>Invalid admin password</td>
+<td>email=vishnureddi04@gmail.com, password=wrong, role=admin</td>
+<td>401 error</td>
+<td>N/A</td>
+<td>Response error="Incorrect email or password."</td>
+<td>Empty password, SQL injection</td>
+<td>No DB write</td>
+<td>POST /api/auth/login returns 401</td>
+<td>No brute-force protection</td>
+</tr>
+<tr>
+<td>BL-003</td>
+<td>Auth</td>
+<td>Admin Login</td>
+<td>Swimmer credentials cannot access admin</td>
+<td>Swimmer email with admin role</td>
+<td>email=swimmer@email.com, password=any, role=admin</td>
+<td>401 error</td>
+<td>N/A</td>
+<td>Response 401</td>
+<td>Any valid swimmer email</td>
+<td>No DB write</td>
+<td>Returns 401</td>
+<td>Roles are isolated</td>
+</tr>
+<tr>
+<td>BL-004</td>
+<td>Auth</td>
+<td>Swimmer Login</td>
+<td>Match by parent_email or parent_mobile</td>
+<td>Valid swimmer email login</td>
+<td>email=registered@email.com, password=correct</td>
+<td>Login success with swimmer_id</td>
+<td>success=true, correct swimmer_id</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>swimmers table queried</td>
+<td>POST /api/auth/login returns 200</td>
+<td>Password hash verified</td>
+</tr>
+<tr>
+<td>BL-005</td>
+<td>Auth</td>
+<td>Swimmer Login</td>
+<td>Normalized mobile matching</td>
+<td>Mobile with +91 prefix</td>
+<td>email=+91 98765 11111, password=any</td>
+<td>Match after stripping +91 and spaces</td>
+<td>success=true</td>
+<td>N/A</td>
+<td>Mobile with dashes, leading zeros</td>
+<td>swimmers table queried</td>
+<td>Returns 200</td>
+<td>Fuzzy mobile matching</td>
+</tr>
+<tr>
+<td>BL-006</td>
+<td>Auth</td>
+<td>Swimmer Login</td>
+<td>Account not found</td>
+<td>Unregistered email</td>
+<td>email=notexist@email.com, password=any</td>
+<td>401 with account not found message</td>
+<td>N/A</td>
+<td>error="Account not found..."</td>
+<td>Empty email, whitespace only</td>
+<td>No match in swimmers</td>
+<td>Returns 401</td>
+<td>Suggests create account</td>
+</tr>
+<tr>
+<td>BL-007</td>
+<td>Auth</td>
+<td>Swimmer Login</td>
+<td>Password hash verification</td>
+<td>Wrong password for existing user</td>
+<td>email=registered@email.com, password=wrong</td>
+<td>401 incorrect password</td>
+<td>N/A</td>
+<td>error="Incorrect password..."</td>
+<td>Correct email wrong pass</td>
+<td>password_hash compared</td>
+<td>Returns 401</td>
+<td>SHA-256 hash</td>
+</tr>
+<tr>
+<td>BL-008</td>
+<td>Auth</td>
+<td>Swimmer Login</td>
+<td>Legacy accounts without password_hash</td>
+<td>User with NULL password_hash</td>
+<td>email=legacy@email.com, password=anything</td>
+<td>Login success (accepts any)</td>
+<td>success=true</td>
+<td>N/A</td>
+<td>password_hash=NULL</td>
+<td>password_hash is NULL</td>
+<td>Returns 200</td>
+<td>Backward compatible</td>
+</tr>
+<tr>
+<td>BL-009</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>All mandatory fields required</td>
+<td>Missing full_name</td>
+<td>full_name=""</td>
+<td>400 or validation error</td>
+<td>N/A</td>
+<td>Error returned</td>
+<td>Null, whitespace, special chars</td>
+<td>No insert</td>
+<td>POST /api/swimmers fails</td>
+<td>Frontend validates first</td>
+</tr>
+<tr>
+<td>BL-010</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>DOB must be 2010-2017</td>
+<td>Valid DOB in range</td>
+<td>dob=2014-03-15</td>
+<td>Age group U-12 calculated</td>
+<td>age_group=U-12</td>
+<td>N/A</td>
+<td>2009-12-31, 2018-01-01</td>
+<td>year_of_birth=2014, age_group=U-12</td>
+<td>Returns swimmer_id</td>
+<td>Auto-detection</td>
+</tr>
+<tr>
+<td>BL-011</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>DOB out of range</td>
+<td>DOB=2008-01-01</td>
+<td>dob=2008-01-01</td>
+<td>age_group=None</td>
+<td>N/A</td>
+<td>No valid age group</td>
+<td>2009, 2018, 2020</td>
+<td>age_group=NULL</td>
+<td>Returns swimmer_id with null age</td>
+<td>Frontend should block</td>
+</tr>
+<tr>
+<td>BL-012</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>Age group calculation</td>
+<td>Each birth year mapped</td>
+<td>dob=2016-05-01</td>
+<td>U-10</td>
+<td>age_group=U-10</td>
+<td>N/A</td>
+<td>2017=U10, 2015=U12, 2013=U14, 2011=U16</td>
+<td>Correct age_group stored</td>
+<td>Returns correct age_group</td>
+<td>Based on year only</td>
+</tr>
+<tr>
+<td>BL-013</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>Password hashing</td>
+<td>Password provided on signup</td>
+<td>password=myPass123</td>
+<td>SHA-256 hash stored</td>
+<td>password_hash is 64-char hex</td>
+<td>N/A</td>
+<td>Empty password, short password</td>
+<td>password_hash column populated</td>
+<td>Returns 201</td>
+<td>hashlib.sha256</td>
+</tr>
+<tr>
+<td>BL-014</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>School OR Academy required</td>
+<td>Neither filled</td>
+<td>school_name="", academy_id=""</td>
+<td>Frontend blocks submission</td>
+<td>N/A</td>
+<td>Alert "fill at least..."</td>
+<td>Both empty, both filled</td>
+<td>No insert if frontend blocks</td>
+<td>Not called</td>
+<td>Frontend validation</td>
+</tr>
+<tr>
+<td>BL-015</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>Academy ID resolution</td>
+<td>Academy name instead of ID</td>
+<td>academy_id="SRM Swim Club"</td>
+<td>Resolves to ACD-001</td>
+<td>Correct academy_id stored</td>
+<td>N/A</td>
+<td>Non-existent academy name</td>
+<td>academy_id matches lookup</td>
+<td>Returns 201</td>
+<td>Name-to-ID lookup</td>
+</tr>
+<tr>
+<td>BL-016</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>Unique swimmer_id generation</td>
+<td>New registration</td>
+<td>Valid data</td>
+<td>SWM-2026-XXXX format ID</td>
+<td>8-char hex uppercase</td>
+<td>N/A</td>
+<td>Collision probability</td>
+<td>swimmer_id is primary key</td>
+<td>Returns unique ID</td>
+<td>UUID-based</td>
+</tr>
+<tr>
+<td>BL-017</td>
+<td>Registration</td>
+<td>Create Account</td>
+<td>Duplicate email</td>
+<td>Same email registered twice</td>
+<td>parent_email=existing@email.com</td>
+<td>Insert succeeds (no unique constraint)</td>
+<td>New swimmer_id</td>
+<td>N/A</td>
+<td>Same mobile, same name</td>
+<td>Two rows with same email</td>
+<td>Returns 201</td>
+<td>No uniqueness check on email</td>
+</tr>
+<tr>
+<td>BL-018</td>
+<td>Booking</td>
+<td>Event Registration</td>
+<td>Max 3 events + 1 relay</td>
+<td>Select 4 individual events</td>
+<td>events=[ev1,ev2,ev3,ev4]</td>
+<td>Frontend blocks at step 3</td>
+<td>N/A</td>
+<td>Alert "max 3 events"</td>
+<td>0 events, 3 events + relay</td>
+<td>Backend accepts any count</td>
+<td>Frontend enforces</td>
+<td>No backend limit</td>
+</tr>
+<tr>
+<td>BL-019</td>
+<td>Booking</td>
+<td>Fee Calculation</td>
+<td>fee = events × fee_per_event + relay_fee + GST</td>
+<td>3 events + relay, fee=300, relay=150</td>
+<td>3 events, relay=true</td>
+<td>total = (900+150) × 1.18 = 1239</td>
+<td>total_paid=1239</td>
+<td>N/A</td>
+<td>0 events, 1 event no relay</td>
+<td>total_fee, gst, total_paid stored</td>
+<td>Returns total_paid</td>
+<td>18% GST</td>
+</tr>
+<tr>
+<td>BL-020</td>
+<td>Booking</td>
+<td>Fee Calculation</td>
+<td>GST = subtotal × gst_rate</td>
+<td>subtotal=900, gst_rate=0.18</td>
+<td>From tournament record</td>
+<td>gst=162, total=1062</td>
+<td>gst field correct</td>
+<td>N/A</td>
+<td>gst_rate=0, gst_rate=0.28</td>
+<td>gst column = round(subtotal×rate)</td>
+<td>Returned in response</td>
+<td>Rounded to int</td>
+</tr>
+<tr>
+<td>BL-021</td>
+<td>Booking</td>
+<td>Payment</td>
+<td>Razorpay order creation</td>
+<td>Valid amount in paise</td>
+<td>amount=106200 (₹1062 × 100)</td>
+<td>order_id returned</td>
+<td>order_id starts with order_</td>
+<td>N/A</td>
+<td>amount=0, amount=-100</td>
+<td>No DB write</td>
+<td>POST /api/payment/create-order</td>
+<td>Test mode</td>
+</tr>
+<tr>
+<td>BL-022</td>
+<td>Booking</td>
+<td>Payment</td>
+<td>Payment verification</td>
+<td>Valid signature</td>
+<td>razorpay_order_id, payment_id, signature</td>
+<td>verified=true</td>
+<td>Payment marked Paid</td>
+<td>N/A</td>
+<td>Invalid signature</td>
+<td>payment_status=Paid</td>
+<td>POST /api/payment/verify</td>
+<td>Test mode accepts all</td>
+</tr>
+<tr>
+<td>BL-023</td>
+<td>Booking</td>
+<td>Confirmation Email</td>
+<td>Email sent after booking</td>
+<td>Successful booking</td>
+<td>Valid swimmer with parent_email</td>
+<td>Email sent to parent_email</td>
+<td>send_booking_confirmation called</td>
+<td>N/A</td>
+<td>Invalid email format</td>
+<td>No DB change for email</td>
+<td>Email service invoked</td>
+<td>Gmail SMTP</td>
+</tr>
+<tr>
+<td>BL-024</td>
+<td>Tournament</td>
+<td>Status Update</td>
+<td>Status changes allowed</td>
+<td>Admin changes Open→Ongoing</td>
+<td>status=Ongoing, tid=GNMC-2026</td>
+<td>Status updated</td>
+<td>DB shows Ongoing</td>
+<td>N/A</td>
+<td>Invalid status value</td>
+<td>status column updated</td>
+<td>PUT /api/tournaments/tid/status</td>
+<td>Any string accepted</td>
+</tr>
+<tr>
+<td>BL-025</td>
+<td>Tournament</td>
+<td>Edit</td>
+<td>All fields editable</td>
+<td>Admin edits venue</td>
+<td>venue="New Venue"</td>
+<td>Venue updated in DB</td>
+<td>tournaments row updated</td>
+<td>N/A</td>
+<td>Empty venue, very long text</td>
+<td>venue column changed</td>
+<td>PUT /api/tournaments/tid</td>
+<td>No validation</td>
+</tr>
+<tr>
+<td>BL-026</td>
+<td>Tournament</td>
+<td>Deadline Logic</td>
+<td>Events with past deadline show "Registration Closed"</td>
+<td>reg_deadline=yesterday</td>
+<td>Past date</td>
+<td>"Registration Closed" badge shown</td>
+<td>No Register button</td>
+<td>N/A</td>
+<td>deadline=today 23:59</td>
+<td>No DB change</td>
+<td>GET /api/home returns deadline</td>
+<td>Frontend JS comparison</td>
+</tr>
+<tr>
+<td>BL-027</td>
+<td>Tournament</td>
+<td>Wizard Filter</td>
+<td>Only open + active deadline in wizard</td>
+<td>3 tournaments: 1 Open active, 1 Open expired, 1 Closed</td>
+<td>Fetch</td>
+<td>Only 1 shown in wizard</td>
+<td>Single card displayed</td>
+<td>N/A</td>
+<td>All expired, none open</td>
+<td>No DB change</td>
+<td>GET /api/tournaments</td>
+<td>Frontend filters</td>
+</tr>
+<tr>
+<td>BL-028</td>
+<td>Heat Sheet</td>
+<td>Generation</td>
+<td>Swimmers sorted by seed time</td>
+<td>10 swimmers with seed times</td>
+<td>Generate for tournament</td>
+<td>Fastest in centre lane</td>
+<td>heat_no, lane_no assigned</td>
+<td>N/A</td>
+<td>All NT, single swimmer</td>
+<td>event_entries updated, heat_sheets inserted</td>
+<td>POST /api/heatsheet/generate/tid</td>
+<td>Centre-out pattern</td>
+</tr>
+<tr>
+<td>BL-029</td>
+<td>Heat Sheet</td>
+<td>Lane Pattern</td>
+<td>8-lane pattern: 4,5,3,6,2,7,1,8</td>
+<td>8 swimmers</td>
+<td>lanes=8</td>
+<td>Fastest gets lane 4</td>
+<td>lane_no=4 for rank 1</td>
+<td>N/A</td>
+<td>6 lanes, 10 lanes</td>
+<td>lane_no matches pattern</td>
+<td>Heat sheet records correct</td>
+<td>LANE_PATTERNS dict</td>
+</tr>
+<tr>
+<td>BL-030</td>
+<td>Heat Sheet</td>
+<td>Multiple Heats</td>
+<td>More swimmers than lanes</td>
+<td>16 swimmers, 8 lanes</td>
+<td>Generate</td>
+<td>2 heats created</td>
+<td>heat_no=1 and heat_no=2</td>
+<td>N/A</td>
+<td>Exactly 8 (1 heat), 9 (2 heats)</td>
+<td>16 records in heat_sheets</td>
+<td>Response shows total_heats=2</td>
+<td>Batch insert</td>
+</tr>
+<tr>
+<td>BL-031</td>
+<td>Results</td>
+<td>Update Entry</td>
+<td>Admin enters final time</td>
+<td>entry_id, final_time=00:45.32</td>
+<td>POST /api/results/update</td>
+<td>final_time stored</td>
+<td>event_entries updated</td>
+<td>N/A</td>
+<td>Invalid time format, null</td>
+<td>final_time column updated</td>
+<td>Returns "Result updated"</td>
+<td>No format validation</td>
+</tr>
+<tr>
+<td>BL-032</td>
+<td>Certificate</td>
+<td>Visibility</td>
+<td>Only shown when tournament=Completed AND swimmer has booking</td>
+<td>Completed tournament, swimmer has booking</td>
+<td>Check profile page</td>
+<td>Certificate card visible</td>
+<td>display="" on certSection</td>
+<td>N/A</td>
+<td>Completed but no booking, Open with booking</td>
+<td>bookings table queried</td>
+<td>GET /api/bookings + /api/tournaments</td>
+<td>Two conditions AND</td>
+</tr>
+<tr>
+<td>BL-033</td>
+<td>Profile</td>
+<td>Load Data</td>
+<td>Profile loads by swimmer_id from localStorage</td>
+<td>swimmer_id=SWM-2026-XXXX</td>
+<td>Navigate to player.html</td>
+<td>All fields populated from DB</td>
+<td>Name, DOB, parent, school shown</td>
+<td>N/A</td>
+<td>Invalid swimmer_id, DEMO, ADMIN</td>
+<td>GET /api/swimmers/id</td>
+<td>Returns swimmer record</td>
+<td>LocalStorage dependency</td>
+</tr>
+<tr>
+<td>BL-034</td>
+<td>Profile</td>
+<td>Edit</td>
+<td>Update swimmer fields</td>
+<td>Change address</td>
+<td>Address="New Address"</td>
+<td>Address updated in DB</td>
+<td>swimmers row updated</td>
+<td>N/A</td>
+<td>Empty value, special chars</td>
+<td>address column changed</td>
+<td>PUT /api/swimmers/id</td>
+<td>Key mapping display→column</td>
+</tr>
+<tr>
+<td>BL-035</td>
+<td>Profile</td>
+<td>Photo</td>
+<td>Per-user photo storage</td>
+<td>Upload photo</td>
+<td>File &lt; 2MB</td>
+<td>Stored in localStorage with swimmer_id key</td>
+<td>avatar_photo_SWM-XXX set</td>
+<td>N/A</td>
+<td>File &gt; 2MB, non-image file</td>
+<td>No DB write (localStorage only)</td>
+<td>N/A</td>
+<td>Not persisted in DB</td>
+</tr>
+<tr>
+<td>BL-036</td>
+<td>Stats</td>
+<td>Dashboard</td>
+<td>Counts from DB</td>
+<td>Admin views dashboard</td>
+<td>GET /api/stats</td>
+<td>Correct swimmer/booking/entry/academy counts</td>
+<td>Matches actual row counts</td>
+<td>N/A</td>
+<td>Empty tables (all 0)</td>
+<td>count queries on 4 tables</td>
+<td>Returns JSON with counts</td>
+<td>Uses count='exact'</td>
+</tr>
+<tr>
+<td>BL-037</td>
+<td>Home</td>
+<td>Data Caching</td>
+<td>/api/home cached for 60 seconds</td>
+<td>Two requests within 60s</td>
+<td>GET /api/home twice</td>
+<td>Second returns cached data</td>
+<td>Same response, faster time</td>
+<td>N/A</td>
+<td>Cache expired after 60s</td>
+<td>No DB query on cached hit</td>
+<td>Returns cached JSON</td>
+<td>In-memory cache</td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

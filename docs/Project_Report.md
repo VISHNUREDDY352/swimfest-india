@@ -6,7 +6,7 @@
 ## 1. Project Overview
 
 **Project Name:** SwimFest India — Swimming Competition Management System  
-**Client:** SwimFest India / SRM University, Kattankulathur  
+**Client:** SwimFest India  
 **Developer:** Vishnu Reddy  
 **Technology Stack:** Flask (Python), Supabase (PostgreSQL), HTML/CSS/JavaScript  
 **Live URL:** https://swimfest-india.onrender.com  

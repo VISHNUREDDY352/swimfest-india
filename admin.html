@@ -331,21 +331,19 @@ async function loadDashboard() {
 async function loadSwimmers() {
   const data = await fetch(API+'/swimmers').then(r=>r.json());
   if (!data.length) { document.getElementById('swimmersTable').innerHTML='<p class="empty-msg">No swimmers registered</p>'; return; }
-  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Age Group</th><th>Academy</th><th>Parent</th><th>Mobile</th><th>Email</th><th>Action</th></tr></thead><tbody>';
+  let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>DOB</th><th>Age Group</th><th>Academy</th><th>Parent</th><th>Mobile</th><th>Email</th></tr></thead><tbody>';
   data.forEach(s => {
+    const gender = s.gender === 'Boys' ? 'Boy' : s.gender === 'Girls' ? 'Girl' : s.gender;
     html += `<tr>
       <td class="mono">${s.swimmer_id}</td>
       <td><strong>${s.full_name}</strong></td>
-      <td>${s.gender}</td>
+      <td>${gender}</td>
       <td>${s.dob}</td>
       <td><span class="badge badge-active">${s.age_group||''}</span></td>
       <td>${s.academy_id||''}</td>
       <td>${s.parent_name||''}</td>
       <td>${s.parent_mobile||''}</td>
       <td>${s.parent_email||''}</td>
-      <td>
-        <button onclick="openEditSwimmer('${s.swimmer_id}','${(s.full_name||'').replace(/'/g,"\\'")}','${s.gender||''}','${s.dob||''}','${s.parent_mobile||''}','${s.parent_email||''}')" style="padding:4px 10px;font-size:.7rem;background:#1d4ed8;color:#fff;border:none;border-radius:6px;cursor:pointer">Edit</button>
-      </td>
     </tr>`;
   });
   html += '</tbody></table>';

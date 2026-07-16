@@ -68,7 +68,18 @@
       </div>
       <div class="form-grp">
         <label>Date of Birth *</label>
-        <input type="date" id="suDob" min="2010-01-01" max="2017-12-31" required/>
+        <input type="date" id="suDob" min="2010-01-01" max="2017-12-31" required onchange="showAge()"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-grp">
+        <label>Age <span style="font-weight:400;color:#94a3b8">(auto)</span></label>
+        <input type="text" id="suAge" readonly placeholder="Detected from DOB" style="background:#f8fafc;color:#1d4ed8;font-weight:700"/>
+      </div>
+      <div class="form-grp">
+        <label>Age Group <span style="font-weight:400;color:#94a3b8">(auto)</span></label>
+        <input type="text" id="suAgeGroup" readonly placeholder="Detected from DOB" style="background:#f8fafc;color:#1d4ed8;font-weight:700"/>
       </div>
     </div>
 
@@ -158,6 +169,13 @@
       </div>
     </div>
 
+    <div style="margin-top:10px;padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px">
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:.8rem;color:#0a1628;cursor:pointer">
+        <input type="checkbox" id="suConfirmCheck" required style="width:18px;height:18px;margin-top:2px;accent-color:#1d4ed8"/>
+        <span>I confirm that all the details entered above are correct and accurate. I understand that incorrect information may lead to disqualification.</span>
+      </label>
+    </div>
+
     <button type="submit" class="btn-signup">Create Account</button>
   </form>
 
@@ -191,6 +209,19 @@ function handleSignup(e) {
     alert('Please fill at least School Name or Swimming Academy.');
     return;
   }
+
+  // Pre-submission popup — reconfirm phone and swimmer details
+  const phone = document.getElementById('suMobile').value.trim();
+  const name = document.getElementById('suName').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const confirmed = confirm(
+    `Please reconfirm your details:\n\n` +
+    `Name: ${name}\n` +
+    `Phone: ${phone}\n` +
+    `Email: ${email}\n\n` +
+    `Are these details correct?`
+  );
+  if (!confirmed) return;
 
   const data = {
     full_name: document.getElementById('suName').value.trim(),
@@ -235,6 +266,32 @@ function handleSignup(e) {
     document.getElementById('signupSuccess').style.display = '';
     setTimeout(() => { window.location.href = 'login.html'; }, 2000);
   });
+}
+
+function showAge() {
+  const dob = document.getElementById('suDob').value;
+  if (!dob) return;
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+  // Determine age group
+  const y = parseInt(dob.split('-')[0]);
+  let ageGroup = '';
+  if (y >= 2016 && y <= 2017) ageGroup = 'U-10';
+  else if (y >= 2014 && y <= 2015) ageGroup = 'U-12';
+  else if (y >= 2012 && y <= 2013) ageGroup = 'U-14';
+  else if (y >= 2010 && y <= 2011) ageGroup = 'U-16';
+  else ageGroup = 'Not Eligible';
+  
+  const ageEl = document.getElementById('suAge');
+  const groupEl = document.getElementById('suAgeGroup');
+  if(ageEl) ageEl.value = age + ' years';
+  if(groupEl) {
+    groupEl.value = ageGroup;
+    groupEl.style.color = ageGroup === 'Not Eligible' ? '#dc2626' : '#1d4ed8';
+  }
 }
 </script>
 

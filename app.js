@@ -1,5 +1,24 @@
 /* SwimFest India — app.js (shared: index.html + event.html) */
 
+// ── Seed Time Auto-Format (MM:SS.ss) ──────────────────
+function formatSeedTime(input) {
+  let val = input.value.toUpperCase();
+  // Allow "NT" without formatting
+  if (val === 'N' || val === 'NT') { input.value = val; return; }
+  // Strip all non-digit characters
+  let digits = val.replace(/[^\d]/g, '');
+  // Limit to 6 digits (MMSSSS)
+  digits = digits.substring(0, 6);
+  // Auto-insert : after 2 digits, . after 4 digits
+  let formatted = '';
+  for (let i = 0; i < digits.length; i++) {
+    if (i === 2) formatted += ':';
+    if (i === 4) formatted += '.';
+    formatted += digits[i];
+  }
+  input.value = formatted;
+}
+
 // ── Modal open/close ──────────────────────────────────
 function openRegisterModal() {
   const modal = document.getElementById('registerModal');
@@ -27,24 +46,40 @@ function openRegisterModal() {
           set('relationship', s.parent_relationship);
           set('phone', s.parent_mobile);
           set('email', s.parent_email);
+          set('schoolName', s.school_name);
+          set('schoolBoard', s.school_board);
+          set('schoolClass', s.school_class);
+          set('swimmerAddress', s.address || '');
           set('institution', s.academy_id || '');
-          // Try to match academy_id to dropdown option
+          // Try to match academy_id to dropdown option (with retry for dynamic loading)
           if (s.academy_id) {
-            fetch('/api/academies').then(r=>r.json()).then(acads => {
-              const acad = acads.find(a => a.academy_id === s.academy_id);
-              if (acad) {
-                const instEl = document.getElementById('institution');
-                if (instEl) {
-                  // Find option matching academy name
-                  for (let opt of instEl.options) {
-                    if (opt.value === acad.name || opt.textContent === acad.name) {
-                      instEl.value = opt.value;
-                      break;
+            function trySetAcademy() {
+              fetch('/api/academies').then(r=>r.json()).then(acads => {
+                const acad = acads.find(a => a.academy_id === s.academy_id);
+                if (acad) {
+                  const instEl = document.getElementById('institution');
+                  if (instEl) {
+                    // Set by academy_id value first
+                    for (let opt of instEl.options) {
+                      if (opt.value === s.academy_id || opt.value === acad.name || opt.textContent === acad.name) {
+                        instEl.value = opt.value;
+                        return;
+                      }
                     }
+                    // If not found, options may not be loaded yet — retry after 1s
+                    setTimeout(() => {
+                      for (let opt of instEl.options) {
+                        if (opt.value === s.academy_id || opt.value === acad.name || opt.textContent === acad.name) {
+                          instEl.value = opt.value;
+                          break;
+                        }
+                      }
+                    }, 1500);
                   }
                 }
-              }
-            }).catch(()=>{});
+              }).catch(()=>{});
+            }
+            trySetAcademy();
           }
           set('instType', s.institution_type);
           set('swimmerAddress', s.address || '');
@@ -321,7 +356,7 @@ function buildEventGrid(ageKey, gender) {
         </div>
       </div>
       <div class="wiz-ev-seed hidden" style="width:100%;margin-top:6px">
-        <input type="text" placeholder="Seed time (e.g. 00:32.45 or NT)" maxlength="12" style="width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:.78rem"/>
+        <input type="text" placeholder="Seed time (e.g. 00:32.45 or NT)" maxlength="8" oninput="formatSeedTime(this)" style="width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:.78rem"/>
       </div>`;
 
     const cb   = card.querySelector('input[type=checkbox]');
@@ -348,7 +383,7 @@ function buildEventGrid(ageKey, gender) {
 
   if (relRow) {
     relRow.style.display = '';
-    if (relDist) relDist.textContent = `(${cat.relay} · &#8377;${cat.relayFee})`;
+    if (relDist) relDist.innerHTML = `(${cat.relay} &middot; &#8377;${cat.relayFee})`;
   }
   updateCounter();
 }
@@ -384,7 +419,7 @@ function buildSeedTimeGrid() {
     row.innerHTML = `
       <div class="wiz-seed-ev">${cb.value}</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <input type="text" class="wiz-seed-input" value="${inlineSeed}" placeholder="MM:SS.ss or NT" maxlength="12" aria-label="Seed time for ${cb.value}"/>
+        <input type="text" class="wiz-seed-input" value="${inlineSeed}" placeholder="MM:SS.ss or NT" maxlength="8" oninput="formatSeedTime(this)" aria-label="Seed time for ${cb.value}"/>
         <span class="wiz-seed-hint">NT = no time</span>
       </div>`;
     grid.appendChild(row);
