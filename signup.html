@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Create Account — SwimFest India</title>
+  <link rel="stylesheet" href="3d-styles.css?v=1"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -42,9 +43,13 @@
     @media(max-width:480px){.signup-card{padding:24px 18px}.form-row{flex-direction:column}}
   </style>
 </head>
-<body>
+<body class="page-has-canvas" data-page="signup">
 
-<div class="signup-card">
+<!-- 3D Water Particle Background -->
+<canvas id="waterCanvas" style="display:none"></canvas>
+<div class="float-container" aria-hidden="true" style="display:none"></div>
+
+<div class="signup-card form-card-3d">
   <div class="signup-header">
     <div class="logo">&#127946;</div>
     <h2>Create Your Account</h2>
@@ -295,5 +300,6 @@ function showAge() {
 }
 </script>
 
+<script src="3d-effects.js?v=1"></script>
 </body>
 </html>

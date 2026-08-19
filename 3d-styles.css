@@ -1,0 +1,179 @@
+/* ═══════════════════════════════════════════════════════════
+   SwimFest India — Lightweight 3D (120fps optimized)
+   Only transform + opacity — zero layout thrash
+   ═══════════════════════════════════════════════════════════ */
+
+/* Force GPU compositing on animated elements */
+.ecard, .dir-card, .pp-card, .arc-card, .faq-item,
+.btn-hero-primary, .btn-hero-ghost, .btn-login, .btn-signup,
+.nav-cta, .hero-chip, .stat-item, .dfb, .social-btn,
+.etag, .pp-tag, .announce-item, .login-card, .signup-card {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Smooth card hover — lift + shadow only */
+.ecard, .dir-card, .arc-card, .pp-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ecard:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(0,0,0,.12);
+}
+
+.dir-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0,0,0,.1);
+}
+
+.arc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+}
+
+.pp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+/* Button hover — lift only */
+.btn-hero-primary, .btn-hero-ghost, .btn-login, .btn-signup, .nav-cta, .btn-reg, .btn-continue {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hero-primary:hover, .nav-cta:hover {
+  transform: translateY(-2px);
+}
+
+.btn-hero-ghost:hover, .btn-login:hover, .btn-signup:hover, .btn-reg:hover, .btn-continue:hover {
+  transform: translateY(-2px);
+}
+
+/* Stats hover */
+.stat-item, .hero-chip {
+  transition: transform 0.2s ease;
+}
+
+.stat-item:hover, .hero-chip:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* Filter buttons */
+.dfb {
+  transition: transform 0.15s ease;
+}
+
+.dfb:hover {
+  transform: translateY(-2px);
+}
+
+.dfb.active {
+  transform: scale(1.05);
+}
+
+/* FAQ items */
+.faq-item {
+  transition: transform 0.2s ease;
+}
+
+.faq-item:hover {
+  transform: translateX(4px);
+}
+
+/* Login/Signup card subtle float */
+.login-card, .signup-card {
+  animation: gentleFloat 6s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Scroll reveal — simple fade + slide */
+.reveal-3d-init {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-3d-init.revealed-3d {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Social buttons */
+.social-btn {
+  transition: transform 0.15s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Nav link active glow */
+.nav-links li a.active {
+  text-shadow: 0 0 8px rgba(6,182,212,.5);
+}
+
+/* Announcements hover */
+.announce-item {
+  transition: transform 0.2s ease;
+}
+
+.announce-item:hover {
+  transform: translateX(4px);
+}
+
+/* Login features stagger entrance */
+.login-features .feat {
+  transition: transform 0.2s ease;
+}
+
+.login-features .feat:hover {
+  transform: translateX(6px);
+}
+
+/* Countdown number glow */
+.cd-num {
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(6,182,212,.4);
+}
+
+/* Stat gradient text */
+.stat-val {
+  background: linear-gradient(135deg, #1d4ed8, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Tags slight lift */
+.etag, .pp-tag {
+  transition: transform 0.15s ease;
+}
+
+.etag:hover, .pp-tag:hover {
+  transform: scale(1.08);
+}
+
+/* Avatar pulse — CSS only */
+.pp-avatar {
+  box-shadow: 0 0 0 0 rgba(6,182,212,.4);
+  animation: avatarRing 3s ease-in-out infinite;
+}
+
+@keyframes avatarRing {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6,182,212,.4); }
+  50% { box-shadow: 0 0 0 6px rgba(6,182,212,0); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

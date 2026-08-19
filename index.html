@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>SwimFest India 2026</title>
   <link rel="stylesheet" href="home.css?v=6"/>
+  <link rel="stylesheet" href="3d-styles.css?v=1"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 </head>
-<body>
+<body data-page="home">
+
+<!-- 3D Water Particle Background -->
+<canvas id="waterCanvas" style="display:none"></canvas>
+<!-- 3D Floating Objects -->
+<div class="float-container" aria-hidden="true" style="display:none"></div>
 
 <!-- NAV -->
 <nav class="nav">
@@ -49,12 +55,12 @@
 </nav>
 
 <!-- HERO -->
-<section id="home" class="hero">
+<section id="home" class="hero hero-3d">
   <div class="hero-inner">
     <div class="hero-text">
-      <span class="hero-eyebrow">&#127941; Tamil Nadu's Premier Swimming Championship</span>
-      <h1>SWIMFEST<br/>INDIA 2026</h1>
-      <p class="hero-sub">Non-medalist &nbsp;&middot;&nbsp; Age-group &nbsp;&middot;&nbsp; School &amp; Academy swimmers welcome</p>
+      <span class="hero-eyebrow" data-depth="0.2">&#127941; Tamil Nadu's Premier Swimming Championship</span>
+      <h1 data-depth="0.4">SWIMFEST<br/>INDIA 2026</h1>
+      <p class="hero-sub" data-depth="0.3">Non-medalist &nbsp;&middot;&nbsp; Age-group &nbsp;&middot;&nbsp; School &amp; Academy swimmers welcome</p>
       <div class="hero-btns">
         <button onclick="openRegisterModal()" class="btn-hero-primary">&#128221; Register Now</button>
         <a href="#events" class="btn-hero-ghost">View Events</a>
@@ -183,7 +189,7 @@
 </script>
 
 <!-- MAIN GRID -->
-<div class="page-grid" id="events">
+<div class="page-grid reveal-3d" id="events">
 
   <!-- LEFT -->
   <div class="col-left">
@@ -196,7 +202,7 @@
 
     <!-- Past Results -->
     <div class="section-head" id="results" style="margin-top:18px">
-      <span class="sh-icon">&#127942;</span><h2>Past Event Results</h2>
+      <span class="sh-icon">&#127942;</span><h2>Completed Events</h2>
     </div>
     <div class="past-list" id="pastResultsList">
       <p style="color:#64748b;font-size:.85rem;padding:10px">Loading results...</p>
@@ -204,7 +210,11 @@
     <script>
     (function(){
       fetch('/api/tournaments').then(r=>r.json()).then(tournaments=>{
-        const completed = tournaments.filter(t=>t.status==='Completed');
+        const today = new Date();
+        const completed = tournaments.filter(t => 
+          t.status === 'Completed' || t.status === 'Closed' || 
+          (t.reg_deadline && new Date(t.reg_deadline + 'T23:59:59') < today)
+        );
         const list = document.getElementById('pastResultsList');
         if(!list) return;
         if(!completed.length){
@@ -250,20 +260,7 @@
   <!-- CENTRE -->
   <div class="col-mid">
 
-    <div class="section-head" style="margin-top:0">
-      <span class="sh-icon">&#9203;</span><h2>Registration Closes In</h2>
-    </div>
-    <div class="countdown-box">
-      <div class="cd-unit"><span class="cd-num" id="cdDays">--</span><span class="cd-lbl">Days</span></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span class="cd-num" id="cdHrs">--</span><span class="cd-lbl">Hrs</span></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span class="cd-num" id="cdMin">--</span><span class="cd-lbl">Min</span></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span class="cd-num" id="cdSec">--</span><span class="cd-lbl">Sec</span></div>
-    </div>
-
-    <div class="section-head" id="eligibility" style="margin-top:16px">
+    <div class="section-head" id="eligibility" style="margin-top:0">
       <span class="sh-icon">&#9989;</span><h2>Eligibility Checker</h2>
     </div>
     <div class="elig-checker">
@@ -286,35 +283,6 @@
       </div>
     </div>
 
-    <!-- Swimming Tips -->
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.09);margin-top:16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid #e2e8f0">
-        <span style="font-size:1.1rem">&#127946;</span>
-        <h2 style="font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#0f172a;margin:0">Swimming Tips</h2>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:1.1rem;flex-shrink:0">&#9201;</span>
-          <div><strong style="font-size:.88rem;color:#0a1628">Warm Up 20 Minutes Early</strong><p style="font-size:.8rem;color:#64748b;margin-top:2px">Arrive at the pool early. Stretch and do light laps to activate muscles before your heat.</p></div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:1.1rem;flex-shrink:0">&#128165;</span>
-          <div><strong style="font-size:.88rem;color:#0a1628">Pace Yourself</strong><p style="font-size:.8rem;color:#64748b;margin-top:2px">Don't sprint the first 15m. Save energy for the final push — most races are won in the last 10 metres.</p></div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:1.1rem;flex-shrink:0">&#128167;</span>
-          <div><strong style="font-size:.88rem;color:#0a1628">Stay Hydrated</strong><p style="font-size:.8rem;color:#64748b;margin-top:2px">Drink water before and after each race. Your body loses fluids fast during competition.</p></div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:1.1rem;flex-shrink:0">&#127919;</span>
-          <div><strong style="font-size:.88rem;color:#0a1628">Focus on Your Lane</strong><p style="font-size:.8rem;color:#64748b;margin-top:2px">Ignore other swimmers. Stay focused on your technique, breathing and turns.</p></div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <span style="font-size:1.1rem;flex-shrink:0">&#128196;</span>
-          <div><strong style="font-size:.88rem;color:#0a1628">Carry Your Documents</strong><p style="font-size:.8rem;color:#64748b;margin-top:2px">Birth Certificate, Aadhaar, Non-Medalist Declaration &amp; Parent Consent Form — originals mandatory.</p></div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- RIGHT -->
@@ -359,73 +327,11 @@
       </script>
     </div>
 
-    <!-- How It Works — order:3, last -->
-    <div class="col-right-block" style="order:3">
-      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.09)">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e2e8f0">
-          <span style="font-size:1.1rem">&#128221;</span>
-          <h2 style="font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#0f172a;margin:0">How It Works</h2>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0">
-            <div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
-            <div><strong style="font-size:.86rem;color:#0a1628">Create Account</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Sign up with swimmer details. Age group auto-detected.</p></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">
-            <div style="width:32px;height:32px;border-radius:50%;background:#059669;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
-            <div><strong style="font-size:.86rem;color:#0a1628">Register for Event</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Pick tournament, up to 3 events + 1 relay.</p></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#faf5ff;border-radius:8px;border:1px solid #e9d5ff">
-            <div style="width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
-            <div><strong style="font-size:.86rem;color:#0a1628">Pay Online</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Razorpay — UPI, card or net banking.</p></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;padding:10px 12px;background:#fffbeb;border-radius:8px;border:1px solid #fde68a">
-            <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b;color:#fff;font-size:.88rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>
-            <div><strong style="font-size:.86rem;color:#0a1628">Compete &amp; Win</strong><p style="font-size:.76rem;color:#64748b;margin-top:2px">Arrive Day 1, check in and race!</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-right-block" style="order:2">
-      <div class="section-head">
-        <span class="sh-icon">&#128100;</span><h2>Quick Register</h2>
-      </div>
-      <form class="qr-form" onsubmit="qrSubmit(event)">
-        <div class="qr-group">
-          <label>Swimmer Name</label>
-          <input type="text" id="qrName" placeholder="Enter full name" required/>
-        </div>
-        <div class="qr-group">
-          <label>Gender</label>
-          <select id="qrGender" required>
-            <option value="">Select Gender</option>
-            <option value="Boys">Boys</option>
-            <option value="Girls">Girls</option>
-          </select>
-        </div>
-        <div class="qr-group">
-          <label>Date of Birth</label>
-          <input type="date" id="qrDob" onchange="qrFillAge()" required/>
-        </div>
-        <div class="qr-group">
-          <label>Age Group <span class="auto-tag-sm">auto</span></label>
-          <input type="text" id="qrAgeGroup" readonly class="readonly-inp" placeholder="Detected from DOB"/>
-        </div>
-        <div class="qr-group">
-          <label>Academy</label>
-          <select id="qrAcademy" required>
-            <option value="">Select Academy</option>
-          </select>
-        </div>
-        <button type="submit" class="btn-continue">Continue to Events &#8594;</button>
-      </form>
-    </div>
   </div>
 </div>
 
 <!-- SWIMMER DIRECTORY -->
-<section id="directory" class="dir-section">
+<section id="directory" class="dir-section reveal-3d">
   <div class="dir-inner">
     <div class="dir-head">
       <div class="section-head" style="margin-bottom:0">
@@ -524,7 +430,7 @@
 </section>
 
 <!-- FAQ -->
-<section id="faq" class="faq-section">
+<section id="faq" class="faq-section reveal-3d">
   <div class="faq-inner">
     <div class="section-head"><span class="sh-icon">&#10067;</span><h2>Frequently Asked Questions</h2></div>
     <input type="text" class="faq-search" id="faqSearch" placeholder="Search FAQs..." oninput="filterFaq()"/>
@@ -952,11 +858,16 @@ function renderHomeEvents(events) {
   const list = document.querySelector('.event-list');
   if (!list) return;
   if (!events || !events.length) {
-    list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
+    list.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:40px">No upcoming events.</p>';
     return;
   }
   const today = new Date();
-  const visibleEvents = events.filter(e => e.status !== 'Completed');
+  const visibleEvents = events.filter(e => {
+    if(e.status === 'Completed') return false;
+    // Hide events where deadline has passed
+    if(e.reg_deadline && new Date(e.reg_deadline + 'T23:59:59') < today) return false;
+    return true;
+  });
   visibleEvents.sort((a, b) => {
     const aActive = a.status === 'Open' && (!a.reg_deadline || new Date(a.reg_deadline + 'T23:59:59') >= today);
     const bActive = b.status === 'Open' && (!b.reg_deadline || new Date(b.reg_deadline + 'T23:59:59') >= today);
@@ -970,46 +881,108 @@ function renderHomeEvents(events) {
     return 0;
   });
   if (!visibleEvents.length) {
-    list.innerHTML = '<p style="color:#64748b;text-align:center;padding:20px">No upcoming events.</p>';
+    list.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:40px">No upcoming events.</p>';
     return;
   }
   function fmtDate(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-  let html = '';
-  visibleEvents.forEach((ev, i) => {
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">';
+  visibleEvents.forEach((ev) => {
     const isOpen = ev.status === 'Open';
     const deadlinePassed = ev.reg_deadline ? new Date(ev.reg_deadline + 'T23:59:59') < today : false;
-    const badge = isOpen ? 'open' : ev.status === 'Upcoming' ? 'school' : 'nm';
-    const badgeText = ev.status === 'Open' ? 'Open Event' : ev.status;
-    const dates = ev.start_date && ev.end_date ? `${fmtDate(ev.start_date)} to ${fmtDate(ev.end_date)}` : '';
-    html += `<div class="ecard ${i===0?'featured':''}">
-      <div class="ecard-top">
-        <span class="etag ${badge}">${badgeText}</span>
-        <span class="ecard-seats" style="color:${isOpen&&!deadlinePassed?'#16a34a':'#64748b'}">${isOpen&&!deadlinePassed?'&#128994; Open':'&#128274; '+ev.status}</span>
+    const statusText = isOpen && !deadlinePassed ? 'UPCOMING' : deadlinePassed ? 'CLOSED' : ev.status.toUpperCase();
+    const statusColor = isOpen && !deadlinePassed ? '#06b6d4' : deadlinePassed ? '#dc2626' : '#f59e0b';
+    const dates = ev.start_date && ev.end_date ? `${fmtDate(ev.start_date)} - ${fmtDate(ev.end_date)}` : '';
+    html += `<div style="background:#0f1c2e;border:1px solid #1e3a5f;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px;transition:transform .25s ease,box-shadow .25s ease;cursor:pointer" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(6,182,212,.15)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+      <span style="display:inline-block;padding:4px 12px;border-radius:999px;font-size:.68rem;font-weight:700;color:#0f1c2e;background:${statusColor};width:fit-content;text-transform:uppercase;letter-spacing:.5px">${statusText}</span>
+      <div style="display:flex;align-items:center;justify-content:center;height:80px;color:rgba(6,182,212,.4)">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 12c1.5-2 3.5-3 5.5-1s3.5 1 5.5-1 3.5-3 5.5-1"/><path d="M2 16c1.5-2 3.5-3 5.5-1s3.5 1 5.5-1 3.5-3 5.5-1"/><path d="M2 8c1.5-2 3.5-3 5.5-1s3.5 1 5.5-1 3.5-3 5.5-1"/></svg>
       </div>
-      <h4>${ev.name}</h4>
-      <div class="ecard-meta">
+      <div>
+        <h4 style="font-size:1rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px">${ev.name}</h4>
+        <p style="font-size:.75rem;color:#06b6d4;font-weight:700;text-transform:uppercase">Categories: U10, U12, U14, U16</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:.78rem;color:#94a3b8">
+        <span>&#128205; ${ev.venue || '—'}</span>
         <span>&#128197; ${dates}</span>
-        <span>&#128205; ${ev.venue || ''}</span>
-        <span>&#128176; &#8377;${ev.fee_per_event || 300}/event</span>
-        <span>&#8987; Reg. Deadline: ${ev.reg_deadline ? fmtDate(ev.reg_deadline) : '—'}</span>
-        <span>&#127946; Max 3 events + 1 relay per swimmer</span>
       </div>
-      <div class="ecard-cats">
-        <span class="ap u10">U10</span><span class="ap u12">U12</span>
-        <span class="ap u14">U14</span><span class="ap u16">U16</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0a1628;border-radius:8px;margin-top:4px">
+        <span style="font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Closes in</span>
+        <span class="ev-countdown" data-deadline="${ev.reg_deadline||''}" style="font-size:.82rem;font-weight:800;color:#06b6d4;font-family:monospace">--:--:--:--</span>
       </div>
-      <div class="ecard-btns">
+      <div style="margin-top:auto">
         ${deadlinePassed
-          ? `<span style="padding:5px 14px;background:#fee2e2;color:#dc2626;border-radius:6px;font-size:.8rem;font-weight:700">&#128274; Registration Closed</span>`
-          : `<button onclick="openRegisterModal()" class="btn-reg">Register</button>`
+          ? `<button disabled style="width:100%;padding:10px;background:transparent;border:1px solid #374151;border-radius:8px;color:#64748b;font-size:.82rem;font-weight:700;cursor:not-allowed">Registration Closed</button>`
+          : `<button onclick="openRegisterModal()" style="width:100%;padding:10px;background:transparent;border:1.5px solid rgba(6,182,212,.5);border-radius:8px;color:#06b6d4;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s" onmouseenter="this.style.background='rgba(6,182,212,.1)';this.style.borderColor='#06b6d4'" onmouseleave="this.style.background='transparent';this.style.borderColor='rgba(6,182,212,.5)'">Register now</button>`
         }
-        <button onclick="openEventDetail(this)" class="btn-info" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#1d4ed8;font-weight:600">More Info &#8594;</button>
-        <button onclick="shareEvent(this)" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#64748b;font-weight:600;margin-left:4px">&#128279; Share</button>
-        <button onclick="showVenuePopup(this,'${(ev.venue||'').replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:#dc2626;font-weight:600;margin-left:4px">&#128205; Venue</button>
       </div>
     </div>`;
   });
+  html += '</div>';
   list.innerHTML = html;
+  
+  // Start individual countdown timers on each card
+  list.querySelectorAll('.ev-countdown').forEach(el => {
+    const deadline = el.dataset.deadline;
+    if (!deadline) { el.textContent = 'No deadline'; return; }
+    function tick() {
+      const diff = new Date(deadline + 'T23:59:59') - new Date();
+      if (diff <= 0) { el.textContent = 'CLOSED'; el.style.color = '#dc2626'; return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  });
+  // Click on any card (except buttons) opens event detail
+  const allCards = list.querySelectorAll('div[style*="background:#0f1c2e"]');
+  allCards.forEach((card, idx) => {
+    card.addEventListener('click', function(e) {
+      if(e.target.tagName === 'BUTTON') return;
+      // Open event detail modal with correct event data
+      fetch('/api/home').then(r=>r.json()).then(home=>{
+        const events = home.tournaments || [];
+        const today = new Date();
+        const visible = events.filter(ev => ev.status !== 'Completed').sort((a, b) => {
+          const aActive = a.status === 'Open' && (!a.reg_deadline || new Date(a.reg_deadline + 'T23:59:59') >= today);
+          const bActive = b.status === 'Open' && (!b.reg_deadline || new Date(b.reg_deadline + 'T23:59:59') >= today);
+          if (aActive && bActive) return new Date(a.reg_deadline||'9999-12-31') - new Date(b.reg_deadline||'9999-12-31');
+          if (aActive && !bActive) return -1;
+          if (!aActive && bActive) return 1;
+          return 0;
+        });
+        const ev = visible[idx];
+        if(!ev) return;
+        function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+        const dates = ev.start_date && ev.end_date ? fD(ev.start_date)+' to '+fD(ev.end_date) : '';
+        document.getElementById('evtModalBadge').textContent = ev.status;
+        document.getElementById('evtModalBadge').className = 'evt-modal-badge open';
+        document.getElementById('evtModalTitle').innerHTML = ev.name;
+        document.getElementById('evtModalMeta').innerHTML = dates+' &middot; '+(ev.venue||'');
+        document.getElementById('evtInfoRow').innerHTML = `
+          <div class="evt-info-item"><span class="evt-info-label">Date</span><span class="evt-info-val">${dates}</span></div>
+          <div class="evt-info-item"><span class="evt-info-label">Venue</span><span class="evt-info-val">${ev.venue||''}</span></div>
+          <div class="evt-info-item"><span class="evt-info-label">Fee</span><span class="evt-info-val">&#8377;${ev.fee_per_event||300}/event + GST</span></div>
+          <div class="evt-info-item"><span class="evt-info-label">Deadline</span><span class="evt-info-val">${fD(ev.reg_deadline)}</span></div>
+          <div class="evt-info-item"><span class="evt-info-label">Age Cut-off</span><span class="evt-info-val">31 Dec 2026</span></div>
+          <div class="evt-info-item"><span class="evt-info-label">Max Events</span><span class="evt-info-val">3 individual + Relay</span></div>`;
+        document.getElementById('evtCatsGrid').innerHTML = '<span class="evt-cat-pill ap u10">U10</span><span class="evt-cat-pill ap u12">U12</span><span class="evt-cat-pill ap u14">U14</span><span class="evt-cat-pill ap u16">U16</span>';
+        document.getElementById('evtEventsTable').innerHTML = `
+          <div class="evt-ev-row evt-ev-head"><span>Code</span><span>Stroke</span><span>Distance</span></div>
+          <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#1d4ed8">FS</span></span><span>Freestyle</span><span style="font-weight:600">50m / 100m</span></div>
+          <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#7c3aed">BK</span></span><span>Backstroke</span><span style="font-weight:600">50m / 100m</span></div>
+          <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#059669">BR</span></span><span>Breaststroke</span><span style="font-weight:600">50m / 100m</span></div>
+          <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#d97706">BF</span></span><span>Butterfly</span><span style="font-weight:600">50m / 100m</span></div>
+          <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#dc2626">IM</span></span><span>Ind. Medley</span><span style="font-weight:600">100m / 200m</span></div>
+          <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#374151">RLY</span></span><span>Relay</span><span style="font-weight:600">4x50m / 4x100m</span></div>`;
+        document.getElementById('evtEligBox').innerHTML = '<strong>&#9989; Who can enter?</strong><ul><li>Open to all registered non-medalist swimmers. Age cut-off: 31 December 2026.</li></ul>';
+        document.getElementById('evtModal').classList.add('open');
+        document.body.classList.add('modal-open');
+      }).catch(()=>{});
+    });
+  });
 }
 
 function loadHomeEvents() {
@@ -1085,8 +1058,8 @@ function showVenuePopup(btn, venue) {
     </div>
   </div>
 </div>
+<script src="3d-effects.js?v=1"></script>
 </body>
-</html>
 </html>
 
 

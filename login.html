@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Login — SwimFest India</title>
+  <link rel="stylesheet" href="3d-styles.css?v=1"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -83,7 +84,11 @@
     @media(max-width:480px){.login-card{padding:24px 20px}.login-right{padding:16px}}
   </style>
 </head>
-<body>
+<body class="page-has-canvas" data-page="login">
+
+<!-- 3D Water Particle Background -->
+<canvas id="waterCanvas" style="display:none"></canvas>
+<div class="float-container" aria-hidden="true" style="display:none"></div>
 
 <div class="login-container">
 
@@ -103,7 +108,7 @@
 
   <!-- RIGHT: Login Form -->
   <div class="login-right">
-    <div class="login-card">
+    <div class="login-card form-card-3d">
 
       <div class="login-card-header">
         <h2>Welcome Back &#128075;</h2>
@@ -331,5 +336,6 @@ function socialLogin(provider) {
 }
 </script>
 
+<script src="3d-effects.js?v=1"></script>
 </body>
 </html>

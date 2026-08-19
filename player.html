@@ -6,9 +6,14 @@
   <title>Player Profile — SwimFest India</title>
   <link rel="stylesheet" href="home.css?v=99"/>
   <link rel="stylesheet" href="player.css?v=99"/>
+  <link rel="stylesheet" href="3d-styles.css?v=1"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 </head>
-<body>
+<body class="page-has-canvas" data-page="player">
+
+<!-- 3D Water Particle Background -->
+<canvas id="waterCanvas" style="display:none"></canvas>
+<div class="float-container" aria-hidden="true" style="display:none"></div>
 
 <!-- NAV -->
 <nav class="nav">
@@ -652,5 +657,6 @@
   </div>
 </div>
 
+<script src="3d-effects.js?v=1"></script>
 </body>
 </html>
