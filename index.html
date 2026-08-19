@@ -193,7 +193,7 @@
 
   <!-- LEFT -->
   <div class="col-left">
-    <div class="section-head">
+    <div class="section-head" style="max-width:1000px;margin:0 auto 12px">
       <span class="sh-icon">&#128197;</span><h2>Upcoming Events</h2>
     </div>
     <div class="event-list">
@@ -225,42 +225,79 @@
         let html='';
         completed.forEach(t=>{
           const yr = t.start_date ? t.start_date.split('-')[0] : '';
-          html+=`<div class="past-row" onclick="toggleResult('r${t.tournament_id}',this)">
-            <div class="past-info"><span class="past-year">${yr}</span><span class="past-name">${t.name}</span></div>
-            <span class="past-chev">&#9660;</span>
+          const dates = t.start_date && t.end_date ? fD(t.start_date)+' - '+fD(t.end_date) : '';
+          const status = t.status === 'Completed' ? 'Completed' : 'Closed';
+          const statusColor = t.status === 'Completed' ? '#16a34a' : '#dc2626';
+          html+=`<div class="past-row" onclick="toggleResult('r${t.tournament_id}',this)" style="flex-direction:column;align-items:stretch;gap:4px">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+              <div class="past-info"><span class="past-year">${yr}</span><span class="past-name">${t.name}</span></div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:.68rem;font-weight:700;color:${statusColor};background:${statusColor}15;padding:2px 8px;border-radius:999px">${status}</span>
+                <span class="past-chev">&#9660;</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;font-size:.72rem;color:#64748b;padding-left:36px">
+              <span>&#128205; ${t.venue||'—'}</span>
+              <span>&#128197; ${dates}</span>
+              <span>&#128176; &#8377;${t.fee_per_event||300}/event</span>
+            </div>
           </div>
           <div class="past-panel" id="r${t.tournament_id}" style="display:none">
             <p style="color:#64748b;font-size:.82rem;padding:10px">Loading results...</p>
           </div>`;
         });
         list.innerHTML = html;
-        // Load results for each completed tournament on expand
+        // Click on completed event opens event detail modal
         completed.forEach(t=>{
           const row = list.querySelector(`[onclick*="r${t.tournament_id}"]`);
-          if(row) row.addEventListener('click', function(){
-            const panel = document.getElementById('r'+t.tournament_id);
-            if(panel && panel.innerHTML.includes('Loading')){
-              fetch('/api/results/'+t.tournament_id).then(r=>r.json()).then(results=>{
-                if(!results.length){panel.innerHTML='<p style="color:#64748b;font-size:.82rem;padding:10px">No results recorded yet.</p>';return;}
-                let tbl=`<table class="mini-results"><thead><tr><th>Event</th><th>Swimmer</th><th>Time</th><th>Place</th></tr></thead><tbody>`;
-                results.slice(0,10).forEach(r=>{
-                  tbl+=`<tr><td>${r.event_name}</td><td>${r.full_name||''}</td><td>${r.final_time||'—'}</td><td>${r.overall_place?'#'+r.overall_place:'—'}</td></tr>`;
-                });
-                tbl+='</tbody></table>';
-                panel.innerHTML=tbl;
-              }).catch(()=>{panel.innerHTML='<p style="color:#64748b;font-size:.82rem;padding:10px">Results unavailable.</p>';});
-            }
-          });
+          if(row) {
+            row.removeAttribute('onclick');
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function(){
+              const dates2 = t.start_date && t.end_date ? fD(t.start_date)+' to '+fD(t.end_date) : '';
+              document.getElementById('evtModalBadge').textContent = t.status;
+              document.getElementById('evtModalBadge').className = 'evt-modal-badge ' + (t.status==='Completed'?'open':'nm');
+              document.getElementById('evtModalTitle').innerHTML = t.name;
+              document.getElementById('evtModalMeta').innerHTML = dates2+' &middot; '+(t.venue||'');
+              document.getElementById('evtInfoRow').innerHTML = `
+                <div class="evt-info-item"><span class="evt-info-label">Date</span><span class="evt-info-val">${dates2}</span></div>
+                <div class="evt-info-item"><span class="evt-info-label">Venue</span><span class="evt-info-val">${t.venue||''}</span></div>
+                <div class="evt-info-item"><span class="evt-info-label">Fee</span><span class="evt-info-val">&#8377;${t.fee_per_event||300}/event + GST</span></div>
+                <div class="evt-info-item"><span class="evt-info-label">Deadline</span><span class="evt-info-val">${fD(t.reg_deadline)}</span></div>
+                <div class="evt-info-item"><span class="evt-info-label">Age Cut-off</span><span class="evt-info-val">31 Dec 2026</span></div>
+                <div class="evt-info-item"><span class="evt-info-label">Max Events</span><span class="evt-info-val">3 individual + Relay</span></div>`;
+              document.getElementById('evtCatsGrid').innerHTML = '<span class="evt-cat-pill ap u10">U10</span><span class="evt-cat-pill ap u12">U12</span><span class="evt-cat-pill ap u14">U14</span><span class="evt-cat-pill ap u16">U16</span>';
+              document.getElementById('evtEventsTable').innerHTML = `
+                <div class="evt-ev-row evt-ev-head"><span>Code</span><span>Stroke</span><span>Distance</span></div>
+                <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#1d4ed8">FS</span></span><span>Freestyle</span><span style="font-weight:600">50m / 100m</span></div>
+                <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#7c3aed">BK</span></span><span>Backstroke</span><span style="font-weight:600">50m / 100m</span></div>
+                <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#059669">BR</span></span><span>Breaststroke</span><span style="font-weight:600">50m / 100m</span></div>
+                <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#d97706">BF</span></span><span>Butterfly</span><span style="font-weight:600">50m / 100m</span></div>
+                <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#dc2626">IM</span></span><span>Ind. Medley</span><span style="font-weight:600">100m / 200m</span></div>
+                <div class="evt-ev-row"><span><span class="evt-ev-code" style="background:#374151">RLY</span></span><span>Relay</span><span style="font-weight:600">4x50m / 4x100m</span></div>`;
+              document.getElementById('evtEligBox').innerHTML = '<strong>&#9989; Who can enter?</strong><ul><li>Open to all registered non-medalist swimmers. Age cut-off: 31 December 2026.</li></ul>';
+              document.getElementById('evtModal').classList.add('open');
+              document.body.classList.add('modal-open');
+              // Hide register button for completed events
+              const regBtn = document.getElementById('evtRegisterBtn');
+              if(regBtn) {
+                regBtn.style.display = 'none';
+              }
+            });
+          }
         });
       }).catch(()=>{});
     })();
     </script>
   </div>
 
-  <!-- CENTRE -->
-  <div class="col-mid">
+  </div>
+</div>
 
-    <div class="section-head" id="eligibility" style="margin-top:0">
+<!-- ELIGIBILITY & ANNOUNCEMENTS — below event cards -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px 20px 0;max-width:100%">
+  <div>
+    <div class="section-head" id="eligibility">
       <span class="sh-icon">&#9989;</span><h2>Eligibility Checker</h2>
     </div>
     <div class="elig-checker">
@@ -282,51 +319,29 @@
         <span>&#9888;&#65039; DOB outside eligible range (2010&ndash;2017).</span>
       </div>
     </div>
-
   </div>
-
-  <!-- RIGHT -->
-  <div class="col-right">
-    <div class="col-right-block" style="order:1">
-      <div class="section-head">
-        <span class="sh-icon">&#128226;</span><h2>Announcements</h2>
-      </div>
-      <div class="announce-list" id="announceList">
-        <div class="announce-item">
-          <span class="an-dot urgent-dot"></span>
-          <div><strong>Loading...</strong><p>Fetching event details.</p></div>
-        </div>
-      </div>
-      <script>
-      (function(){
-        fetch('/api/tournaments').then(r=>r.json()).then(events=>{
-          const open = events.find(e=>e.status==='Open') || events[0];
-          if(!open) return;
-          function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-          const startD = fD(open.start_date);
-          document.getElementById('announceList').innerHTML = `
-            <div class="announce-item">
-              <span class="an-dot urgent-dot"></span>
-              <div><strong>Registration Deadline</strong><p>Entries close ${fD(open.reg_deadline)}. No late entries accepted.</p></div>
-            </div>
-            <div class="announce-item">
-              <span class="an-dot"></span>
-              <div><strong>Document Check-in</strong><p>Day 1 (${startD}) at 08:00 AM. Bring all originals.</p></div>
-            </div>
-            <div class="announce-item">
-              <span class="an-dot info-dot"></span>
-              <div><strong>Heat Sheets</strong><p>Published 24 hrs before race day on this website.</p></div>
-            </div>
-            <div class="announce-item">
-              <span class="an-dot info-dot"></span>
-              <div><strong>Relay Teams</strong><p>Relay medalists from other meets are eligible. 4&#215;50m / 4&#215;100m.</p></div>
-            </div>
-          `;
-        }).catch(()=>{});
-      })();
-      </script>
+  <div>
+    <div class="section-head">
+      <span class="sh-icon">&#128226;</span><h2>Announcements</h2>
     </div>
-
+    <div class="announce-list" id="announceList">
+      <div class="announce-item"><span class="an-dot urgent-dot"></span><div><strong>Loading...</strong><p>Fetching event details.</p></div></div>
+    </div>
+    <script>
+    (function(){
+      fetch('/api/tournaments').then(r=>r.json()).then(events=>{
+        const open = events.find(e=>e.status==='Open') || events[0];
+        if(!open) return;
+        function fD(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+        const startD = fD(open.start_date);
+        document.getElementById('announceList').innerHTML = `
+          <div class="announce-item"><span class="an-dot urgent-dot"></span><div><strong>Registration Deadline</strong><p>Entries close ${fD(open.reg_deadline)}. No late entries accepted.</p></div></div>
+          <div class="announce-item"><span class="an-dot"></span><div><strong>Document Check-in</strong><p>Day 1 (${startD}) at 08:00 AM. Bring all originals.</p></div></div>
+          <div class="announce-item"><span class="an-dot info-dot"></span><div><strong>Heat Sheets</strong><p>Published 24 hrs before race day on this website.</p></div></div>
+          <div class="announce-item"><span class="an-dot info-dot"></span><div><strong>Relay Teams</strong><p>Relay medalists from other meets are eligible. 4&#215;50m / 4&#215;100m.</p></div></div>`;
+      }).catch(()=>{});
+    })();
+    </script>
   </div>
 </div>
 
@@ -885,7 +900,7 @@ function renderHomeEvents(events) {
     return;
   }
   function fmtDate(d){if(!d)return '';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">';
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1000px;margin:0 auto">';
   visibleEvents.forEach((ev) => {
     const isOpen = ev.status === 'Open';
     const deadlinePassed = ev.reg_deadline ? new Date(ev.reg_deadline + 'T23:59:59') < today : false;
@@ -980,6 +995,9 @@ function renderHomeEvents(events) {
         document.getElementById('evtEligBox').innerHTML = '<strong>&#9989; Who can enter?</strong><ul><li>Open to all registered non-medalist swimmers. Age cut-off: 31 December 2026.</li></ul>';
         document.getElementById('evtModal').classList.add('open');
         document.body.classList.add('modal-open');
+        // Show register button for upcoming events
+        const regBtn = document.getElementById('evtRegisterBtn');
+        if(regBtn) regBtn.style.display = '';
       }).catch(()=>{});
     });
   });
@@ -1051,8 +1069,8 @@ function showVenuePopup(btn, venue) {
       <div class="evt-events-table" id="evtEventsTable"></div>
       <div class="evt-section-label">&#9989; Eligibility Rules</div>
       <div class="evt-elig-box" id="evtEligBox"></div>
-      <div class="evt-modal-actions">
-        <button onclick="closeEvtModal();openRegisterModal()" class="evt-btn-register">&#128221; Register Now</button>
+      <div class="evt-modal-actions" id="evtModalActions">
+        <button onclick="closeEvtModal();openRegisterModal()" class="evt-btn-register" id="evtRegisterBtn">&#128221; Register Now</button>
         <button onclick="closeEvtModal()" class="evt-btn-close">Close</button>
       </div>
     </div>

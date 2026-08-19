@@ -64,7 +64,7 @@ a{text-decoration:none;color:inherit}
 .stat-div{width:1px;height:36px;background:#e2e8f0;flex-shrink:0}
 
 /* PAGE GRID */
-.page-grid{max-width:100%;margin:0;padding:16px 20px 0;display:grid;grid-template-columns:1fr 280px 260px;gap:16px;align-items:stretch}
+.page-grid{max-width:100%;margin:0;padding:16px 20px 0;display:block}
 
 /* Force all columns to fill height equally */
 .col-left,.col-mid,.col-right{display:flex;flex-direction:column;gap:16px}
